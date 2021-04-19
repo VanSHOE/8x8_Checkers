@@ -4,6 +4,7 @@
 
 typedef struct board game_state; //game state
 typedef struct pieces pawn;
+typedef struct move move;
 
 struct pieces
 {
@@ -20,27 +21,35 @@ struct board
     int cur_turn; // Whose turn is it at this particular state
 };
 
-//make bot
-void init_game_2players(); //starts the game with 2 players mode
-void init_game_bot();      //starts the game with bot
+struct move // move will store new posn of piece after a move is made // to be returned from best_move
+{
+	pawn piece;
+	int x_new;
+	int y_new;
+};
 
-void start();
+//make bot
+void init_game_2players(void); //starts the game with 2 players mode
+void init_game_bot(void);      //starts the game with bot
+
+void start(void);
 void resign(game_state g);
 void draw(game_state g);
-void toss();
+void toss(void);
 
 //update board
-game_state move_entries(pawn p); // Function to move one of the pawns
+// horz and vert will tell in which direction we have to move the pawn p 
+game_state move_entries(pawn p , int horizontal , int vertical); // Function to move one of the pawns
 /*
 in this function i am writing here but after .c is made paste it there,
 we have to update board which involves lots of subfunctions like checking if move is legal or not
 also we have to update the position. and additional features if one can add (using \b) sounds to show moves
 */
 void print_board(game_state P);
-game_state undo(pawn p);
-void rule();                        //just prints rule book
-bool islegal(pawn p, pawn new_pos); // Need a 'from' and a 'to'
-void result(game_state P);          //tells the result of the game
+game_state undo(void);                            // undo the last move taken    
+void rule(void);                                  //just prints rule book
+int islegal(pawn p, pawn new_pos);                // Need a 'from' and a 'to'// will return the id. of rule which is voilated
+void result(game_state P);                        //tells the result of the game // will simply print a string
 
 //interface
 /*
@@ -52,7 +61,7 @@ i cant think of functions data types so plz excuse me.....
 //analysis
 void review();                              //slideshow of board , added:- we will be using a global stack , no need to pass anything in review, undo etc
 void show_all_possible_moves(game_state P); //print all possible moves in simple algebraic manner
-void best_move(game_state P);               //tells best move we can go upto depth of 2/3 or as we discussed as far as 10
+move best_move(game_state P);               //tells best move we can go upto depth of 2/3 or as we discussed as far as 10
 //void evaluation_bar(game_state P); //its hard to do so..but ok i wrote it , not required , these parameters are best kept out of the view of the player , they will be used just for the bot
 
 /*
