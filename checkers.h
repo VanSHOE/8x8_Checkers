@@ -6,6 +6,9 @@ typedef struct board game_state; //game state
 typedef struct pieces pawn;
 typedef struct move move;
 
+const int topRight = 1, bottomRight = 2, topLeft = 3, bottomLeft = 4;
+const int WHITE = 0, BLACK = 1;
+
 struct pieces
 {
     int x;
@@ -45,6 +48,15 @@ in this function i am writing here but after .c is made paste it there,
 we have to update board which involves lots of subfunctions like checking if move is legal or not
 also we have to update the position. and additional features if one can add (using \b) sounds to show moves
 */
+
+bool isOccupied(game_state *g, pawn P);     // checks if coordinates x and y of P are occupied on board
+bool find_with_team(game_state *g, pawn P); // returns true if P is present on board
+bool capturePossible(game_state *g, pawn P, int direction);
+// checks if capture is possible from P in a direction
+// direction can be one of the const int variables: topLeft, bottomLeft, topRight and bottomRight
+
+
+
 void print_board(game_state P);
 game_state undo(void);                            // undo the last move taken    
 void rule(void);                                  //just prints rule book

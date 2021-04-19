@@ -62,7 +62,7 @@ bool isOccupied(game_state *g, pawn P)
 
 bool find_with_team(game_state *g, pawn P)
 {
-    if (P.allegiance == 1)
+    if (P.allegiance == BLACK)
     {
         for (int i = 0; i < 12; ++i)
         {
@@ -70,7 +70,7 @@ bool find_with_team(game_state *g, pawn P)
                 return true;
         }
     }
-    else
+    else if (P.allegiance == WHITE)
     {
         for (int i = 0; i < 12; ++i)
         {
@@ -81,100 +81,174 @@ bool find_with_team(game_state *g, pawn P)
     return false;
 }
 
-bool capturePossible(game_state *g, pawn tmp, int addToX, int addToY)
+// topRight       1
+// bottomRight    2
+// topLeft        3
+// bottomLeft     4
+
+bool capturePossible(game_state *g, pawn P, int direction)
 {
-    if (!isOccupied(&g, tmp))
+    pawn AfterCapture, Enemy;
+    switch (direction)
     {
-        tmp.x += addToX;
-        tmp.y += addToY;
-        tmp.allegiance = (tmp.allegiance + 1) % 2;
-        if (find_with_team(&g, tmp))
-        {
-            return true;
-        }
+    case topRight:
+        if (P.x + 2 > 7 || P.y + 2 > 7)
+            return false;
+        AfterCapture.x = P.x + 2;
+        AfterCapture.y = P.y + 2;
+        Enemy.x = P.x + 1;
+        Enemy.y = P.y + 1;
+        Enemy.allegiance = (P.allegiance + 1) % 2;
+        break;
+    case bottomRight:
+        if (P.x + 2 > 7 || P.y - 2 < 0)
+            return false;
+        AfterCapture.x = P.x + 2;
+        AfterCapture.y = P.y - 2;
+        Enemy.x = P.x + 1;
+        Enemy.y = P.y - 1;
+        Enemy.allegiance = (P.allegiance + 1) % 2;
+        break;
+    case topLeft:
+        if (P.x - 2 < 0 || P.y + 2 > 7)
+            return false;
+        AfterCapture.x = P.x - 2;
+        AfterCapture.y = P.y + 2;
+        Enemy.x = P.x - 1;
+        Enemy.y = P.y + 1;
+        Enemy.allegiance = (P.allegiance + 1) % 2;
+        break;
+    case bottomLeft:
+        if (P.x - 2 < 0 || P.y - 2 < 0)
+            return false;
+        AfterCapture.x = P.x - 2;
+        AfterCapture.y = P.y - 2;
+        Enemy.x = P.x - 1;
+        Enemy.y = P.y - 1;
+        Enemy.allegiance = (P.allegiance + 1) % 2;
+        break;
     }
+
+    // AfterCapture position is not occupied and 
+    // Enemy piece is present on the diagonal between P and AfterCapture
+    if (!isOccupied(g, AfterCapture) && find_with_team(g, Enemy))
+        return true;
+    else
+        return false;
 }
 
 bool isLegal(pawn p, pawn new_pos, game_state *g)
 {
-    if (p.x < 0 || p.y < 0 || p.x > 7 || p.y > 7) // if p.x and p.y >= 0 && <= 7
+    if (p.x < 0 || p.y < 0 || p.x > 7 || p.y > 7) // x and y between 0 and 7
         return false;
     if (new_pos.x < 0 || new_pos.y < 0 || new_pos.x > 7 || new_pos.y > 7)
         return false;
 
+    if (!p.is_king) // if not a king
+    {
+        // if white, check if moves UP on board
+        if (p.allegiance == WHITE && !(new_pos.y > p.y))
+            return false;
+        // if black, check if moves DOWN on board
+        if (p.allegiance == BLACK && !(new_pos.y < p.y))
+            return false;
+    }
+
     int x_diff = abs(p.x - new_pos.x);
     int y_diff = abs(p.y - new_pos.y);
 
-    if (!p.is_king && new_pos.y <= p.y) // not a king.. check if new.y > old.y
+    if (x_diff < 1 || y_diff < 1 || x_diff > 2 || y_diff > 2) // invalid move
         return false;
 
-    if (x_diff < 1 || y_diff < 1 || x_diff > 2 || y_diff > 2)
-        return false;
-
-    if (!isOccupied(&g, p)) // check if p is present in board
+    if (!isOccupied(g, p)) // check if p is present in board
     {
         return false;
     }
 
-    if (isOccupied(&g, new_pos)) // check if the new_pos coordinates are empty
+    if (isOccupied(g, new_pos)) // check if the new_pos coordinates are empty
     {
         return false;
     }
 
     if (x_diff == 1 && y_diff == 1)
     {
+        // move is value only if any capture is not possible
         if (p.is_king)
         {
-            if (p.x - 2 >= 0 && p.y - 2 >= 0)
-            {
-                pawn tmp = {p.x - 2, p.y - 2, p.allegiance};
-                if (capturePossible (&g, tmp, 1, 1))
-                {
-                    return false;
-                }
-            }
+            if (!(new_pos.x > p.x && new_pos.y > p.y) && capturePossible(g, p, topRight))
+                return false;
+            if (!(new_pos.x > p.x && new_pos.y < p.y) && capturePossible(g, p, bottomRight))
+                return false;
+            if (!(new_pos.x < p.x && new_pos.y > p.y) && capturePossible(g, p, topLeft))
+                return false;
+            if (!(new_pos.x < p.x && new_pos.y < p.y) && capturePossible(g, p, bottomLeft))
+                return false;
         }
         else
         {
-            if (new_pos.x > p.x)
+            if (p.allegiance == WHITE)
             {
-                if (p.x - 2 >= 0 && p.y + 2 <= 7)
-                {
-                    pawn tmp = {p.x - 2, p.y + 2, p.allegiance};
-                    if (capturePossible(&g, tmp, 1, -1))
-                    {
-                        return false;
-                    }
-                }
-                return true;
+                if (new_pos.x < p.x && capturePossible(g, p, topRight))
+                    return false;
+                if (new_pos.x > p.x && capturePossible(g, p, topLeft))
+                    return false;
             }
-            else
+            else if (p.allegiance == BLACK)
             {
-                if (p.x + 2 <= 7 && p.y + 2 <= 7)
-                {
-                    pawn tmp = {p.x + 2, p.y + 2};
-                    if (!isOccupied(&g, tmp))
-                    {
-                        tmp.x = p.x + 1;
-                        tmp.y = p.y + 1;
-                        tmp.allegiance = (p.allegiance + 1) % 2;
-                        if (find_with_team(&g, tmp))
-                        {
-                            return false;
-                        }
-                    }
-                }
-                return true;
+                if (new_pos.x < p.x && newcapturePossible(g, p, bottomRight))
+                    return false;
+                if (new_pos.x > p.x && capturePossible(g, p, bottomLeft))
+                    return false;
             }
         }
+
+        return true;
     }
 
     if (x_diff == 2 && y_diff == 2)
     {
+        if (p.is_king)
+        {
+            // if destination is topRight jump, check if capturePossible
+            if (new_pos.x > p.x && new_pos.y > p.y && capturePossible(g, p, topRight))
+                return true;
+
+            // if destination is bottomRight jump, check if capturePossible
+            if (new_pos.x > p.x && new_pos.y < p.y && capturePossible(g, p, bottomRight))
+                return true;
+
+            // if destination is topLeft jump, check if capturePossible
+            if (new_pos.x < p.x && new_pos.y > p.y && capturePossible(g, p, topLeft))
+                return true;
+
+            // if destination is topRight jump, check if capturePossible
+            if (new_pos.x < p.x && new_pos.y < p.y && capturePossible(g, p, bottomLeft))
+                return true;
+        }
+        else
+        {
+            if (p.allegiance == WHITE)
+            {
+                if (new_pos.x > p.x && capturePossible(g, p, topRight))
+                    return true;
+                if (new_pos.x < p.x && capturePossible(g, p, topLeft))
+                    return true;
+            }
+            else if (p.allegiance == BLACK)
+            {
+                if (new_pos.x > p.x && capturePossible(g, p, bottomRight))
+                    return true;
+                if (new_pos.x < p.x && capturePossible(g, p, bottomLeft))
+                    return true;
+            }
+        }
+
+        return false;
     }
 
     return true;
 }
+
 
 int main()
 {
