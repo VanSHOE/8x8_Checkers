@@ -1,0 +1,48 @@
+---------------------------------------------------------------RULES OF 8X8 CHECKERS---------------------------------------------------------------------------
+
+# BOARD:
+The board of checkers is 8X8 board with black (dark coloured) and white (light coloured) lattices which represent the black and white side respectively.
+
+# PIECES:
+Each side has 12 pieces (i.e. 12 black pieces and 12 white pieces).
+
+# POSITION:
+Black lattices are taken as reasonable position. Each team have put pieces in first 3 rows of their side on the black lattices only.
+
+# TARGET:
+During the entire game, pieces must stay in black lattices and move along the diagonal. Normal pieces can only move forward in diagonal while king can move forward 
+as well as backward in the diagonal.
+Target of one side is to either eat up all the pieces or block all the pieces of opponents.
+
+# EATING and JUMPING:
+If there is a piece of opponents at the adjacent lattice of same diagonal and lattice behind that piece is empty , then piece of our side jump over the piece of 
+opponent and land on that empty piece. In this jump, we will eat that piece of opponent over which we jumped.
+
+* Multiple jumps at one Go:
+If after eating one piece of the opponent, we are again in condition of jumping and eating using same piece then we will go with that move also in same chance itself.
+We will keep on jumping and eating with same piece till we can.
+
+# If the piece has no jumping and eating then normal piece has to move forward one lattice along same diagonal.
+
+# CORONATION:
+Any piece arriving and stay at the bottom line of opponent. Then that piece is coronated at once and it will become king from now.
+If piece reach at the bottom row of opponent while jumping and if due to multiple jumps it do not stay there, then that piece will
+NOT be coronated.
+There can have multiple kings for one side in a single game.
+
+# SPECIAL MOVE FOR KING:
+Since normal pieces can only move forward but king can move forward as well as backward along same diagonal.
+Every move of normal piece will also be the move of king along with backward move also.
+
+# MISCELLANEOUS:
+
+* Only after one move ended, the eaten pieces can be removed from the board. The pieces that eaten but not removed can be not jumped through, so they can be used to
+form the barrier.
+
+*During the game, the game can be draw by mutual consent. If one side refuses to draw, then it needs to win within the 40 moves after, or to show some obvious
+advantages than the opponent.
+
+# WIN:
+If all the pieces of opponent have been eaten or blocked, then you will be awarded win.
+
+
