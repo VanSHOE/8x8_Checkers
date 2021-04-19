@@ -9,6 +9,8 @@ struct pieces
 {
     int x;
     int y;
+    int allegiance; // Whose team is it on?
+    bool is_king;   // Is it king yet?
 };
 
 struct board
