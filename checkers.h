@@ -48,7 +48,7 @@ also we have to update the position. and additional features if one can add (usi
 void print_board(game_state P);
 game_state undo(void);                            // undo the last move taken    
 void rule(void);                                  //just prints rule book
-int islegal(pawn p, pawn new_pos);                // Need a 'from' and a 'to'// will return the id. of rule which is voilated
+bool isLegal(pawn p, pawn new_pos, game_state *g);                // Need a 'from' and a 'to'// will return the id. of rule which is voilated
 void result(game_state P);                        //tells the result of the game // will simply print a string
 
 //interface
