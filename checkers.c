@@ -50,13 +50,13 @@ void print_board(game_state* P)
 
                     if(b[i/c_s][j/c_s] == 1)
                     {
-                    setColor(RED);
+                    setColor(BLACK);
                     printf("@");
                     }
                     else 
                     if(b[i/c_s][j/c_s] == 2)
                     {
-                    setColor(BLACK);
+                    setColor(WHITE);
                     printf("@");
                     }
                     else printf(" ");
@@ -313,7 +313,7 @@ void undo(log* head) //undo fxn go one steps back and deletes the current state
     if(head->next->next == NULL) // no move has been made , so returns the initial board
     {
         printf("Atleast one move has to be made to use undo fxn\n");
-        print_board(head->next);
+        print_board(&(head->next->g));
         return;
     }
     // atleast one move has been taken // delete the log of current state
@@ -321,7 +321,7 @@ void undo(log* head) //undo fxn go one steps back and deletes the current state
     head->next = head->next->next;
     head ->next->prev = head;
     free(temp);
-    print_board(head->next);
+    print_board(&(head->next->g));
     return;
 } 
 
@@ -332,7 +332,7 @@ void review(log* head)
 
     while(temp->prev != last)
     {
-        print_board(temp);
+        print_board(&(temp->g));
         temp = temp->prev;
     }    
 }
