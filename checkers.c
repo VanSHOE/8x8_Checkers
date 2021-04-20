@@ -112,14 +112,15 @@ bool is_present(game_state *g, pawn P)
 
 bool capturePossible(game_state *g, pawn P, int direction)
 {
-    pawn AfterCapture, Enemy;
+    pawn Enemy;
+    int AfterCapture_X, AfterCapture_Y;
     switch (direction)
     {
     case topRight:
         if (P.x + 2 > 7 || P.y + 2 > 7)
             return false;
-        AfterCapture.x = P.x + 2;
-        AfterCapture.y = P.y + 2;
+        AfterCapture_X = P.x + 2;
+        AfterCapture_Y = P.y + 2;
         Enemy.x = P.x + 1;
         Enemy.y = P.y + 1;
         Enemy.allegiance = colorFlip(P.allegiance);
@@ -127,8 +128,8 @@ bool capturePossible(game_state *g, pawn P, int direction)
     case bottomRight:
         if (P.x + 2 > 7 || P.y - 2 < 0)
             return false;
-        AfterCapture.x = P.x + 2;
-        AfterCapture.y = P.y - 2;
+        AfterCapture_X = P.x + 2;
+        AfterCapture_Y = P.y - 2;
         Enemy.x = P.x + 1;
         Enemy.y = P.y - 1;
         Enemy.allegiance = colorFlip(P.allegiance);
@@ -136,8 +137,8 @@ bool capturePossible(game_state *g, pawn P, int direction)
     case topLeft:
         if (P.x - 2 < 0 || P.y + 2 > 7)
             return false;
-        AfterCapture.x = P.x - 2;
-        AfterCapture.y = P.y + 2;
+        AfterCapture_X = P.x - 2;
+        AfterCapture_Y = P.y + 2;
         Enemy.x = P.x - 1;
         Enemy.y = P.y + 1;
         Enemy.allegiance = colorFlip(P.allegiance);
@@ -145,8 +146,8 @@ bool capturePossible(game_state *g, pawn P, int direction)
     case bottomLeft:
         if (P.x - 2 < 0 || P.y - 2 < 0)
             return false;
-        AfterCapture.x = P.x - 2;
-        AfterCapture.y = P.y - 2;
+        AfterCapture_X = P.x - 2;
+        AfterCapture_Y = P.y - 2;
         Enemy.x = P.x - 1;
         Enemy.y = P.y - 1;
         Enemy.allegiance = colorFlip(P.allegiance);
@@ -155,7 +156,7 @@ bool capturePossible(game_state *g, pawn P, int direction)
 
     // AfterCapture position is not occupied and
     // Enemy piece is present on the diagonal between P and AfterCapture
-    if (!isOccupied(g, AfterCapture.x , AfterCapture.y) && is_present(g, Enemy))
+    if (!isOccupied(g, AfterCapture_X , AfterCapture_Y) && is_present(g, Enemy))
         return true;
     else
         return false;
