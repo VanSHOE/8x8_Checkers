@@ -342,6 +342,10 @@ void add_board(game_state p , log* head)   // after every move , add game state 
     log* temp = (log*)malloc(sizeof(log));
     temp->g = p;
     temp->next = head->next;
+    
+    if(head->next != NULL)
+    head->next->prev = temp;
+
     head->next = temp;
     temp->prev = head;
     if(temp->next == NULL)
