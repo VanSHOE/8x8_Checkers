@@ -336,6 +336,42 @@ void review(log *head)
         print_board(&(temp->g));
         temp = temp->prev;
     }
+} 
+
+void result(game_state P)
+{
+    int white_pieces_left =0;
+    int black_pieces_left =0;
+
+    for(int i=0;i<12;i++)
+    {
+        if(P.white[i].x != -1) // for piece that has got out , its x and y position will be -1
+        white_pieces_left++;
+        if(P.black[i].x != -1)
+        black_pieces_left++;
+    }
+
+    if(white_pieces_left == 0)
+    {
+        printf("Black is the winner\n");
+        return ;
+    }
+    else if(black_pieces_left == 0)
+    {
+        printf("White is the winner\n");
+        return;
+    }
+    else // in this case , no. of pieces left of both color will be non zero
+    {
+        printf("Match has been drawed\n");
+        return;
+    }
+}
+
+void draw(game_state P) // just call this fxn and it will print who is the winner and the current board
+{
+    result(P);
+    print_board(&P);
 }
 
 void add_board(game_state p, log *head) // after every move , add game state to it

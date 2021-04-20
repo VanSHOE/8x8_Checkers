@@ -80,9 +80,10 @@ void add_board(game_state p , log* head);   // after every move , add game state
 void rule(void);                                  //just prints rule book
 bool isLegal(pawn p, pawn new_pos, game_state *g);                // Need a 'from' and a 'to'// will return the id. of rule which is voilated
 void result(game_state P);                        //tells the result of the game // will simply print a string
+void draw(game_state P);
 
 //interface
-/*
+/* 
 we have to make elegant impresion and to fully appriciate the function print board, we have to create 
 a game like interface for board. apart from that we also want function to show legal moves
 i cant think of functions data types so plz excuse me.....
