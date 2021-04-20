@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <wchar.h>
 #include "rlutil.h"
 #include "checkers.h"
@@ -121,7 +122,7 @@ bool capturePossible(game_state *g, pawn P, int direction)
         AfterCapture.y = P.y + 2;
         Enemy.x = P.x + 1;
         Enemy.y = P.y + 1;
-        Enemy.allegiance = (P.allegiance + 1) % 2;
+        Enemy.allegiance = colorFlip(P.allegiance);
         break;
     case bottomRight:
         if (P.x + 2 > 7 || P.y - 2 < 0)
@@ -130,7 +131,7 @@ bool capturePossible(game_state *g, pawn P, int direction)
         AfterCapture.y = P.y - 2;
         Enemy.x = P.x + 1;
         Enemy.y = P.y - 1;
-        Enemy.allegiance = (P.allegiance + 1) % 2;
+        Enemy.allegiance = colorFlip(P.allegiance);
         break;
     case topLeft:
         if (P.x - 2 < 0 || P.y + 2 > 7)
@@ -139,7 +140,7 @@ bool capturePossible(game_state *g, pawn P, int direction)
         AfterCapture.y = P.y + 2;
         Enemy.x = P.x - 1;
         Enemy.y = P.y + 1;
-        Enemy.allegiance = (P.allegiance + 1) % 2;
+        Enemy.allegiance = colorFlip(P.allegiance);
         break;
     case bottomLeft:
         if (P.x - 2 < 0 || P.y - 2 < 0)
@@ -148,7 +149,7 @@ bool capturePossible(game_state *g, pawn P, int direction)
         AfterCapture.y = P.y - 2;
         Enemy.x = P.x - 1;
         Enemy.y = P.y - 1;
-        Enemy.allegiance = (P.allegiance + 1) % 2;
+        Enemy.allegiance = colorFlip(P.allegiance);
         break;
     }
 

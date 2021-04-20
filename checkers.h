@@ -12,6 +12,9 @@ typedef struct move move;
 #define bottomLeft 4
 //const int WHITE = 15, BLACK = 0;
 
+#define colorFlip(i) (i ^ (1 << 0) ^ (1 << 1) ^ (1 << 2) ^ (1 << 3))
+// if i is WHITE, converts it to black and vice-versa
+
 game_state c_state;
 
 
