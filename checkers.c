@@ -4,62 +4,62 @@
 #include "rlutil.h"
 #include "checkers.h"
 
-void print_board(game_state* P)
+void print_board(game_state *P)
 {
-    int c_s = 4;
+    int c_s = 4, r_s = 8;
     int b[8][8] = {0};
     setColor(WHITE);
-    for(int i = 0;i<12;i++)
+    for (int i = 0; i < 12; i++)
     {
         b[7 - P->black[i].y][P->black[i].x] = 1;
         b[7 - P->white[i].y][P->white[i].x] = 2;
     }
-    for(int i = 0;i<8;i++)
+    for (int i = 0; i < 8; i++)
     {
-        for(int j = 0;j<8;j++)
+        for (int j = 0; j < 8; j++)
         {
-            printf("%d ",b[i][j]);
+            printf("%d ", b[i][j]);
         }
         printf("\n");
     }
     for (int i = 0; i <= 8 * c_s; i++)
     {
-        for (int j = 0; j <= 8 * c_s; j++)
+        for (int j = 0; j <= 8 * r_s; j++)
         {
             setBackgroundColor(BLACK);
-            if (i % (c_s) == 0 && j % (c_s) == 0)
+            if (i % (c_s) == 0 && j % (r_s) == 0)
             {
                 printf("+");
             }
             else if (i % (c_s) == 0)
                 printf("-");
-            else if (j % (c_s) == 0)
+            else if (j % (r_s) == 0)
             {
                 printf("|");
             }
             else
             {
-                if (((i / c_s) + (j / c_s)) % 2 == 0)
+                if (((i / c_s) + (j / r_s)) % 2 == 0)
                 {
                     setBackgroundColor(7);
                 }
                 else
                     setBackgroundColor(2);
-                if (i % (c_s) == j % (c_s) && j % (c_s) == c_s / 2)
+                if ((i % c_s == c_s / 2) && (j % r_s == r_s / 2))
                 {
 
-                    if(b[i/c_s][j/c_s] == 1)
+                    if (b[i / c_s][j / r_s] == 1)
                     {
-                    setColor(BLACK);
-                    printf("@");
+                        setColor(BLACK);
+                        printf("@");
                     }
-                    else 
-                    if(b[i/c_s][j/c_s] == 2)
+                    else if (b[i / c_s][j / r_s] == 2)
                     {
-                    setColor(WHITE);
-                    printf("@");
+                        setColor(WHITE);
+                        printf("@");
                     }
-                    else printf(" ");
+                    else
+                        printf(" ");
                     setColor(WHITE);
                 }
                 else
@@ -72,7 +72,7 @@ void print_board(game_state* P)
     }
 }
 
-bool isOccupied(game_state *g, int x , int y)
+bool isOccupied(game_state *g, int x, int y)
 {
     for (int i = 0; i < 12; ++i)
     {
@@ -156,7 +156,7 @@ bool capturePossible(game_state *g, pawn P, int direction)
 
     // AfterCapture position is not occupied and
     // Enemy piece is present on the diagonal between P and AfterCapture
-    if (!isOccupied(g, AfterCapture_X , AfterCapture_Y) && is_present(g, Enemy))
+    if (!isOccupied(g, AfterCapture_X, AfterCapture_Y) && is_present(g, Enemy))
         return true;
     else
         return false;
@@ -187,12 +187,12 @@ bool isLegal(pawn p, pawn new_pos, game_state *g)
 
     if (x_diff != y_diff)
         return false;
-    if (!isOccupied(g, p.x , p.y)) // check if p is present in board
+    if (!isOccupied(g, p.x, p.y)) // check if p is present in board
     {
         return false;
     }
 
-    if (isOccupied(g, new_pos.x , new_pos.y)) // check if the new_pos coordinates are empty
+    if (isOccupied(g, new_pos.x, new_pos.y)) // check if the new_pos coordinates are empty
     {
         return false;
     }
@@ -309,59 +309,59 @@ void start()
     print_board(&c_state);
 }
 
-void undo(log* head) //undo fxn go one steps back and deletes the current state
+void undo(log *head) //undo fxn go one steps back and deletes the current state
 {
-    if(head->next->next == NULL) // no move has been made , so returns the initial board
+    if (head->next->next == NULL) // no move has been made , so returns the initial board
     {
         printf("Atleast one move has to be made to use undo fxn\n");
         print_board(&(head->next->g));
         return;
     }
     // atleast one move has been taken // delete the log of current state
-    log* temp = head->next;
+    log *temp = head->next;
     head->next = head->next->next;
-    head ->next->prev = head;
+    head->next->prev = head;
     free(temp);
     print_board(&(head->next->g));
     return;
-} 
+}
 
-void review(log* head)
+void review(log *head)
 {
-    log* last = head->prev;
-    log* temp = head->prev;
+    log *last = head->prev;
+    log *temp = head->prev;
 
-    while(temp->prev != last)
+    while (temp->prev != last)
     {
         print_board(&(temp->g));
         temp = temp->prev;
-    }    
+    }
 }
 
-void add_board(game_state p , log* head)   // after every move , add game state to it
-{                                         
-    log* temp = (log*)malloc(sizeof(log));
+void add_board(game_state p, log *head) // after every move , add game state to it
+{
+    log *temp = (log *)malloc(sizeof(log));
     temp->g = p;
     temp->next = head->next;
-    
-    if(head->next != NULL)
-    head->next->prev = temp;
+
+    if (head->next != NULL)
+        head->next->prev = temp;
 
     head->next = temp;
     temp->prev = head;
-    if(temp->next == NULL)
-    head->prev = temp;
+    if (temp->next == NULL)
+        head->prev = temp;
 }
 
 int main()
 {
-    log head;      // start of linked list which is going to store table after every move
+    log head; // start of linked list which is going to store table after every move
     head.next = NULL;
     head.prev = NULL;
 
-   // print_board(s);
+    // print_board(s);
 
- //  while(1)
-   start();
+    //  while(1)
+    start();
     return 0;
 }
