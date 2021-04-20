@@ -72,11 +72,11 @@ void print_board(game_state* P)
     }
 }
 
-bool isOccupied(game_state *g, pawn P)
+bool isOccupied(game_state *g, int x , int y)
 {
     for (int i = 0; i < 12; ++i)
     {
-        if ((P.x == g->white[i].x && P.y == g->white[i].y) || (P.x == g->black[i].x && P.y == g->black[i].y))
+        if ((x == g->white[i].x && y == g->white[i].y) || (x == g->black[i].x && y == g->black[i].y))
         {
             return true;
         }
@@ -84,7 +84,7 @@ bool isOccupied(game_state *g, pawn P)
     return false;
 }
 
-bool find_with_team(game_state *g, pawn P)
+bool is_present(game_state *g, pawn P)
 {
     if (P.allegiance == BLACK)
     {
@@ -155,7 +155,7 @@ bool capturePossible(game_state *g, pawn P, int direction)
 
     // AfterCapture position is not occupied and
     // Enemy piece is present on the diagonal between P and AfterCapture
-    if (!isOccupied(g, AfterCapture) && find_with_team(g, Enemy))
+    if (!isOccupied(g, AfterCapture.x , AfterCapture.y) && is_present(g, Enemy))
         return true;
     else
         return false;
@@ -186,12 +186,12 @@ bool isLegal(pawn p, pawn new_pos, game_state *g)
 
     if (x_diff != y_diff)
         return false;
-    if (!isOccupied(g, p)) // check if p is present in board
+    if (!isOccupied(g, p.x , p.y)) // check if p is present in board
     {
         return false;
     }
 
-    if (isOccupied(g, new_pos)) // check if the new_pos coordinates are empty
+    if (isOccupied(g, new_pos.x , new_pos.y)) // check if the new_pos coordinates are empty
     {
         return false;
     }
@@ -307,9 +307,55 @@ void start()
     }
     print_board(&c_state);
 }
+
+void undo(log* head) //undo fxn go one steps back and deletes the current state
+{
+    if(head->next->next == NULL) // no move has been made , so returns the initial board
+    {
+        printf("Atleast one move has to be made to use undo fxn\n");
+        print_board(head->next);
+        return;
+    }
+    // atleast one move has been taken // delete the log of current state
+    log* temp = head->next;
+    head->next = head->next->next;
+    head ->next->prev = head;
+    free(temp);
+    print_board(head->next);
+    return;
+} 
+
+void review(log* head)
+{
+    log* last = head->prev;
+    log* temp = head->prev;
+
+    while(temp->prev != last)
+    {
+        print_board(temp);
+        temp = temp->prev;
+    }    
+}
+
+void add_board(game_state p , log* head)   // after every move , add game state to it
+{                                         
+    log* temp = (log*)malloc(sizeof(log));
+    temp->g = p;
+    temp->next = head->next;
+    head->next = temp;
+    temp->prev = head;
+    if(temp->next == NULL)
+    head->prev = temp;
+}
+
 int main()
 {
+    log head;      // start of linked list which is going to store table after every move
+    head.next = NULL;
+    head.prev = NULL;
+
    // print_board(s);
+
  //  while(1)
    start();
     return 0;
