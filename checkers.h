@@ -6,8 +6,14 @@ typedef struct board game_state; //game state
 typedef struct pieces pawn;
 typedef struct move move;
 
-const int topRight = 1, bottomRight = 2, topLeft = 3, bottomLeft = 4;
-const int WHITE = 0, BLACK = 1;
+#define topRight 1
+#define bottomRight 2
+#define topLeft 3
+#define bottomLeft 4
+//const int WHITE = 15, BLACK = 0;
+
+game_state c_state;
+
 
 struct pieces
 {
@@ -29,6 +35,11 @@ struct move // move will store new posn of piece after a move is made // to be r
 	pawn piece;
 	int x_new;
 	int y_new;
+};
+struct undo_stack
+{
+    game_state g;
+    struct undo_stack* next;
 };
 
 //make bot
@@ -57,7 +68,7 @@ bool capturePossible(game_state *g, pawn P, int direction);
 
 
 
-void print_board(game_state P);
+void print_board(game_state* P);
 game_state undo(void);                            // undo the last move taken    
 void rule(void);                                  //just prints rule book
 bool isLegal(pawn p, pawn new_pos, game_state *g);                // Need a 'from' and a 'to'// will return the id. of rule which is voilated

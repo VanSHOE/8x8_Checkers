@@ -3,17 +3,28 @@
 #include "rlutil.h"
 #include "checkers.h"
 
-void print_board(game_state P)
+void print_board(game_state* P)
 {
     int c_s = 4;
-    int b[8][8];
+    int b[8][8] = {0};
     setColor(WHITE);
-  
+    for(int i = 0;i<12;i++)
+    {
+        b[7 - P->black[i].y][P->black[i].x] = 1;
+        b[7 - P->white[i].y][P->white[i].x] = 2;
+    }
+    for(int i = 0;i<8;i++)
+    {
+        for(int j = 0;j<8;j++)
+        {
+            printf("%d ",b[i][j]);
+        }
+        printf("\n");
+    }
     for (int i = 0; i <= 8 * c_s; i++)
     {
         for (int j = 0; j <= 8 * c_s; j++)
         {
-           
             setBackgroundColor(BLACK);
             if (i % (c_s) == 0 && j % (c_s) == 0)
             {
@@ -27,20 +38,32 @@ void print_board(game_state P)
             }
             else
             {
-                if (((i / c_s) + (j / c_s)) % 2)
+                if (((i / c_s) + (j / c_s)) % 2 == 0)
                 {
-                    setBackgroundColor(BROWN);
+                    setBackgroundColor(7);
                 }
-                else setBackgroundColor(GREY);
+                else
+                    setBackgroundColor(2);
                 if (i % (c_s) == j % (c_s) && j % (c_s) == c_s / 2)
                 {
+
+                    if(b[i/c_s][j/c_s] == 1)
+                    {
+                    setColor(RED);
+                    printf("@");
+                    }
+                    else 
+                    if(b[i/c_s][j/c_s] == 2)
+                    {
                     setColor(BLACK);
                     printf("@");
+                    }
+                    else printf(" ");
                     setColor(WHITE);
                 }
                 else
                     printf(" ");
-                    resetColor();
+                resetColor();
             }
         }
         resetColor();
@@ -129,7 +152,7 @@ bool capturePossible(game_state *g, pawn P, int direction)
         break;
     }
 
-    // AfterCapture position is not occupied and 
+    // AfterCapture position is not occupied and
     // Enemy piece is present on the diagonal between P and AfterCapture
     if (!isOccupied(g, AfterCapture) && find_with_team(g, Enemy))
         return true;
@@ -160,6 +183,8 @@ bool isLegal(pawn p, pawn new_pos, game_state *g)
     if (x_diff < 1 || y_diff < 1 || x_diff > 2 || y_diff > 2) // invalid move
         return false;
 
+    if (x_diff != y_diff)
+        return false;
     if (!isOccupied(g, p)) // check if p is present in board
     {
         return false;
@@ -195,7 +220,7 @@ bool isLegal(pawn p, pawn new_pos, game_state *g)
             }
             else if (p.allegiance == BLACK)
             {
-                if (new_pos.x < p.x && newcapturePossible(g, p, bottomRight))
+                if (new_pos.x < p.x && capturePossible(g, p, bottomRight))
                     return false;
                 if (new_pos.x > p.x && capturePossible(g, p, bottomLeft))
                     return false;
@@ -246,13 +271,45 @@ bool isLegal(pawn p, pawn new_pos, game_state *g)
         return false;
     }
 
-    return true;
+    return false;
 }
 
-
+void start()
+{
+    int cur_pc = 0;
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 8; j++)
+        {
+            if ((i + j) % 2 == 0)
+            {
+                c_state.white[cur_pc].allegiance = WHITE;
+                c_state.white[cur_pc].is_king = 0;
+                c_state.white[cur_pc].x = j;
+                c_state.white[cur_pc++].y = i;
+            }
+        }
+    }
+    cur_pc = 0;
+    for (int i = 7; i >= 5; i--)
+    {
+        for (int j = 0; j < 8; j++)
+        {
+            if ((i + j) % 2 == 0)
+            {
+                c_state.black[cur_pc].allegiance = BLACK;
+                c_state.black[cur_pc].is_king = 0;
+                c_state.black[cur_pc].x = j;
+                c_state.black[cur_pc++].y = i;
+            }
+        }
+    }
+    print_board(&c_state);
+}
 int main()
 {
-    game_state s;
-    print_board(s);
+   // print_board(s);
+ //  while(1)
+   start();
     return 0;
 }
