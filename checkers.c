@@ -8,7 +8,7 @@ bool move_entries(game_state *g, pawn P, int horizontal, int vertical)
 {
     if (!is_present(g, P))
     {
-        //  printf("NOT PRESENT\n");
+          printf("NOT PRESENT\n");
         return false;
     }
     pawn n;
@@ -16,7 +16,7 @@ bool move_entries(game_state *g, pawn P, int horizontal, int vertical)
     n.y = vertical;
     if (!isLegal(P, n, g))
     {
-        //   printf("NOT LEGAL\n");
+           printf("NOT LEGAL\n");
         return false;
     }
     // printf("WORKING\n");
@@ -572,7 +572,7 @@ void add_board(game_state p, log *head) // after every move , add game state to 
 
 void controller()
 {
-
+     pawn p;
     if (c_state.cur_turn == BLACK)
     {
         int c = 10;
@@ -582,6 +582,7 @@ void controller()
         y[0] = c_state.black[c].y;
         x[1] = y[1] = -1;
         int cur = 0;
+   
         while (1)
         {
             c_state.hover[0].x = x[0];
@@ -630,6 +631,7 @@ void controller()
                             flag = i;
                             x[1] = x[0];
                             y[1] = y[0];
+                            p = c_state.black[i];
                             break;
                         }
                     }
@@ -646,10 +648,7 @@ void controller()
                         y[1] = -1;
                         continue;
                     }
-                    pawn p;
-                    p.x = x[0];
-                    p.y = y[0];
-                    p.allegiance = BLACK;
+                   
                     pawn n;
                     n.x = x[1];
                     n.y = y[1];
@@ -681,7 +680,7 @@ void controller()
         x[1] = y[1] = -1;
         int cur = 0;
         while (1)
-        {
+        {   
             c_state.hover[0].x = x[0];
             c_state.hover[0].y = y[0];
             c_state.hover[1].x = x[1];
@@ -728,6 +727,7 @@ void controller()
                             flag = i;
                             x[1] = x[0];
                             y[1] = y[0];
+                            p = c_state.white[i];
                             break;
                         }
                     }
@@ -744,10 +744,8 @@ void controller()
                         y[1] = -1;
                         continue;
                     }
-                    pawn p;
-                    p.x = x[0];
-                    p.y = y[0];
-                    p.allegiance = WHITE;
+            
+                    
                     pawn n;
                     n.x = x[1];
                     n.y = y[1];
