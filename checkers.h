@@ -52,8 +52,8 @@ void init_game_2players(void); //starts the game with 2 players mode
 void init_game_bot(void);      //starts the game with bot
 
 void start(void);
-void resign(game_state g);
-void draw(game_state g);
+void resign(game_state *g);
+void draw(game_state *g);
 void toss(void);
 
 //update board
@@ -69,8 +69,8 @@ bool isOccupied(game_state *g, int x , int y);     // checks if coordinates (x ,
 bool is_present(game_state *g, pawn P); // returns true if P is present on board
 bool capturePossible(game_state *g, pawn P, int direction);
 // checks if capture is possible from P in a direction
-// direction can be one of the const int variables: topLeft, bottomLeft, topRight and bottomRight
-
+// direction can be one of the four: topLeft, bottomLeft, topRight and bottomRight
+bool simple_Move_Possible(game_state *g, pawn P, int direction);
 
 
 void print_board(game_state* P);
@@ -79,8 +79,7 @@ void review(log* head);                            // print boards in order from
 void add_board(game_state p , log* head);   // after every move , add game state to it
 void rule(void);                                  //just prints rule book
 bool isLegal(pawn p, pawn new_pos, game_state *g);                // Need a 'from' and a 'to'// will return the id. of rule which is voilated
-void result(game_state P);                        //tells the result of the game // will simply print a string
-void draw(game_state P);
+void result(game_state *P);                        //tells the result of the game // will simply print a string
 
 //interface
 /* 

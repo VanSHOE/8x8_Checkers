@@ -8,7 +8,7 @@ void print_board(game_state *P)
 {
     int c_s = 4, r_s = 8;
     int b[8][8] = {0};
-    setColor(WHITE);
+    resetColor();
     for (int i = 0; i < 12; i++)
     {
         b[7 - P->black[i].y][P->black[i].x] = 1;
@@ -60,7 +60,7 @@ void print_board(game_state *P)
                     }
                     else
                         printf(" ");
-                    setColor(WHITE);
+                    resetColor();
                 }
                 else
                     printf(" ");
@@ -109,6 +109,42 @@ bool is_present(game_state *g, pawn P)
 // bottomRight    2
 // topLeft        3
 // bottomLeft     4
+
+bool simple_Move_Possible(game_state *g, pawn P, int direction)
+{
+    int AfterMove_X, AfterMove_Y;
+    switch (direction)
+    {
+    case topRight:
+        if (P.x + 1 > 7 || P.y + 1 > 7)
+            return false;
+        AfterMove_X = P.x + 1;
+        AfterMove_Y = P.y + 1;
+        break;
+    case bottomRight:
+        if (P.x + 1 > 7 || P.y - 1 < 0)
+            return false;
+        AfterMove_X = P.x + 1;
+        AfterMove_Y = P.y - 1;
+        break;
+    case topLeft:
+        if (P.x - 1 < 0 || P.y + 1 > 7)
+            return false;
+        AfterMove_X = P.x - 1;
+        AfterMove_Y = P.y + 1;
+        break;
+    case bottomLeft:
+        if (P.x - 1 < 0 || P.y - 1 < 0)
+            return false;
+        AfterMove_X = P.x - 1;
+        AfterMove_Y = P.y - 1;
+        break;
+    }
+    if (!isOccupied(g, AfterMove_X, AfterMove_Y))
+        return true;
+    else
+        return false;
+}
 
 bool capturePossible(game_state *g, pawn P, int direction)
 {
@@ -202,13 +238,17 @@ bool isLegal(pawn p, pawn new_pos, game_state *g)
         // move is value only if any capture is not possible
         if (p.is_king)
         {
-            if (!(new_pos.x > p.x && new_pos.y > p.y) && capturePossible(g, p, topRight))
+            if (!(new_pos.x > p.x && new_pos.y > p.y) &&
+                capturePossible(g, p, topRight))
                 return false;
-            if (!(new_pos.x > p.x && new_pos.y < p.y) && capturePossible(g, p, bottomRight))
+            if (!(new_pos.x > p.x && new_pos.y < p.y) &&
+                capturePossible(g, p, bottomRight))
                 return false;
-            if (!(new_pos.x < p.x && new_pos.y > p.y) && capturePossible(g, p, topLeft))
+            if (!(new_pos.x < p.x && new_pos.y > p.y) &&
+                capturePossible(g, p, topLeft))
                 return false;
-            if (!(new_pos.x < p.x && new_pos.y < p.y) && capturePossible(g, p, bottomLeft))
+            if (!(new_pos.x < p.x && new_pos.y < p.y) &&
+                capturePossible(g, p, bottomLeft))
                 return false;
         }
         else
@@ -237,19 +277,23 @@ bool isLegal(pawn p, pawn new_pos, game_state *g)
         if (p.is_king)
         {
             // if destination is topRight jump, check if capturePossible
-            if (new_pos.x > p.x && new_pos.y > p.y && capturePossible(g, p, topRight))
+            if (new_pos.x > p.x && new_pos.y > p.y &&
+                capturePossible(g, p, topRight))
                 return true;
 
             // if destination is bottomRight jump, check if capturePossible
-            if (new_pos.x > p.x && new_pos.y < p.y && capturePossible(g, p, bottomRight))
+            if (new_pos.x > p.x && new_pos.y < p.y &&
+                capturePossible(g, p, bottomRight))
                 return true;
 
             // if destination is topLeft jump, check if capturePossible
-            if (new_pos.x < p.x && new_pos.y > p.y && capturePossible(g, p, topLeft))
+            if (new_pos.x < p.x && new_pos.y > p.y &&
+                capturePossible(g, p, topLeft))
                 return true;
 
             // if destination is topRight jump, check if capturePossible
-            if (new_pos.x < p.x && new_pos.y < p.y && capturePossible(g, p, bottomLeft))
+            if (new_pos.x < p.x && new_pos.y < p.y &&
+                capturePossible(g, p, bottomLeft))
                 return true;
         }
         else
@@ -336,42 +380,122 @@ void review(log *head)
         print_board(&(temp->g));
         temp = temp->prev;
     }
-} 
+}
 
-void result(game_state P)
+void result(game_state *P)
 {
-    int white_pieces_left =0;
-    int black_pieces_left =0;
+    int white_pieces_left = 0;
+    int black_pieces_left = 0;
 
-    for(int i=0;i<12;i++)
+    for (int i = 0; i < 12; i++)
     {
-        if(P.white[i].x != -1) // for piece that has got out , its x and y position will be -1
-        white_pieces_left++;
-        if(P.black[i].x != -1)
-        black_pieces_left++;
+        if (P->white[i].x != -1) // for piece that has got out , its x and y position will be -1
+        {
+            white_pieces_left++;
+        }
+        if (P->black[i].x != -1)
+        {
+            black_pieces_left++;
+        }
     }
 
-    if(white_pieces_left == 0)
+    if (white_pieces_left == 0)
     {
         printf("Black is the winner\n");
-        return ;
+        return;
     }
-    else if(black_pieces_left == 0)
+    else if (black_pieces_left == 0)
     {
         printf("White is the winner\n");
         return;
     }
     else // in this case , no. of pieces left of both color will be non zero
     {
-        printf("Match has been drawed\n");
+        bool white_draw_Check = true, black_draw_Check = true; // if both are true -> DRAW
+
+        for (int i = 0; i < 12; ++i)
+        {
+            if (P->black[i].x != -1)
+            {
+                if (simple_Move_Possible(P, P->black[i], bottomRight) ||
+                    simple_Move_Possible(P, P->black[i], bottomLeft) ||
+                    capturePossible(P, P->black[i], bottomRight) ||
+                    capturePossible(P, P->black[i], bottomLeft))
+                {
+                    black_draw_Check = false;
+                    if (!white_draw_Check && !black_draw_Check)
+                        break;
+                }
+                else if (P->black[i].is_king)
+                {
+                    if (simple_Move_Possible(P, P->black[i], topRight) ||
+                        simple_Move_Possible(P, P->black[i], topLeft) ||
+                        capturePossible(P, P->black[i], topRight) ||
+                        capturePossible(P, P->black[i], topLeft))
+                    {
+                        black_draw_Check = false;
+                        if (!white_draw_Check && !black_draw_Check)
+                            break;
+                    }
+                }
+            }
+
+            if (P->white[i].x != -1)
+            {
+                if (simple_Move_Possible(P, P->white[i], topRight) ||
+                    simple_Move_Possible(P, P->white[i], topLeft) ||
+                    capturePossible(P, P->white[i], topRight) ||
+                    capturePossible(P, P->white[i], topLeft))
+                {
+                    white_draw_Check = false;
+                    if (!white_draw_Check && !black_draw_Check)
+                        break;
+                }
+                else if (P->white[i].is_king)
+                {
+                    if (simple_Move_Possible(P, P->white[i], bottomRight) ||
+                        simple_Move_Possible(P, P->white[i], bottomLeft) ||
+                        capturePossible(P, P->white[i], bottomRight) ||
+                        capturePossible(P, P->white[i], bottomLeft))
+                    {
+                        white_draw_Check = false;
+                        if (!white_draw_Check && !black_draw_Check)
+                            break;
+                    }
+                }
+            }
+        }
+
+        if (!white_draw_Check && !black_draw_Check)
+        {
+            // no draw.. game continues
+        }
+
+        if (white_draw_Check && black_draw_Check)
+        {
+            printf("Match has been drawed\n");
+        }
+        else
+        {
+            if (!white_draw_Check && black_draw_Check)
+            {
+                printf("White is the winner\n");
+            }
+
+            if (white_draw_Check && !black_draw_Check)
+            {
+                printf("Black is the winner\n");
+            }
+        }
+
         return;
     }
 }
 
-void draw(game_state P) // just call this fxn and it will print who is the winner and the current board
+void draw(game_state *P) // just call this fxn and it will print who is the winner and the current board
 {
     result(P);
-    print_board(&P);
+    print_board(P);
 }
 
 void add_board(game_state p, log *head) // after every move , add game state to it
