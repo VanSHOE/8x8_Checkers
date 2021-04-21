@@ -4,11 +4,57 @@
 #include "rlutil.h"
 #include "checkers.h"
 
+bool move_entries(game_state *g, pawn P, int horizontal, int vertical)
+{
+    if (!is_present(g, P))
+    {
+        //  printf("NOT PRESENT\n");
+        return false;
+    }
+    pawn n;
+    n.x = horizontal;
+    n.y = vertical;
+    if (!isLegal(P, n, g))
+    {
+        //   printf("NOT LEGAL\n");
+        return false;
+    }
+    // printf("WORKING\n");
+    if (P.allegiance == BLACK)
+    { //printf("WORKINGb\n");
+        for (int i = 0; i < 12; ++i)
+        {
+            if (P.x == g->black[i].x && P.y == g->black[i].y)
+            {
+                g->black[i].x = horizontal;
+                g->black[i].y = vertical;
+            }
+        }
+    }
+    else if (P.allegiance == WHITE)
+    {
+
+        for (int i = 0; i < 12; ++i)
+        {
+            if (P.x == g->white[i].x && P.y == g->white[i].y)
+            { //   printf("OLD:%d, %d ; New: %d , %d\n",g->white[i].x, g->white[i].y,horizontal,vertical);
+                g->white[i].x = horizontal;
+                g->white[i].y = vertical;
+            }
+        }
+    }
+    return true;
+}
+
 void print_board(game_state *P)
 {
     int c_s = 4, r_s = 8;
     int b[8][8] = {0};
     resetColor();
+    int yc1 = 7 - P->hover[0].y;
+    int xc1 = P->hover[0].x;
+    int yc2 = 7 - P->hover[1].y;
+    int xc2 = P->hover[1].x;
     for (int i = 0; i < 12; i++)
     {
         b[7 - P->black[i].y][P->black[i].x] = 1;
@@ -39,7 +85,16 @@ void print_board(game_state *P)
             }
             else
             {
-                if (((i / c_s) + (j / r_s)) % 2 == 0)
+                if ((i / c_s) == yc1 && j / r_s == xc1)
+                {
+                    setBackgroundColor(RED);
+                }
+                else if ((i / c_s) == yc2 && j / r_s == xc2)
+                {
+                    setBackgroundColor(RED);
+                }
+
+                else if (((i / c_s) + (j / r_s)) % 2 == 0)
                 {
                     setBackgroundColor(7);
                 }
@@ -350,7 +405,9 @@ void start()
             }
         }
     }
-    print_board(&c_state);
+    c_state.cur_turn = BLACK;
+    controller();
+    //    print_board(&c_state);
 }
 
 void undo(log *head) //undo fxn go one steps back and deletes the current state
@@ -513,8 +570,212 @@ void add_board(game_state p, log *head) // after every move , add game state to 
         head->prev = temp;
 }
 
+void controller()
+{
+
+    if (c_state.cur_turn == BLACK)
+    {
+        int c = 10;
+        int x[2];
+        int y[2];
+        x[0] = c_state.black[c].x;
+        y[0] = c_state.black[c].y;
+        x[1] = y[1] = -1;
+        int cur = 0;
+        while (1)
+        {
+            c_state.hover[0].x = x[0];
+            c_state.hover[0].y = y[0];
+            c_state.hover[1].x = x[1];
+            c_state.hover[1].y = y[1];
+
+            //    cls();
+            locate(1, 1);
+            hidecursor();
+            print_board(&c_state);
+            char ch = getkey();
+            if (ch == 'd')
+            {
+                x[cur] = (x[cur] + 1) % 8;
+            }
+            else if (ch == 's')
+            {
+                y[cur] = (y[cur] - 1) % 8;
+                if (y[cur] < 0)
+                    y[cur] += 8;
+            }
+            else if (ch == 'w')
+            {
+                y[cur] = (y[cur] + 1) % 8;
+            }
+            else if (ch == 'a')
+            {
+                x[cur] = (x[cur] - 1) % 8;
+                if (x[cur] < 0)
+                    x[cur] += 8;
+            }
+            else if (ch == 'r')
+            {
+                cls();
+            }
+            else if (ch == KEY_SPACE)
+            {
+                if (cur == 0)
+                {
+                    int flag = -1;
+                    for (int i = 0; i < 12; ++i)
+                    {
+                        if (x[0] == c_state.black[i].x && y[0] == c_state.black[i].y)
+                        {
+                            flag = i;
+                            x[1] = x[0];
+                            y[1] = y[0];
+                            break;
+                        }
+                    }
+                    if (flag == -1)
+                        continue;
+                    cur++;
+                }
+                else
+                {
+                    if (x[1] == x[0] && y[0] == y[1])
+                    {
+                        cur--;
+                        x[1] = -1;
+                        y[1] = -1;
+                        continue;
+                    }
+                    pawn p;
+                    p.x = x[0];
+                    p.y = y[0];
+                    p.allegiance = BLACK;
+                    pawn n;
+                    n.x = x[1];
+                    n.y = y[1];
+                    if (!move_entries(&c_state, p, x[1], y[1]))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        cur--;
+                        x[0] = x[1];
+                        y[0] = y[1];
+                        x[1] = -1;
+                        y[1] = -1;
+                        c_state.cur_turn = WHITE;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        int c = 10;
+        int x[2];
+        int y[2];
+        x[0] = c_state.white[c].x;
+        y[0] = c_state.white[c].y;
+        x[1] = y[1] = -1;
+        int cur = 0;
+        while (1)
+        {
+            c_state.hover[0].x = x[0];
+            c_state.hover[0].y = y[0];
+            c_state.hover[1].x = x[1];
+            c_state.hover[1].y = y[1];
+
+            //    cls();
+            locate(1, 1);
+            hidecursor();
+            print_board(&c_state);
+            char ch = getkey();
+            if (ch == 'd')
+            {
+                x[cur] = (x[cur] + 1) % 8;
+            }
+            else if (ch == 's')
+            {
+                y[cur] = (y[cur] - 1) % 8;
+                if (y[cur] < 0)
+                    y[cur] += 8;
+            }
+            else if (ch == 'w')
+            {
+                y[cur] = (y[cur] + 1) % 8;
+            }
+            else if (ch == 'a')
+            {
+                x[cur] = (x[cur] - 1) % 8;
+                if (x[cur] < 0)
+                    x[cur] += 8;
+            }
+            else if (ch == 'r')
+            {
+                cls();
+            }
+            else if (ch == KEY_SPACE)
+            {
+                if (cur == 0)
+                {
+                    int flag = -1;
+                    for (int i = 0; i < 12; ++i)
+                    {
+                        if (x[0] == c_state.white[i].x && y[0] == c_state.white[i].y)
+                        {
+                            flag = i;
+                            x[1] = x[0];
+                            y[1] = y[0];
+                            break;
+                        }
+                    }
+                    if (flag == -1)
+                        continue;
+                    cur++;
+                }
+                else
+                {
+                    if (x[1] == x[0] && y[0] == y[1])
+                    {
+                        cur--;
+                        x[1] = -1;
+                        y[1] = -1;
+                        continue;
+                    }
+                    pawn p;
+                    p.x = x[0];
+                    p.y = y[0];
+                    p.allegiance = WHITE;
+                    pawn n;
+                    n.x = x[1];
+                    n.y = y[1];
+                    if (!move_entries(&c_state, p, x[1], y[1]))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        cur--;
+                        x[0] = x[1];
+                        y[0] = y[1];
+                        x[1] = -1;
+                        y[1] = -1;
+                        c_state.cur_turn = BLACK;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    controller();
+}
+
 int main()
 {
+    //cls();
+    resetColor();
     log head; // start of linked list which is going to store table after every move
     head.next = NULL;
     head.prev = NULL;
@@ -523,5 +784,6 @@ int main()
 
     //  while(1)
     start();
+    //   move_entries(&c_state,c_state.black[8],2,4);
     return 0;
 }
