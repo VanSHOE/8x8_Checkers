@@ -779,8 +779,18 @@ void controller()
 void toss(void)
 {
     srand(time(0));
-    int Toss = rand() % 2;
+    int Toss;
+    for (int i = 0; i < 100; i++)
+    {
+        Toss = rand() % 2;
+        if (Toss == 1)
+            printf("HEAD\n");
+        else
+            printf("TAIL\n");
 
+        msleep(i);
+        cls();
+    }
     if (Toss == 1)
         printf("HEAD\n");
     else
@@ -815,7 +825,8 @@ int main()
     // print_board(s);
 
     //  while(1)
-    start();
+    // start();
     //   move_entries(&c_state,c_state.black[8],2,4);
+    toss();
     return 0;
 }
