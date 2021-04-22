@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <wchar.h>
 #include <time.h>
 #include "rlutil.h"
 #include "checkers.h"
@@ -27,6 +26,20 @@ bool move_entries(game_state *g, pawn P, int horizontal, int vertical)
         {
             if (P.x == g->black[i].x && P.y == g->black[i].y)
             {
+                if (abs(P.x - horizontal) == 2 && abs(P.y - vertical) == 2)
+                {
+                    coords captured_piece = {0, 0};
+                    captured_piece.x = (P.x < horizontal) ? (P.x + 1) : (P.x - 1);
+                    captured_piece.y = (P.y < vertical) ? (P.y + 1) : (P.y - 1);
+                    for (int i = 0; i < 12; ++i)
+                    {
+                        if (g->white[i].x == captured_piece.x && g->white[i].y == captured_piece.y)
+                        {
+                            g->white[i].x = -1;
+                            g->white[i].y = -1;
+                        }
+                    }
+                }
                 g->black[i].x = horizontal;
                 g->black[i].y = vertical;
 
@@ -42,6 +55,20 @@ bool move_entries(game_state *g, pawn P, int horizontal, int vertical)
         {
             if (P.x == g->white[i].x && P.y == g->white[i].y)
             { //   printf("OLD:%d, %d ; New: %d , %d\n",g->white[i].x, g->white[i].y,horizontal,vertical);
+                if (abs(P.x - horizontal) == 2 && abs(P.y - vertical) == 2)
+                {
+                    coords captured_piece = {0, 0};
+                    captured_piece.x = (P.x < horizontal) ? (P.x + 1) : (P.x - 1);
+                    captured_piece.y = (P.y < vertical) ? (P.y + 1) : (P.y - 1);
+                    for (int i = 0; i < 12; ++i)
+                    {
+                        if (g->black[i].x == captured_piece.x && g->black[i].y == captured_piece.y)
+                        {
+                            g->black[i].x = -1;
+                            g->black[i].y = -1;
+                        }
+                    }
+                }
                 g->white[i].x = horizontal;
                 g->white[i].y = vertical;
 
@@ -64,8 +91,10 @@ void print_board(game_state *P)
     int xc2 = P->hover[1].x;
     for (int i = 0; i < 12; i++)
     {
-        b[7 - P->black[i].y][P->black[i].x] = 1;
-        b[7 - P->white[i].y][P->white[i].x] = 2;
+        if (P->black[i].y != -1)
+            b[7 - P->black[i].y][P->black[i].x] = 1;
+        if (P->white[i].y != -1)
+            b[7 - P->white[i].y][P->white[i].x] = 2;
     }
     for (int i = 0; i < 8; i++)
     {
@@ -297,37 +326,37 @@ bool isLegal(pawn p, pawn new_pos, game_state *g)
 
     if (x_diff == 1 && y_diff == 1)
     {
-        // move is value only if any capture is not possible
-        if (p.is_king)
+
+        if (p.allegiance == WHITE)
         {
-            if (!(new_pos.x > p.x && new_pos.y > p.y) &&
-                capturePossible(g, p, topRight))
-                return false;
-            if (!(new_pos.x > p.x && new_pos.y < p.y) &&
-                capturePossible(g, p, bottomRight))
-                return false;
-            if (!(new_pos.x < p.x && new_pos.y > p.y) &&
-                capturePossible(g, p, topLeft))
-                return false;
-            if (!(new_pos.x < p.x && new_pos.y < p.y) &&
-                capturePossible(g, p, bottomLeft))
-                return false;
-        }
-        else
-        {
-            if (p.allegiance == WHITE)
+            for (int i = 0; i < 12; ++i)
             {
-                if (new_pos.x < p.x && capturePossible(g, p, topRight))
-                    return false;
-                if (new_pos.x > p.x && capturePossible(g, p, topLeft))
-                    return false;
+                if (g->white[i].x != -1)
+                {
+                    if (capturePossible(g, g->white[i], topRight) ||
+                        capturePossible(g, g->white[i], topLeft))
+                        return false;
+                    if (g->white[i].is_king &&
+                        (capturePossible(g, g->white[i], bottomRight) ||
+                         capturePossible(g, g->white[i], bottomLeft)))
+                        return false;
+                }
             }
-            else if (p.allegiance == BLACK)
+        }
+        else if (p.allegiance == BLACK)
+        {
+            for (int i = 0; i < 12; ++i)
             {
-                if (new_pos.x < p.x && capturePossible(g, p, bottomRight))
-                    return false;
-                if (new_pos.x > p.x && capturePossible(g, p, bottomLeft))
-                    return false;
+                if (g->black[i].x != -1)
+                {
+                    if (capturePossible(g, g->black[i], bottomRight) ||
+                        capturePossible(g, g->black[i], bottomLeft))
+                        return false;
+                    if (g->black[i].is_king &&
+                        (capturePossible(g, g->black[i], topRight) ||
+                         capturePossible(g, g->black[i], topLeft)))
+                        return false;
+                }
             }
         }
 
@@ -413,8 +442,9 @@ void start()
         }
     }
     c_state.cur_turn = BLACK;
+    cls();
     controller();
-    //    print_board(&c_state);
+    // print_board(&c_state);
 }
 
 void undo(log *head) //undo fxn go one steps back and deletes the current state
@@ -532,7 +562,7 @@ void result(game_state *P)
 
         if (!white_draw_Check && !black_draw_Check)
         {
-            // no draw.. game continues
+            return;
         }
 
         if (white_draw_Check && black_draw_Check)
@@ -579,201 +609,218 @@ void add_board(game_state p, log *head) // after every move , add game state to 
 
 void controller()
 {
-    pawn p;
-    if (c_state.cur_turn == BLACK)
+    while (1)
     {
-        int c = 10;
-        int x[2];
-        int y[2];
-        x[0] = c_state.black[c].x;
-        y[0] = c_state.black[c].y;
-        x[1] = y[1] = -1;
-        int cur = 0;
-
-        while (1)
+        pawn p;
+        int c;
+        if (c_state.cur_turn == BLACK)
         {
-            c_state.hover[0].x = x[0];
-            c_state.hover[0].y = y[0];
-            c_state.hover[1].x = x[1];
-            c_state.hover[1].y = y[1];
-
-            //    cls();
-            locate(1, 1);
-            hidecursor();
-            print_board(&c_state);
-            char ch = getkey();
-            if (ch == 'd')
+            for (int i = 11; i >= 0; --i)
             {
-                x[cur] = (x[cur] + 1) % 8;
-            }
-            else if (ch == 's')
-            {
-                y[cur] = (y[cur] - 1) % 8;
-                if (y[cur] < 0)
-                    y[cur] += 8;
-            }
-            else if (ch == 'w')
-            {
-                y[cur] = (y[cur] + 1) % 8;
-            }
-            else if (ch == 'a')
-            {
-                x[cur] = (x[cur] - 1) % 8;
-                if (x[cur] < 0)
-                    x[cur] += 8;
-            }
-            else if (ch == 'r')
-            {
-                cls();
-            }
-            else if (ch == KEY_SPACE)
-            {
-                if (cur == 0)
+                if (c_state.black[i].x != -1 && c_state.black[i].y != -1)
                 {
-                    int flag = -1;
-                    for (int i = 0; i < 12; ++i)
-                    {
-                        if (x[0] == c_state.black[i].x && y[0] == c_state.black[i].y)
-                        {
-                            flag = i;
-                            x[1] = x[0];
-                            y[1] = y[0];
-                            p = c_state.black[i];
-                            break;
-                        }
-                    }
-                    if (flag == -1)
-                        continue;
-                    cur++;
+                    c = i;
+                    break;
                 }
-                else
-                {
-                    if (x[1] == x[0] && y[0] == y[1])
-                    {
-                        cur--;
-                        x[1] = -1;
-                        y[1] = -1;
-                        continue;
-                    }
+            }
+            int x[2];
+            int y[2];
+            x[0] = c_state.black[c].x;
+            y[0] = c_state.black[c].y;
+            x[1] = y[1] = -1;
+            int cur = 0;
 
-                    pawn n;
-                    n.x = x[1];
-                    n.y = y[1];
-                    if (!move_entries(&c_state, p, x[1], y[1]))
+            while (1)
+            {
+                c_state.hover[0].x = x[0];
+                c_state.hover[0].y = y[0];
+                c_state.hover[1].x = x[1];
+                c_state.hover[1].y = y[1];
+
+                //    cls();
+                locate(1, 1);
+                hidecursor();
+                print_board(&c_state);
+                char ch = getkey();
+                if (ch == 'd')
+                {
+                    x[cur] = (x[cur] + 1) % 8;
+                }
+                else if (ch == 's')
+                {
+                    y[cur] = (y[cur] - 1) % 8;
+                    if (y[cur] < 0)
+                        y[cur] += 8;
+                }
+                else if (ch == 'w')
+                {
+                    y[cur] = (y[cur] + 1) % 8;
+                }
+                else if (ch == 'a')
+                {
+                    x[cur] = (x[cur] - 1) % 8;
+                    if (x[cur] < 0)
+                        x[cur] += 8;
+                }
+                else if (ch == 'r')
+                {
+                    cls();
+                }
+                else if (ch == KEY_SPACE)
+                {
+                    if (cur == 0)
                     {
-                        continue;
+                        int flag = -1;
+                        for (int i = 0; i < 12; ++i)
+                        {
+                            if (x[0] == c_state.black[i].x && y[0] == c_state.black[i].y)
+                            {
+                                flag = i;
+                                x[1] = x[0];
+                                y[1] = y[0];
+                                p = c_state.black[i];
+                                break;
+                            }
+                        }
+                        if (flag == -1)
+                            continue;
+                        cur++;
                     }
                     else
                     {
-                        cur--;
-                        x[0] = x[1];
-                        y[0] = y[1];
-                        x[1] = -1;
-                        y[1] = -1;
-                        c_state.cur_turn = WHITE;
-                        break;
+                        if (x[1] == x[0] && y[0] == y[1])
+                        {
+                            cur--;
+                            x[1] = -1;
+                            y[1] = -1;
+                            continue;
+                        }
+
+                        pawn n;
+                        n.x = x[1];
+                        n.y = y[1];
+                        if (!move_entries(&c_state, p, x[1], y[1]))
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            cur--;
+                            x[0] = x[1];
+                            y[0] = y[1];
+                            x[1] = -1;
+                            y[1] = -1;
+                            break;
+                        }
                     }
                 }
             }
         }
-    }
-    else
-    {
-        int c = 10;
-        int x[2];
-        int y[2];
-        x[0] = c_state.white[c].x;
-        y[0] = c_state.white[c].y;
-        x[1] = y[1] = -1;
-        int cur = 0;
-        while (1)
+        else
         {
-            c_state.hover[0].x = x[0];
-            c_state.hover[0].y = y[0];
-            c_state.hover[1].x = x[1];
-            c_state.hover[1].y = y[1];
-
-            //    cls();
-            locate(1, 1);
-            hidecursor();
-            print_board(&c_state);
-            char ch = getkey();
-            if (ch == 'd')
+            for (int i = 11; i >= 0; --i)
             {
-                x[cur] = (x[cur] + 1) % 8;
-            }
-            else if (ch == 's')
-            {
-                y[cur] = (y[cur] - 1) % 8;
-                if (y[cur] < 0)
-                    y[cur] += 8;
-            }
-            else if (ch == 'w')
-            {
-                y[cur] = (y[cur] + 1) % 8;
-            }
-            else if (ch == 'a')
-            {
-                x[cur] = (x[cur] - 1) % 8;
-                if (x[cur] < 0)
-                    x[cur] += 8;
-            }
-            else if (ch == 'r')
-            {
-                cls();
-            }
-            else if (ch == KEY_SPACE)
-            {
-                if (cur == 0)
+                if (c_state.white[i].x != -1 && c_state.white[i].y != -1)
                 {
-                    int flag = -1;
-                    for (int i = 0; i < 12; ++i)
-                    {
-                        if (x[0] == c_state.white[i].x && y[0] == c_state.white[i].y)
-                        {
-                            flag = i;
-                            x[1] = x[0];
-                            y[1] = y[0];
-                            p = c_state.white[i];
-                            break;
-                        }
-                    }
-                    if (flag == -1)
-                        continue;
-                    cur++;
+                    c = i;
+                    break;
                 }
-                else
-                {
-                    if (x[1] == x[0] && y[0] == y[1])
-                    {
-                        cur--;
-                        x[1] = -1;
-                        y[1] = -1;
-                        continue;
-                    }
+            }
+            int x[2];
+            int y[2];
+            x[0] = c_state.white[c].x;
+            y[0] = c_state.white[c].y;
+            x[1] = y[1] = -1;
+            int cur = 0;
+            while (1)
+            {
+                c_state.hover[0].x = x[0];
+                c_state.hover[0].y = y[0];
+                c_state.hover[1].x = x[1];
+                c_state.hover[1].y = y[1];
 
-                    pawn n;
-                    n.x = x[1];
-                    n.y = y[1];
-                    if (!move_entries(&c_state, p, x[1], y[1]))
+                //    cls();
+                locate(1, 1);
+                hidecursor();
+                print_board(&c_state);
+                char ch = getkey();
+                if (ch == 'd')
+                {
+                    x[cur] = (x[cur] + 1) % 8;
+                }
+                else if (ch == 's')
+                {
+                    y[cur] = (y[cur] - 1) % 8;
+                    if (y[cur] < 0)
+                        y[cur] += 8;
+                }
+                else if (ch == 'w')
+                {
+                    y[cur] = (y[cur] + 1) % 8;
+                }
+                else if (ch == 'a')
+                {
+                    x[cur] = (x[cur] - 1) % 8;
+                    if (x[cur] < 0)
+                        x[cur] += 8;
+                }
+                else if (ch == 'r')
+                {
+                    cls();
+                }
+                else if (ch == KEY_SPACE)
+                {
+                    if (cur == 0)
                     {
-                        continue;
+                        int flag = -1;
+                        for (int i = 0; i < 12; ++i)
+                        {
+                            if (x[0] == c_state.white[i].x && y[0] == c_state.white[i].y)
+                            {
+                                flag = i;
+                                x[1] = x[0];
+                                y[1] = y[0];
+                                p = c_state.white[i];
+                                break;
+                            }
+                        }
+                        if (flag == -1)
+                            continue;
+                        cur++;
                     }
                     else
                     {
-                        cur--;
-                        x[0] = x[1];
-                        y[0] = y[1];
-                        x[1] = -1;
-                        y[1] = -1;
-                        c_state.cur_turn = BLACK;
-                        break;
+                        if (x[1] == x[0] && y[0] == y[1])
+                        {
+                            cur--;
+                            x[1] = -1;
+                            y[1] = -1;
+                            continue;
+                        }
+
+                        pawn n;
+                        n.x = x[1];
+                        n.y = y[1];
+                        if (!move_entries(&c_state, p, x[1], y[1]))
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            cur--;
+                            x[0] = x[1];
+                            y[0] = y[1];
+                            x[1] = -1;
+                            y[1] = -1;
+                            break;
+                        }
                     }
                 }
             }
         }
+        result(&c_state);
+        c_state.cur_turn = colorFlip(c_state.cur_turn);
     }
-    controller();
 }
 
 void toss(void)
@@ -825,8 +872,8 @@ int main()
     // print_board(s);
 
     //  while(1)
-    // start();
-    //   move_entries(&c_state,c_state.black[8],2,4);
+    start();
+    // move_entries(&c_state, c_state.black[8], 2, 4);
     toss();
     return 0;
 }
