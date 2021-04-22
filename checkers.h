@@ -3,9 +3,11 @@
 #include <stdbool.h>
 
 typedef struct board game_state; //game state
+typedef struct game_state board;
 typedef struct pieces pawn;
 typedef struct move move;
 typedef struct undo_stack log;
+typedef struct node node;
 
 #define topRight 1
 #define bottomRight 2
@@ -18,6 +20,16 @@ typedef struct undo_stack log;
 
 game_state c_state;
 
+struct node
+{
+     node *array[12][4]; // at each turn , at max all 12 pieces of that color can move in at max 4 dirn
+     node *next_board;
+     node *prev_board;
+     game_state board; // will store the current board
+};
+
+game_state play_simple_move(game_state p , pawn g , int direction); // have to be completed // dont forget to change the cur_turn
+game_state play_capture_move(game_state p , pawn g , int direction);
 struct pieces
 {
     int x;
@@ -30,12 +42,13 @@ typedef struct coords
     int x;
     int y;
 } coords;
+
 struct board
 {
     pawn white[12]; // stores info about 12 white elements
     pawn black[12]; // stores info about 12 black elements
     coords hover[2];
-    int cur_turn;   // Whose turn is it at this particular state
+    int cur_turn; // Whose turn is it at this particular state // assuming 0 is for black , 1 is for white
 };
 
 struct move // move will store new posn of piece after a move is made // to be returned from best_move
