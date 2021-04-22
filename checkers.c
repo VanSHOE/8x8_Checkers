@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <wchar.h>
+#include <time.h>
 #include "rlutil.h"
 #include "checkers.h"
 
@@ -8,7 +9,7 @@ bool move_entries(game_state *g, pawn P, int horizontal, int vertical)
 {
     if (!is_present(g, P))
     {
-          printf("NOT PRESENT\n");
+        printf("NOT PRESENT\n");
         return false;
     }
     pawn n;
@@ -16,7 +17,7 @@ bool move_entries(game_state *g, pawn P, int horizontal, int vertical)
     n.y = vertical;
     if (!isLegal(P, n, g))
     {
-           printf("NOT LEGAL\n");
+        printf("NOT LEGAL\n");
         return false;
     }
     // printf("WORKING\n");
@@ -28,6 +29,9 @@ bool move_entries(game_state *g, pawn P, int horizontal, int vertical)
             {
                 g->black[i].x = horizontal;
                 g->black[i].y = vertical;
+
+                if (g->black[i].y == 0) // black piece reached to row 0
+                    g->black[i].is_king = 1;
             }
         }
     }
@@ -40,6 +44,9 @@ bool move_entries(game_state *g, pawn P, int horizontal, int vertical)
             { //   printf("OLD:%d, %d ; New: %d , %d\n",g->white[i].x, g->white[i].y,horizontal,vertical);
                 g->white[i].x = horizontal;
                 g->white[i].y = vertical;
+
+                if (g->white[i].y == 7) // white piece reached to row 7
+                    g->white[i].is_king = 1;
             }
         }
     }
@@ -572,7 +579,7 @@ void add_board(game_state p, log *head) // after every move , add game state to 
 
 void controller()
 {
-     pawn p;
+    pawn p;
     if (c_state.cur_turn == BLACK)
     {
         int c = 10;
@@ -582,7 +589,7 @@ void controller()
         y[0] = c_state.black[c].y;
         x[1] = y[1] = -1;
         int cur = 0;
-   
+
         while (1)
         {
             c_state.hover[0].x = x[0];
@@ -648,7 +655,7 @@ void controller()
                         y[1] = -1;
                         continue;
                     }
-                   
+
                     pawn n;
                     n.x = x[1];
                     n.y = y[1];
@@ -680,7 +687,7 @@ void controller()
         x[1] = y[1] = -1;
         int cur = 0;
         while (1)
-        {   
+        {
             c_state.hover[0].x = x[0];
             c_state.hover[0].y = y[0];
             c_state.hover[1].x = x[1];
@@ -744,8 +751,7 @@ void controller()
                         y[1] = -1;
                         continue;
                     }
-            
-                    
+
                     pawn n;
                     n.x = x[1];
                     n.y = y[1];
@@ -768,6 +774,34 @@ void controller()
         }
     }
     controller();
+}
+
+void toss(void)
+{
+    srand(time(0));
+    int Toss = rand() % 2;
+
+    if (Toss == 1)
+        printf("HEAD\n");
+    else
+        printf("TAIL\n");
+}
+
+void rule(void)
+{
+    char A;
+    FILE *fp;
+
+    fp = fopen("Rule_book.txt", "r");
+    while (feof(fp) != 1)
+    {
+        fscanf(fp, "%c", &A);
+        printf("%c", A);
+    }
+    if (fp == NULL)
+        printf("File doesnot exist\n");
+
+    fclose(fp);
 }
 
 int main()
