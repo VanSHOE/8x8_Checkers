@@ -14,6 +14,7 @@ typedef struct node node;
 #define topLeft 3
 #define bottomLeft 4
 //const int WHITE = 15, BLACK = 0;
+//At start of game white occupies row 0,1,2 and black occupies row 5,6,7. 
 
 #define colorFlip(i) (i ^ (1 << 0) ^ (1 << 1) ^ (1 << 2) ^ (1 << 3))
 // if i is WHITE, converts it to black and vice-versa
@@ -28,8 +29,8 @@ struct node
      game_state board; // will store the current board  **************** change the variable name board to smthng else and also wherever used********************
 };
 
-game_state play_simple_move(game_state p , pawn g , int direction); // have to be completed // dont forget to change the cur_turn
-game_state play_capture_move(game_state p , pawn g , int direction);
+game_state play_simple_move(game_state* g , pawn p , int direction); // have to be completed // dont forget to change the cur_turn
+game_state play_capture_move(game_state* g , pawn p , int direction);
 struct pieces
 {
     int x;
