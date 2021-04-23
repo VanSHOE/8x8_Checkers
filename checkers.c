@@ -5,6 +5,83 @@
 #include "checkers.h"
 #include <stdbool.h>
 
+game_state play_simple_move(game_state *g, pawn p, int direction)
+{
+    int aftermove_x, aftermove_y;
+    if(direction == topLeft)
+    {
+        aftermove_x = p.x -1;
+        aftermove_y = p.y +1;
+    }
+    else if(direction == topRight)
+    {
+        aftermove_x = p.x + 1;
+        aftermove_y = p.x + 1;
+    }
+    else if(direction == bottomLeft)
+    {
+        aftermove_x = p.x - 1;
+        aftermove_y = p.y - 1;
+    }
+    else {
+        aftermove_x = p.x+1;
+        aftermove_y = p.y - 1;
+    }
+
+    pawn new;
+    new.x = aftermove_x;
+    new.y = aftermove_y;
+    new.allegiance = p.allegiance;
+    new.is_king = p.is_king;
+
+    if(!isLegal(p,new,g))
+    {
+        printf("Invalid move!\n");
+        return g;
+    }
+
+    if(isOccupied(g,aftermove_x,aftermove_y))
+    {
+        printf("Position is already occupied!\n");
+        return g;
+    }
+
+    if( !is_present(g,p) )
+    {
+        printf("Piece is Not present\n");
+        return g;
+    }
+
+    if(p.allegiance == WHITE)
+    {
+        for(int i=0; i<12; i++)
+        {
+            if(g->white[i].x == p.x  && g->white[i].y == p.y)
+            {
+                g->white.x = aftermove_x;
+                g->black.y = aftermove_y;
+                break;
+            }
+        }
+    }
+    else
+    {
+        for(int i=0; i<12; i++)
+        {
+            if(g->black[i].x == p.x && g->black[i].y == p.y)
+            {
+                g->black[i].x = aftermove_x;
+                g->black[i].y = aftermove_y;
+                break;
+            }
+        }
+    }
+
+    g->cur_turn = (g->cur_turn + 1)%2;
+
+    return g;
+}
+
 void print_all_possible_next_move(node *current) // given a game state , what all possible can be achieved in next move
 {
     // array will contain board condition possible after a piece whose turn it should be has been moved
@@ -537,6 +614,8 @@ void print_board(game_state *P)
     int xc1 = P->hover[0].x;
     int yc2 = 7 - P->hover[1].y;
     int xc2 = P->hover[1].x;
+    
+
     for (int i = 0; i < 12; i++)
     {
         if (P->black[i].y != -1)
@@ -544,6 +623,8 @@ void print_board(game_state *P)
         if (P->white[i].y != -1)
             b[7 - P->white[i].y][P->white[i].x] = 2;
     }
+
+    
     for (int i = 0; i < 8; i++)
     {
         for (int j = 0; j < 8; j++)
@@ -1317,11 +1398,18 @@ int main()
     head.next = NULL;
     head.prev = NULL;
 
+    char key2 = getkey();  // press key 't' to toss
+    if(key2 == 't')
+    toss();
+
+    char key1 = getkey();  // press Enter to start the game
+    if(key1 == '\n')
+    start();
     // print_board(s);
 
     //  while(1)
-    start();
+    // start();
     // move_entries(&c_state, c_state.black[8], 2, 4);
-    toss();
+    // toss();
     return 0;
 }
