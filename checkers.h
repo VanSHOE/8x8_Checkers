@@ -23,9 +23,9 @@ game_state c_state;
 struct node
 {
      node *array[12][4]; // at each turn , at max all 12 pieces of that color can move in at max 4 dirn
-     node *next_board;
-     node *prev_board;
-     game_state board; // will store the current board
+     node *next_board;  // i guess not needed , dont know why I made this 
+     node *prev_board; // will store address of previous posn 
+     game_state board; // will store the current board  **************** change the variable name board to smthng else and also wherever used********************
 };
 
 game_state play_simple_move(game_state p , pawn g , int direction); // have to be completed // dont forget to change the cur_turn

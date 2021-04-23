@@ -23,13 +23,43 @@ void print_all_possible_next_move(node *current) // given a game state , what al
 
 void point_to_null(node *p) // take ptr to node and initialize each of its child to null
 {
+    p->prev_board = NULL;
     for (int i = 0; i < 12; i++)
     {
         for (int j = 0; j < 4; j++)
-            p->array[i][j] = NULL;
+        {
+            p->array[i][j] = NULL;   
+        }
     }
 }
 
+void reached_how(node *final) // will tell how we reached a particular board position // every node contains address of its parent node 
+{
+    node stack[10]; // assuming that value of board will be less than this
+    int id =0; 
+    stack[0] = *final;
+
+    if((*final).prev_board == NULL) // condition when final and parent board are same 
+    {
+        print_board(&(*final).board);
+        return;
+    }
+
+    while((*final).prev_board != NULL) // will keep moving backward untill we do not reach the parent board
+    {
+        id++;
+        final = (*final).prev_board;
+        stack[id] = *final;
+    }
+
+    for(int i=0;i<=id;i++)
+    {
+        print_board(&stack[i]);
+        printf("\n");  
+    } 
+}
+
+void print_k_state();// have to be completed **************************************************************************************
 // #define topRight 1
 // #define bottomRight 2
 // #define topLeft 3
