@@ -37,19 +37,19 @@ game_state play_simple_move(game_state *g, pawn p, int direction)
     if(!isLegal(p,new,g))
     {
         printf("Invalid move!\n");
-        return g;
+        return *g;
     }
 
     if(isOccupied(g,aftermove_x,aftermove_y))
     {
         printf("Position is already occupied!\n");
-        return g;
+        return *g;
     }
 
     if( !is_present(g,p) )
     {
         printf("Piece is Not present\n");
-        return g;
+        return *g;
     }
 
     if(p.allegiance == WHITE)
@@ -58,8 +58,8 @@ game_state play_simple_move(game_state *g, pawn p, int direction)
         {
             if(g->white[i].x == p.x  && g->white[i].y == p.y)
             {
-                g->white.x = aftermove_x;
-                g->black.y = aftermove_y;
+                g->white[i].x = aftermove_x;
+                g->black[i].y = aftermove_y;
                 break;
             }
         }
@@ -79,7 +79,7 @@ game_state play_simple_move(game_state *g, pawn p, int direction)
 
     g->cur_turn = (g->cur_turn + 1)%2;
 
-    return g;
+    return *g;
 }
 
 void print_all_possible_next_move(node *current) // given a game state , what all possible can be achieved in next move
@@ -163,7 +163,7 @@ void filling_node(node *current, game_state p) // takes a node , find which colo
                         if (simple_Move_Possible(&p, p.black[i], topLeft))
                         {
                             // finding the board after the move is made
-                            game_state board_next = play_simple_move(p, p.black[i], topLeft); // fix the error
+                            game_state board_next = play_simple_move(&p, p.black[i], topLeft); // fix the error
 
                             //allocating memory
                             current->array[i][j] = (node *)malloc(sizeof(node));
@@ -175,7 +175,7 @@ void filling_node(node *current, game_state p) // takes a node , find which colo
                         //else we will check if capturing another color piece is possible in that direction
                         else if (capturePossible(&p, p.black[i], topLeft))
                         {
-                            game_state board_next = play_capture_move(p, p.black[i], topLeft);
+                            game_state board_next = play_capture_move(&p, p.black[i], topLeft);
 
                             current->array[i][j] = (node *)malloc(sizeof(node));
                             current->array[i][j]->next_board = NULL;
@@ -191,7 +191,7 @@ void filling_node(node *current, game_state p) // takes a node , find which colo
                         if (simple_Move_Possible(&p, p.black[i], topRight))
                         {
                             // finding the board after the move is made
-                            game_state board_next = play_simple_move(p, p.black[i], topRight); // fix the error
+                            game_state board_next = play_simple_move(&p, p.black[i], topRight); // fix the error
 
                             //allocating memory
                             current->array[i][j] = (node *)malloc(sizeof(node));
@@ -203,7 +203,7 @@ void filling_node(node *current, game_state p) // takes a node , find which colo
                         //else we will check if capturing another color piece is possible in that direction
                         else if (capturePossible(&p, p.black[i], topRight))
                         {
-                            game_state board_next = play_capture_move(p, p.black[i], topRight);
+                            game_state board_next = play_capture_move(&p, p.black[i], topRight);
 
                             current->array[i][j] = (node *)malloc(sizeof(node));
                             current->array[i][j]->next_board = NULL;
@@ -219,7 +219,7 @@ void filling_node(node *current, game_state p) // takes a node , find which colo
                         if (simple_Move_Possible(&p, p.black[i], bottomLeft))
                         {
                             // finding the board after the move is made
-                             game_state board_next =  play_simple_move(p , p.black[i] , bottomLeft);  // fix the error
+                             game_state board_next =  play_simple_move(&p , p.black[i] , bottomLeft);  // fix the error
                              
                              //allocating memory 
                              current->array[i][j] = (node*)malloc(sizeof(node));
@@ -232,7 +232,7 @@ void filling_node(node *current, game_state p) // takes a node , find which colo
                         //else we will check if capturing another color piece is possible in that direction
                         else if (capturePossible(&p , p.black[i] , bottomLeft))
                         {
-                             game_state board_next =  play_capture_move(p , p.black[i] , bottomLeft);
+                             game_state board_next =  play_capture_move(&p , p.black[i] , bottomLeft);
 
                              current->array[i][j] = (node*)malloc(sizeof(node));
                              current->array[i][j]->next_board = NULL;
@@ -248,7 +248,7 @@ void filling_node(node *current, game_state p) // takes a node , find which colo
                         if (simple_Move_Possible(&p, p.black[i], bottomRight))
                         {
                             // finding the board after the move is made
-                             game_state board_next =  play_simple_move(p , p.black[i] , bottomRight);  // fix the error
+                             game_state board_next =  play_simple_move(&p , p.black[i] , bottomRight);  // fix the error
                              
                              //allocating memory 
                              current->array[i][j] = (node*)malloc(sizeof(node));
@@ -261,7 +261,7 @@ void filling_node(node *current, game_state p) // takes a node , find which colo
                         //else we will check if capturing another color piece is possible in that direction
                         else if (capturePossible(&p , p.black[i] , bottomRight))
                         {
-                             game_state board_next =  play_capture_move(p , p.black[i] , bottomRight);
+                             game_state board_next =  play_capture_move(&p , p.black[i] , bottomRight);
 
                              current->array[i][j] = (node*)malloc(sizeof(node));
                              current->array[i][j]->next_board = NULL;
@@ -280,7 +280,7 @@ void filling_node(node *current, game_state p) // takes a node , find which colo
                         if (simple_Move_Possible(&p, p.black[i], bottomLeft))
                         {
                             // finding the board after the move is made
-                             game_state board_next =  play_simple_move(p , p.black[i] , bottomLeft);  // fix the error
+                             game_state board_next =  play_simple_move(&p , p.black[i] , bottomLeft);  // fix the error
                              
                              //allocating memory 
                              current->array[i][j] = (node*)malloc(sizeof(node));
@@ -293,7 +293,7 @@ void filling_node(node *current, game_state p) // takes a node , find which colo
                         //else we will check if capturing another color piece is possible in that direction
                         else if (capturePossible(&p , p.black[i] , bottomLeft))
                         {
-                             game_state board_next =  play_capture_move(p , p.black[i] , bottomLeft);
+                             game_state board_next =  play_capture_move(&p , p.black[i] , bottomLeft);
 
                              current->array[i][j] = (node*)malloc(sizeof(node));
                              current->array[i][j]->next_board = NULL;
@@ -308,7 +308,7 @@ void filling_node(node *current, game_state p) // takes a node , find which colo
                         if (simple_Move_Possible(&p, p.black[i], bottomRight))
                         {
                             // finding the board after the move is made
-                             game_state board_next =  play_simple_move(p , p.black[i] ,bottomRight);  // fix the error
+                             game_state board_next =  play_simple_move(&p , p.black[i] ,bottomRight);  // fix the error
                              
                              //allocating memory 
                              current->array[i][j] = (node*)malloc(sizeof(node));
@@ -321,7 +321,7 @@ void filling_node(node *current, game_state p) // takes a node , find which colo
                         //else we will check if capturing another color piece is possible in that direction
                         else if (capturePossible(&p , p.black[i] , bottomRight))
                         {
-                             game_state board_next =  play_capture_move(p , p.black[i] , bottomRight);
+                             game_state board_next =  play_capture_move(&p , p.black[i] , bottomRight);
 
                              current->array[i][j] = (node*)malloc(sizeof(node));
                              current->array[i][j]->next_board = NULL;
@@ -354,7 +354,7 @@ void filling_node(node *current, game_state p) // takes a node , find which colo
                         if (simple_Move_Possible(&p, p.white[i], topLeft))
                         {
                             // finding the board after the move is made
-                            game_state board_next = play_simple_move(p, p.white[i], topLeft); // fix the error
+                            game_state board_next = play_simple_move(&p, p.white[i], topLeft); // fix the error
 
                             //allocating memory
                             current->array[i][j] = (node *)malloc(sizeof(node));
@@ -366,7 +366,7 @@ void filling_node(node *current, game_state p) // takes a node , find which colo
                         //else we will check if capturing another color piece is possible in that direction
                         else if (capturePossible(&p, p.white[i], topLeft))
                         {
-                            game_state board_next = play_capture_move(p, p.white[i], topLeft);
+                            game_state board_next = play_capture_move(&p, p.white[i], topLeft);
 
                             current->array[i][j] = (node *)malloc(sizeof(node));
                             current->array[i][j]->next_board = NULL;
@@ -382,7 +382,7 @@ void filling_node(node *current, game_state p) // takes a node , find which colo
                         if (simple_Move_Possible(&p, p.white[i], topRight))
                         {
                             // finding the board after the move is made
-                            game_state board_next = play_simple_move(p, p.white[i], topRight); // fix the error
+                            game_state board_next = play_simple_move(&p, p.white[i], topRight); // fix the error
 
                             //allocating memory
                             current->array[i][j] = (node *)malloc(sizeof(node));
@@ -394,7 +394,7 @@ void filling_node(node *current, game_state p) // takes a node , find which colo
                         //else we will check if capturing another color piece is possible in that direction
                         else if (capturePossible(&p, p.white[i], topRight))
                         {
-                            game_state board_next = play_capture_move(p, p.white[i], topRight);
+                            game_state board_next = play_capture_move(&p, p.white[i], topRight);
 
                             current->array[i][j] = (node *)malloc(sizeof(node));
                             current->array[i][j]->next_board = NULL;
@@ -410,7 +410,7 @@ void filling_node(node *current, game_state p) // takes a node , find which colo
                         if (simple_Move_Possible(&p, p.white[i], bottomLeft))
                         {
                             // finding the board after the move is made
-                             game_state board_next =  play_simple_move(p , p.white[i] , bottomLeft);  // fix the error
+                             game_state board_next =  play_simple_move(&p , p.white[i] , bottomLeft);  // fix the error
                              
                              //allocating memory 
                              current->array[i][j] = (node*)malloc(sizeof(node));
@@ -423,7 +423,7 @@ void filling_node(node *current, game_state p) // takes a node , find which colo
                         //else we will check if capturing another color piece is possible in that direction
                         else if (capturePossible(&p , p.white[i] , bottomLeft))
                         {
-                             game_state board_next =  play_capture_move(p , p.white[i] , bottomLeft);
+                             game_state board_next =  play_capture_move(&p , p.white[i] , bottomLeft);
 
                              current->array[i][j] = (node*)malloc(sizeof(node));
                              current->array[i][j]->next_board = NULL;
@@ -439,7 +439,7 @@ void filling_node(node *current, game_state p) // takes a node , find which colo
                         if (simple_Move_Possible(&p, p.white[i], bottomRight))
                         {
                             // finding the board after the move is made
-                             game_state board_next =  play_simple_move(p , p.white[i] , bottomRight);  // fix the error
+                             game_state board_next =  play_simple_move(&p , p.white[i] , bottomRight);  // fix the error
                              
                              //allocating memory 
                              current->array[i][j] = (node*)malloc(sizeof(node));
@@ -452,7 +452,7 @@ void filling_node(node *current, game_state p) // takes a node , find which colo
                         //else we will check if capturing another color piece is possible in that direction
                         else if (capturePossible(&p , p.white[i] , bottomRight))
                         {
-                             game_state board_next =  play_capture_move(p , p.white[i] , bottomRight);
+                             game_state board_next =  play_capture_move(&p , p.white[i] , bottomRight);
 
                              current->array[i][j] = (node*)malloc(sizeof(node));
                              current->array[i][j]->next_board = NULL;
@@ -471,7 +471,7 @@ void filling_node(node *current, game_state p) // takes a node , find which colo
                         if (simple_Move_Possible(&p, p.white[i], topLeft))
                         {
                             // finding the board after the move is made
-                             game_state board_next =  play_simple_move(p , p.white[i] , topLeft);  // fix the error
+                             game_state board_next =  play_simple_move(&p , p.white[i] , topLeft);  // fix the error
                              
                              //allocating memory 
                              current->array[i][j] = (node*)malloc(sizeof(node));
@@ -484,7 +484,7 @@ void filling_node(node *current, game_state p) // takes a node , find which colo
                         //else we will check if capturing another color piece is possible in that direction
                         else if (capturePossible(&p , p.white[i] , topLeft))
                         {
-                             game_state board_next =  play_capture_move(p , p.white[i] , topLeft);
+                             game_state board_next =  play_capture_move(&p , p.white[i] , topLeft);
 
                              current->array[i][j] = (node*)malloc(sizeof(node));
                              current->array[i][j]->next_board = NULL;
@@ -499,7 +499,7 @@ void filling_node(node *current, game_state p) // takes a node , find which colo
                         if (simple_Move_Possible(&p, p.white[i], topRight))
                         {
                             // finding the board after the move is made
-                             game_state board_next =  play_simple_move(p , p.white[i] ,topRight);  // fix the error
+                             game_state board_next =  play_simple_move(&p , p.white[i] ,topRight);  // fix the error
                              
                              //allocating memory 
                              current->array[i][j] = (node*)malloc(sizeof(node));
@@ -512,7 +512,7 @@ void filling_node(node *current, game_state p) // takes a node , find which colo
                         //else we will check if capturing another color piece is possible in that direction
                         else if (capturePossible(&p , p.white[i] , topRight))
                         {
-                             game_state board_next =  play_capture_move(p , p.white[i] , topRight);
+                             game_state board_next =  play_capture_move(&p , p.white[i] , topRight);
 
                              current->array[i][j] = (node*)malloc(sizeof(node));
                              current->array[i][j]->next_board = NULL;
