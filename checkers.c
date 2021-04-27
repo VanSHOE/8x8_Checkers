@@ -887,9 +887,19 @@ void print_board(game_state *P)
     for (int i = 0; i < 12; i++)
     {
         if (P->black[i].y != -1)
-            b[7 - P->black[i].y][P->black[i].x] = 1;
+        {
+            if (P->black[i].is_king)
+                b[7 - P->black[i].y][P->black[i].x] = 3;
+            else
+                b[7 - P->black[i].y][P->black[i].x] = 1;
+        }
         if (P->white[i].y != -1)
-            b[7 - P->white[i].y][P->white[i].x] = 2;
+        {
+            if (P->white[i].is_king)
+                b[7 - P->white[i].y][P->white[i].x] = 4;
+            else
+                b[7 - P->white[i].y][P->white[i].x] = 2;
+        }
     }
 
     for (int i = 0; i < 8; i++)
@@ -938,22 +948,22 @@ void print_board(game_state *P)
                     if (b[i / c_s][j / r_s] == 1)
                     {
                         setColor(BLACK);
-                        if(P->black[i].y == 0) 
-                            P->black[i].is_king == 1;
-                        if(P->black[i].is_king == 0 )
-                            printf("@");
-                        else
-                            printf("W");
+                        printf("@");
+                    }
+                    else if (b[i / c_s][j / r_s] == 3)
+                    {
+                        setColor(BLACK);
+                        printf("W");
                     }
                     else if (b[i / c_s][j / r_s] == 2)
                     {
                         setColor(WHITE);
-                        if(P->white[i].y == 7) 
-                            P->white[i].is_king == 1;
-                        if(P->white[i].is_king == 0 )
-                            printf("@");
-                        else
-                            printf("W");
+                        printf("@");
+                    }
+                    else if (b[i / c_s][j / r_s] == 4)
+                    {
+                        setColor(WHITE);
+                        printf("W");
                     }
                     else
                         printf(" ");
@@ -1406,9 +1416,9 @@ void controller(log *head)
         int c;
         if (c_state.cur_turn == BLACK)
         {
-            printf("Bot");
-            bot();
-            /*
+            //printf("Bot");
+            //bot();
+            
             for (int i = 11; i >= 0; --i)
             {
                 if (c_state.black[i].x != -1 && c_state.black[i].y != -1)
@@ -1547,7 +1557,7 @@ void controller(log *head)
                     }
                 }
             }
-            */
+            
         }
         else
         {
