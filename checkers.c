@@ -940,7 +940,7 @@ bool isLegal(pawn p, pawn new_pos, game_state *g)
     return false;
 }
 
-void start()
+void start(log *head)
 {
     int cur_pc = 0;
     for (int i = 0; i < 3; i++)
@@ -972,40 +972,16 @@ void start()
     }
     c_state.cur_turn = BLACK;
     cls();
-    controller();
+    controller(head);
     // print_board(&c_state);
 }
 
-void undo(log *head) //undo fxn go one steps back and deletes the current state
+void restart(log* head)
 {
-    if (head->next->next == NULL) // no move has been made , so returns the initial board
-    {
-        printf("Atleast one move has to be made to use undo fxn\n");
-        print_board(&(head->next->g));
-        return;
-    }
-    // atleast one move has been taken // delete the log of current state
-    log *temp = head->next;
-    head->next = head->next->next;
-    head->next->prev = head;
-    free(temp);
-    print_board(&(head->next->g));
-    return;
+    start(head);
 }
 
-void review(log *head)
-{
-    log *last = head->prev;
-    log *temp = head->prev;
-
-    while (temp->prev != last)
-    {
-        print_board(&(temp->g));
-        temp = temp->prev;
-    }
-}
-
-void result(game_state *P)
+void result(game_state *P, log* head)
 {
     int white_pieces_left = 0;
     int black_pieces_left = 0;
@@ -1025,11 +1001,19 @@ void result(game_state *P)
     if (white_pieces_left == 0)
     {
         printf("Black is the winner\n");
+        printf("press 'R' to Review\n" );
+        char key = getkey();
+        if(key == 'R')
+        review(head);
         return;
     }
     else if (black_pieces_left == 0)
     {
         printf("White is the winner\n");
+        printf("press 'R' to Review\n" );
+        char key = getkey();
+        if(key == 'R')
+        review(head);
         return;
     }
     else // in this case , no. of pieces left of both color will be non zero
@@ -1115,9 +1099,9 @@ void result(game_state *P)
     }
 }
 
-void draw(game_state *P) // just call this fxn and it will print who is the winner and the current board
+void draw(game_state *P, log* head) // just call this fxn and it will print who is the winner and the current board
 {
-    result(P);
+    result(P,head);
     print_board(P);
 }
 
@@ -1136,8 +1120,9 @@ void add_board(game_state p, log *head) // after every move , add game state to 
         head->prev = temp;
 }
 
-void controller()
+void controller(log *head)
 {
+    push(head,&c_state);
     while (1)
     {
         pawn p;
@@ -1195,6 +1180,42 @@ void controller()
                 {
                     cls();
                 }
+                else if(ch == 'b')
+                {
+                    cls();
+                    while(1)
+                    {
+                        rule();
+                        char key = getkey();
+                        if(key == '\n')
+                        {
+                            cls();
+                            break;
+                        }
+                    }
+                }
+                else if(ch == 'u')
+                {
+                    c_state = undo(head);
+                }
+                else if(ch == 'N')
+                {
+                    restart(head);
+                }
+                else if(ch == 'H')
+                {
+                    cls();
+                    while(1)
+                    {
+                        instruction();
+                        char key = getkey();
+                        if(key == '\n')
+                        {
+                            cls();
+                            break;
+                        }
+                    }
+                }
                 else if (ch == KEY_SPACE)
                 {
                     if (cur == 0)
@@ -1234,11 +1255,13 @@ void controller()
                         }
                         else
                         {
+                            push(head,&c_state);
                             cur--;
                             x[0] = x[1];
                             y[0] = y[1];
                             x[1] = -1;
                             y[1] = -1;
+
                             break;
                         }
                     }
@@ -1297,6 +1320,42 @@ void controller()
                 {
                     cls();
                 }
+                else if(ch == 'b')
+                {
+                    cls();
+                    while(1)
+                    {
+                        rule();
+                        char key = getkey();
+                        if(key == '\n')
+                        {
+                            cls();
+                            break;
+                        }
+                    }
+                }
+                else if(ch == 'u')
+                {
+                    c_state = undo(head);
+                }
+                else if(ch == 'N')
+                {
+                    restart(head);
+                }
+                else if(ch == 'H')
+                {
+                    cls();
+                    while(1)
+                    {
+                        instruction();
+                        char key = getkey();
+                        if(key == '\n')
+                        {
+                            cls();
+                            break;
+                        }
+                    }
+                }
                 else if (ch == KEY_SPACE)
                 {
                     if (cur == 0)
@@ -1336,6 +1395,7 @@ void controller()
                         }
                         else
                         {
+                            push(head,&c_state);
                             cur--;
                             x[0] = x[1];
                             y[0] = y[1];
@@ -1347,9 +1407,27 @@ void controller()
                 }
             }
         }
-        result(&c_state);
+        result(&c_state, head);
         c_state.cur_turn = colorFlip(c_state.cur_turn);
     }
+}
+
+void instruction()
+{
+    cls();
+    char A;
+    FILE *fp;
+
+    fp = fopen("instruction.txt", "r");
+    while (feof(fp) != 1)
+    {
+        fscanf(fp, "%c", &A);
+        printf("%c", A);
+    }
+    if (fp == NULL)
+        printf("File doesnot exist\n");
+
+    fclose(fp);
 }
 
 void toss(void)
@@ -1375,6 +1453,7 @@ void toss(void)
 
 void rule(void)
 {
+    cls();
     char A;
     FILE *fp;
 
@@ -1390,26 +1469,101 @@ void rule(void)
     fclose(fp);
 }
 
+log* CreateEmptyStackNode()
+{
+    log* S = (log*)malloc(sizeof(log));
+
+    S->next = NULL;
+    S->prev = NULL;
+
+    return S;
+}
+
+void push(log* head, game_state* preState)
+{
+    log* S = CreateEmptyStackNode();
+    S->g = *preState;
+    if(head->next != NULL)
+    {
+        S->next = head->next;
+        head->next = S;
+        S->next->prev = S;
+        S->prev = head;
+    }
+    else
+    {
+        S->next = head->next;
+        head->next = S;
+        S->prev = head;
+    }
+}
+
+game_state undo(log *head) //undo fxn go one steps back and deletes the current state
+{
+    
+    if(head->next == NULL)
+    {
+        printf("Stack is Empty\n");
+        return c_state;
+    }
+
+    log* temp = head->next;
+    game_state s = temp->g;
+    if(head->next->next != NULL)
+    {
+        head->next = temp->next;
+        head->next->prev = head;
+    }
+    else
+    {
+        head->next = NULL;
+    }
+    cls();
+    print_board(&(temp->g));
+    free(temp);
+    return s;
+}
+
+void review(log *head)
+{
+    cls();
+    log* temp;
+    while(head->next != NULL)
+    {
+        temp = head->next;
+        game_state s = temp->g;
+        if(head->next->next != NULL)
+        {
+            head->next = temp->next;
+            head->next->prev = head;
+        }
+        else
+        {
+            head->next = NULL;
+        }
+        print_board(&(temp->g));
+        free(temp);
+        head = head->next;
+    }
+
+}
+
+
 int main()
 {
     //cls();
     resetColor();
-    log head; // start of linked list which is going to store table after every move
-    head.next = NULL;
-    head.prev = NULL;
-
-    char key2 = getkey();  // press key 't' to toss
-    if(key2 == 't')
-    toss();
-
-    char key1 = getkey();  // press Enter to start the game
-    if(key1 == '\n')
-    start();
-    // print_board(s);
-
-    //  while(1)
-    // start();
-    // move_entries(&c_state, c_state.black[8], 2, 4);
-    // toss();
+    log* head = CreateEmptyStackNode(); // start of linked list which is going to store table after every move
+    
+    char key;
+    while(1)
+    {
+        key = getkey();
+        if(key == 't')
+        toss();
+        
+        else if(key == '\n')
+        start(head);
+    }
     return 0;
 }
