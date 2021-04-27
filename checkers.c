@@ -1190,7 +1190,7 @@ void controller(log *head)
                     {
                         rule();
                         char key = getkey();
-                        if(key == '\n')
+                        if(key == 'e')
                         {
                             cls();
                             break;
@@ -1212,7 +1212,7 @@ void controller(log *head)
                     {
                         instruction();
                         char key = getkey();
-                        if(key == '\n')
+                        if(key == 'e')
                         {
                             cls();
                             break;
@@ -1330,7 +1330,7 @@ void controller(log *head)
                     {
                         rule();
                         char key = getkey();
-                        if(key == '\n')
+                        if(key == 'e')
                         {
                             cls();
                             break;
@@ -1352,7 +1352,7 @@ void controller(log *head)
                     {
                         instruction();
                         char key = getkey();
-                        if(key == '\n')
+                        if(key == 'e')
                         {
                             cls();
                             break;
@@ -1565,7 +1565,7 @@ int main()
         if(key == 't')
         toss();
         
-        else if(key == KEY_ENTER)
+        else if(key == 'e')
         start(head);
     }
     return 0;

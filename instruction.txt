@@ -25,4 +25,4 @@ How to play:
 4. Use above mentioned keys to move the pieces.
 
 
-press 'ENTER' to exit
+press 'e' to exit

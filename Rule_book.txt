@@ -45,4 +45,4 @@ advantages than the opponent.
 # WIN:
 If all the pieces of opponent have been eaten or blocked, then you will be awarded win.
 
-Press 'ENTER' to exit.
+Press 'e' to exit.
