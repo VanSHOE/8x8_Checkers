@@ -8,23 +8,21 @@ typedef struct pieces pawn;
 typedef struct move move;
 typedef struct undo_stack log;
 typedef struct node node;
-
+#define ll long long
 #define topRight 1
 #define bottomRight 2
 #define topLeft 3
 #define bottomLeft 4
 //const int WHITE = 15, BLACK = 0;
-//At start of game white occupies row 0,1,2 and black occupies row 5,6,7. 
+//At start of game white occupies row 0,1,2 and black occupies row 5,6,7.
 
 #define colorFlip(i) (i ^ (1 << 0) ^ (1 << 1) ^ (1 << 2) ^ (1 << 3))
 // if i is WHITE, converts it to black and vice-versa
 
-game_state c_state;
-
 int bot_mode; // -1: 2 player mode ; 0: Black is bot ; 15: White is bot
 
-game_state play_simple_move(game_state* g , pawn p , int direction); // have to be completed // dont forget to change the cur_turn
-game_state play_capture_move(game_state* g , pawn p , int direction);
+game_state play_simple_move(game_state *g, pawn p, int direction); // have to be completed // dont forget to change the cur_turn
+game_state play_capture_move(game_state *g, pawn p, int direction);
 struct pieces
 {
     int x;
@@ -55,10 +53,10 @@ struct move // move will store new posn of piece after a move is made // to be r
 
 struct node
 {
-     node *array[12][4]; // at each turn , at max all 12 pieces of that color can move in at max 4 dirn
-     node *next_board;  // i guess not needed , dont know why I made this 
-     node *prev_board; // will store address of previous posn 
-     game_state board; // will store the current board  **************** change the variable name board to smthng else and also wherever used********************
+    node *array[12][4]; // at each turn , at max all 12 pieces of that color can move in at max 4 dirn
+    node *next_board;   // i guess not needed , dont know why I made this
+    node *prev_board;   // will store address of previous posn
+    game_state board;   // will store the current board  **************** change the variable name board to smthng else and also wherever used********************
 };
 struct undo_stack // stores the data using doubly linked list
 {
@@ -66,15 +64,15 @@ struct undo_stack // stores the data using doubly linked list
     struct undo_stack *next;
     struct undo_stack *prev;
 };
-
+game_state c_state;
 //make bot
 void init_game_2players(void); //starts the game with 2 players mode
 void init_game_bot(void);      //starts the game with bot
 
-void start(log* head);
-void restart(log* head);
+void start(log *head);
+void restart(log *head);
 void resign(game_state *g);
-void draw(game_state *g, log* head);
+void draw(game_state *g, log *head);
 void toss(void);
 void instruction();
 
@@ -94,19 +92,19 @@ bool capturePossible(game_state *g, pawn P, int direction);
 // direction can be one of the four: topLeft, bottomLeft, topRight and bottomRight
 bool simple_Move_Possible(game_state *g, pawn P, int direction);
 
-log* CreateEmptyStackNode();
-void push(log* head, game_state* preState);
+log *CreateEmptyStackNode();
+void push(log *head, game_state *preState);
 void print_board(game_state *P);
-game_state undo(log *head);                              // undo the last move taken
+game_state undo(log *head);                        // undo the last move taken
 void review(log *head);                            // print boards in order from 1 to last
 void add_board(game_state p, log *head);           // after every move , add game state to it
 void rule(void);                                   //just prints rule book
 bool isLegal(pawn p, pawn new_pos, game_state *g); // Need a 'from' and a 'to'// will return the id. of rule which is voilated
-void result(game_state *P, log* head);                        //tells the result of the game // will simply print a string
+void result(game_state *P, log *head);             //tells the result of the game // will simply print a string
 
 //interface
-/* 
-we have to make elegant impresion and to fully appriciate the function print board, we have to create 
+/*
+we have to make elegant impresion and to fully appriciate the function print board, we have to create
 a game like interface for board. apart from that we also want function to show legal moves
 i cant think of functions data types so plz excuse me.....
 */
@@ -116,10 +114,10 @@ void review();                              //slideshow of board , added:- we wi
 void show_all_possible_moves(game_state P); //print all possible moves in simple algebraic manner
 move best_move(game_state P);               //tells best move we can go upto depth of 2/3 or as we discussed as far as 10
 //void evaluation_bar(game_state P); //its hard to do so..but ok i wrote it , not required , these parameters are best kept out of the view of the player , they will be used just for the bot
-void controller(log* head);
+void controller(log *head);
 /*
-NOTES- 
-after a move is played by running a command, we will print board interface and subseq. after user types next move 
+NOTES-
+after a move is played by running a command, we will print board interface and subseq. after user types next move
 command we will clear screen and prints the board.
 similarly when user prints undo, we print prev board configurations.
 */

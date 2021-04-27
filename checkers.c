@@ -7,13 +7,13 @@
 #include "checkers.h"
 #include <stdbool.h>
 int lim = 4;
-int bot_helper(game_state g_o, int lim)
+ll bot_helper(game_state g_o, int lim)
 {
     if (!lim)
         return 0;
-    int scores[48] = { 0 };
+    ll scores[48] = {0};
+    g_o.cur_turn = colorFlip(g_o.cur_turn);
     game_state g = g_o;
-    g.cur_turn = colorFlip(g.cur_turn);
     if (g.cur_turn == BLACK)
     {
         for (int i = 0; i < 12; i++)
@@ -22,7 +22,7 @@ int bot_helper(game_state g_o, int lim)
 
             if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 1, g.black[pc_i].y + 1))
             {
-                scores[4*i] = 1;
+                scores[4 * i] = 1;
                 scores[4 * i] += bot_helper(g, lim - 1);
                 g = g_o;
             }
@@ -126,10 +126,13 @@ int bot_helper(game_state g_o, int lim)
                 scores[4 * i + 3] += bot_helper(g, lim - 1);
                 g = g_o;
             }
-            scores[i] = -scores[i];
+            scores[4 * i] = -scores[4 * i];
+            scores[4 * i + 1] = -scores[4 * i + 1];
+            scores[4 * i + 2] = -scores[4 * i + 2];
+            scores[4 * i + 3] = -scores[4 * i + 3];
         }
     }
-    int sum = 0;
+    ll sum = 0;
     for (int i = 0; i < 48; i++)
     {
         sum += scores[i];
@@ -140,7 +143,7 @@ int bot_helper(game_state g_o, int lim)
 void bot()
 {
 
-    int scores[48] = { 0 };
+    ll scores[48] = {0};
     game_state g = c_state;
     for (int i = 0; i < 12; i++)
     {
@@ -148,21 +151,21 @@ void bot()
 
         if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 1, g.black[pc_i].y + 1))
         {
-            scores[4*i] = 1;
-            scores[4*i] += bot_helper(g, lim - 1);
+            scores[4 * i] = 1;
+            scores[4 * i] += bot_helper(g, lim - 1);
             g = c_state;
         }
 
         else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 2, g.black[pc_i].y + 2))
         {
-            scores[4*i] = 10;
-            scores[4*i] += bot_helper(g, lim - 1);
+            scores[4 * i] = 10;
+            scores[4 * i] += bot_helper(g, lim - 1);
             g = c_state;
         }
         if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 1, g.black[pc_i].y - 1))
         {
-            scores[4*i + 1] = 2;
-            scores[4*i + 1] += bot_helper(g, lim - 1);
+            scores[4 * i + 1] = 2;
+            scores[4 * i + 1] += bot_helper(g, lim - 1);
             g = c_state;
         }
         else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 2, g.black[pc_i].y - 2))
@@ -204,35 +207,72 @@ void bot()
             mi = i;
         }
     }
-    int pc_i = mi / 4;
 
     printf("Moving %d", mi);
-    switch (mi % 4)
+    int flag = 0;
+    while (!flag)
     {
-    case 0:
-        if (!move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x + 1, c_state.black[pc_i].y + 1))
-            move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x + 2, c_state.black[pc_i].y + 2);
-        break;
-    case 1:
-        if (!move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x + 1, c_state.black[pc_i].y - 1))
-            move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x + 2, c_state.black[pc_i].y - 2);
-        break;
-    case 2:
-        if (!move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x - 1, c_state.black[pc_i].y - 1))
-            move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x - 2, c_state.black[pc_i].y - 2);
-        break;
-    case 3:
-        if (!move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x - 1, c_state.black[pc_i].y + 1))
-            move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x - 2, c_state.black[pc_i].y + 2);
-        break;
+        int pc_i = mi / 4;
+        switch (mi % 4)
+        {
+        case 0:
+            if (!move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x + 1, c_state.black[pc_i].y + 1))
+            {
+                if (move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x + 2, c_state.black[pc_i].y + 2))
+                    flag = 1;
+            }
+            else
+                flag = 1;
+            break;
+        case 1:
+            if (!move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x + 1, c_state.black[pc_i].y - 1))
+            {
+                if (move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x + 2, c_state.black[pc_i].y - 2))
+                    flag = 1;
+            }
+            else
+                flag = 1;
+            break;
+        case 2:
+            if (!move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x - 1, c_state.black[pc_i].y - 1))
+            {
+                if (move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x - 2, c_state.black[pc_i].y - 2))
+                    flag = 1;
+            }
+            else
+                flag = 1;
+            break;
+        case 3:
+            if (!move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x - 1, c_state.black[pc_i].y + 1))
+            {
+                if (move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x - 2, c_state.black[pc_i].y + 2))
+                    flag = 1;
+            }
+            else
+                flag = 1;
+            break;
+        }
+        if (flag == 0)
+        {
+            scores[mi] = -999999999;
+        }
+        mi = 0;
+        for (int i = 1; i < 48; i++)
+        {
+            if (scores[mi] < scores[i])
+            {
+                mi = i;
+            }
+        }
+        mi = mi;
     }
 }
 
-game_state play_capture_move(game_state* g, pawn p, int direction)
+game_state play_capture_move(game_state *g, pawn p, int direction)
 {
     printf("This fxn will be replaced by move entry\n");
 }
-game_state play_simple_move(game_state* g, pawn p, int direction)
+game_state play_simple_move(game_state *g, pawn p, int direction)
 {
     int aftermove_x, aftermove_y;
     if (direction == topLeft)
@@ -310,7 +350,7 @@ game_state play_simple_move(game_state* g, pawn p, int direction)
     return *g;
 }
 
-void print_all_possible_next_move(node* current) // given a game state , what all possible can be achieved in next move
+void print_all_possible_next_move(node *current) // given a game state , what all possible can be achieved in next move
 {
     // array will contain board condition possible after a piece whose turn it should be has been moved
     for (int i = 0; i < 12; i++) // selecting the piece
@@ -325,7 +365,7 @@ void print_all_possible_next_move(node* current) // given a game state , what al
     }
 }
 
-void point_to_null(node* p) // take ptr to node and initialize each of its child to null
+void point_to_null(node *p) // take ptr to node and initialize each of its child to null
 {
     p->prev_board = NULL;
     for (int i = 0; i < 12; i++)
@@ -337,7 +377,7 @@ void point_to_null(node* p) // take ptr to node and initialize each of its child
     }
 }
 
-void reached_how(node* final) // will tell how we reached a particular board position // every node contains address of its parent node
+void reached_how(node *final) // will tell how we reached a particular board position // every node contains address of its parent node
 {
     node stack[10]; // assuming that value of board will be less than this
     int id = 0;
@@ -757,7 +797,7 @@ void filling_node(node *current, game_state p) // takes a node , find which colo
 
 */
 
-bool move_entries(game_state* g, pawn P, int horizontal, int vertical)
+bool move_entries(game_state *g, pawn P, int horizontal, int vertical)
 {
     if (!is_present(g, P))
     {
@@ -781,7 +821,7 @@ bool move_entries(game_state* g, pawn P, int horizontal, int vertical)
             {
                 if (abs(P.x - horizontal) == 2 && abs(P.y - vertical) == 2)
                 {
-                    coords captured_piece = { 0, 0 };
+                    coords captured_piece = {0, 0};
                     captured_piece.x = (P.x < horizontal) ? (P.x + 1) : (P.x - 1);
                     captured_piece.y = (P.y < vertical) ? (P.y + 1) : (P.y - 1);
                     for (int i = 0; i < 12; ++i)
@@ -810,7 +850,7 @@ bool move_entries(game_state* g, pawn P, int horizontal, int vertical)
             { //   printf("OLD:%d, %d ; New: %d , %d\n",g->white[i].x, g->white[i].y,horizontal,vertical);
                 if (abs(P.x - horizontal) == 2 && abs(P.y - vertical) == 2)
                 {
-                    coords captured_piece = { 0, 0 };
+                    coords captured_piece = {0, 0};
                     captured_piece.x = (P.x < horizontal) ? (P.x + 1) : (P.x - 1);
                     captured_piece.y = (P.y < vertical) ? (P.y + 1) : (P.y - 1);
                     for (int i = 0; i < 12; ++i)
@@ -833,10 +873,10 @@ bool move_entries(game_state* g, pawn P, int horizontal, int vertical)
     return true;
 }
 
-void print_board(game_state* P)
+void print_board(game_state *P)
 {
     int c_s = 4, r_s = 8;
-    int b[8][8] = { 0 };
+    int b[8][8] = {0};
     resetColor();
     int yc1 = 7 - P->hover[0].y;
     int xc1 = P->hover[0].x;
@@ -918,7 +958,7 @@ void print_board(game_state* P)
     }
 }
 
-bool isOccupied(game_state* g, int x, int y)
+bool isOccupied(game_state *g, int x, int y)
 {
     for (int i = 0; i < 12; ++i)
     {
@@ -930,7 +970,7 @@ bool isOccupied(game_state* g, int x, int y)
     return false;
 }
 
-bool is_present(game_state* g, pawn P)
+bool is_present(game_state *g, pawn P)
 {
     if (P.allegiance == BLACK)
     {
@@ -956,7 +996,7 @@ bool is_present(game_state* g, pawn P)
 // topLeft        3
 // bottomLeft     4
 
-bool simple_Move_Possible(game_state* g, pawn P, int direction)
+bool simple_Move_Possible(game_state *g, pawn P, int direction)
 {
     int AfterMove_X, AfterMove_Y;
     switch (direction)
@@ -992,7 +1032,7 @@ bool simple_Move_Possible(game_state* g, pawn P, int direction)
         return false;
 }
 
-bool capturePossible(game_state* g, pawn P, int direction)
+bool capturePossible(game_state *g, pawn P, int direction)
 {
     pawn Enemy;
     int AfterCapture_X, AfterCapture_Y;
@@ -1044,7 +1084,7 @@ bool capturePossible(game_state* g, pawn P, int direction)
         return false;
 }
 
-bool isLegal(pawn p, pawn new_pos, game_state* g)
+bool isLegal(pawn p, pawn new_pos, game_state *g)
 {
     if (p.x < 0 || p.y < 0 || p.x > 7 || p.y > 7) // x and y between 0 and 7
         return false;
@@ -1093,7 +1133,7 @@ bool isLegal(pawn p, pawn new_pos, game_state* g)
                         return false;
                     if (g->white[i].is_king &&
                         (capturePossible(g, g->white[i], bottomRight) ||
-                            capturePossible(g, g->white[i], bottomLeft)))
+                         capturePossible(g, g->white[i], bottomLeft)))
                         return false;
                 }
             }
@@ -1109,7 +1149,7 @@ bool isLegal(pawn p, pawn new_pos, game_state* g)
                         return false;
                     if (g->black[i].is_king &&
                         (capturePossible(g, g->black[i], topRight) ||
-                            capturePossible(g, g->black[i], topLeft)))
+                         capturePossible(g, g->black[i], topLeft)))
                         return false;
                 }
             }
@@ -1166,7 +1206,7 @@ bool isLegal(pawn p, pawn new_pos, game_state* g)
     return false;
 }
 
-void start(log* head)
+void start(log *head)
 {
     int cur_pc = 0;
     for (int i = 0; i < 3; i++)
@@ -1202,12 +1242,12 @@ void start(log* head)
     // print_board(&c_state);
 }
 
-void restart(log* head)
+void restart(log *head)
 {
     start(head);
 }
 
-void result(game_state* P, log* head)
+void result(game_state *P, log *head)
 {
     int white_pieces_left = 0;
     int black_pieces_left = 0;
@@ -1325,15 +1365,15 @@ void result(game_state* P, log* head)
     }
 }
 
-void draw(game_state* P, log* head) // just call this fxn and it will print who is the winner and the current board
+void draw(game_state *P, log *head) // just call this fxn and it will print who is the winner and the current board
 {
     result(P, head);
     print_board(P);
 }
 
-void add_board(game_state p, log* head) // after every move , add game state to it
+void add_board(game_state p, log *head) // after every move , add game state to it
 {
-    log* temp = (log*)malloc(sizeof(log));
+    log *temp = (log *)malloc(sizeof(log));
     temp->g = p;
     temp->next = head->next;
 
@@ -1346,7 +1386,7 @@ void add_board(game_state p, log* head) // after every move , add game state to 
         head->prev = temp;
 }
 
-void controller(log* head)
+void controller(log *head)
 {
     push(head, &c_state);
     while (1)
@@ -1646,7 +1686,7 @@ void instruction()
 {
     cls();
     char A;
-    FILE* fp;
+    FILE *fp;
 
     fp = fopen("instruction.txt", "r");
     while (feof(fp) != 1)
@@ -1685,7 +1725,7 @@ void rule(void)
 {
     cls();
     char A;
-    FILE* fp;
+    FILE *fp;
 
     fp = fopen("Rule_book.txt", "r");
     while (feof(fp) != 1)
@@ -1699,9 +1739,9 @@ void rule(void)
     fclose(fp);
 }
 
-log* CreateEmptyStackNode()
+log *CreateEmptyStackNode()
 {
-    log* S = (log*)malloc(sizeof(log));
+    log *S = (log *)malloc(sizeof(log));
 
     S->next = NULL;
     S->prev = NULL;
@@ -1709,9 +1749,9 @@ log* CreateEmptyStackNode()
     return S;
 }
 
-void push(log* head, game_state* preState)
+void push(log *head, game_state *preState)
 {
-    log* S = CreateEmptyStackNode();
+    log *S = CreateEmptyStackNode();
     S->g = *preState;
     if (head->next != NULL)
     {
@@ -1728,7 +1768,7 @@ void push(log* head, game_state* preState)
     }
 }
 
-game_state undo(log* head) //undo fxn go one steps back and deletes the current state
+game_state undo(log *head) //undo fxn go one steps back and deletes the current state
 {
 
     if (head->next == NULL)
@@ -1737,7 +1777,7 @@ game_state undo(log* head) //undo fxn go one steps back and deletes the current 
         return c_state;
     }
 
-    log* temp = head->next;
+    log *temp = head->next;
     game_state s = temp->g;
     if (head->next->next != NULL)
     {
@@ -1754,10 +1794,10 @@ game_state undo(log* head) //undo fxn go one steps back and deletes the current 
     return s;
 }
 
-void review(log* head)
+void review(log *head)
 {
     cls();
-    log* temp;
+    log *temp;
     while (head->next != NULL)
     {
         temp = head->next;
@@ -1781,7 +1821,7 @@ int main()
 {
     //cls();
     resetColor();
-    log* head = CreateEmptyStackNode(); // start of linked list which is going to store table after every move
+    log *head = CreateEmptyStackNode(); // start of linked list which is going to store table after every move
 
     char key;
     while (1)
