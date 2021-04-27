@@ -21,13 +21,7 @@ typedef struct node node;
 
 game_state c_state;
 
-struct node
-{
-     node *array[12][4]; // at each turn , at max all 12 pieces of that color can move in at max 4 dirn
-     node *next_board;  // i guess not needed , dont know why I made this 
-     node *prev_board; // will store address of previous posn 
-     game_state board; // will store the current board  **************** change the variable name board to smthng else and also wherever used********************
-};
+
 
 game_state play_simple_move(game_state* g , pawn p , int direction); // have to be completed // dont forget to change the cur_turn
 game_state play_capture_move(game_state* g , pawn p , int direction);
@@ -58,6 +52,14 @@ struct move // move will store new posn of piece after a move is made // to be r
     int x_new;
     int y_new;
 };
+
+struct node
+{
+     node *array[12][4]; // at each turn , at max all 12 pieces of that color can move in at max 4 dirn
+     node *next_board;  // i guess not needed , dont know why I made this 
+     node *prev_board; // will store address of previous posn 
+     game_state board; // will store the current board  **************** change the variable name board to smthng else and also wherever used********************
+};
 struct undo_stack // stores the data using doubly linked list
 {
     game_state g;
@@ -69,10 +71,12 @@ struct undo_stack // stores the data using doubly linked list
 void init_game_2players(void); //starts the game with 2 players mode
 void init_game_bot(void);      //starts the game with bot
 
-void start(void);
+void start(log* head);
+void restart(log* head);
 void resign(game_state *g);
-void draw(game_state *g);
+void draw(game_state *g, log* head);
 void toss(void);
+void instruction();
 
 //update board
 // horz and vert will tell in which direction we have to move the pawn p
@@ -90,13 +94,15 @@ bool capturePossible(game_state *g, pawn P, int direction);
 // direction can be one of the four: topLeft, bottomLeft, topRight and bottomRight
 bool simple_Move_Possible(game_state *g, pawn P, int direction);
 
+log* CreateEmptyStackNode();
+void push(log* head, game_state* preState);
 void print_board(game_state *P);
-void undo(log *head);                              // undo the last move taken
+game_state undo(log *head);                              // undo the last move taken
 void review(log *head);                            // print boards in order from 1 to last
 void add_board(game_state p, log *head);           // after every move , add game state to it
 void rule(void);                                   //just prints rule book
 bool isLegal(pawn p, pawn new_pos, game_state *g); // Need a 'from' and a 'to'// will return the id. of rule which is voilated
-void result(game_state *P);                        //tells the result of the game // will simply print a string
+void result(game_state *P, log* head);                        //tells the result of the game // will simply print a string
 
 //interface
 /* 
@@ -110,7 +116,7 @@ void review();                              //slideshow of board , added:- we wi
 void show_all_possible_moves(game_state P); //print all possible moves in simple algebraic manner
 move best_move(game_state P);               //tells best move we can go upto depth of 2/3 or as we discussed as far as 10
 //void evaluation_bar(game_state P); //its hard to do so..but ok i wrote it , not required , these parameters are best kept out of the view of the player , they will be used just for the bot
-void controller();
+void controller(log* head);
 /*
 NOTES- 
 after a move is played by running a command, we will print board interface and subseq. after user types next move 
