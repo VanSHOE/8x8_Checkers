@@ -3,7 +3,7 @@
 #include <stdbool.h>
 
 typedef struct board game_state; //game state
-typedef struct game_state board;
+//typedef struct game_state board;
 typedef struct pieces pawn;
 typedef struct move move;
 typedef struct undo_stack log;

@@ -4,7 +4,10 @@
 #include "rlutil.h"
 #include "checkers.h"
 #include <stdbool.h>
-
+game_state play_capture_move(game_state* g , pawn p , int direction)
+{
+    printf("This fxn will be replaced by move entry\n");
+}
 game_state play_simple_move(game_state *g, pawn p, int direction)
 {
     int aftermove_x, aftermove_y;
@@ -130,7 +133,7 @@ void reached_how(node *final) // will tell how we reached a particular board pos
 
     for(int i=0;i<=id;i++)
     {
-        print_board(&stack[i]);
+        print_board(&(stack[i].board));
         printf("\n");  
     } 
 }
