@@ -7,6 +7,7 @@
 #include "checkers.h"
 #include <stdbool.h>
 int lim = 4;
+
 ll bot_helper(game_state g_o, int lim)
 {
     if (!lim)
@@ -937,12 +938,18 @@ void print_board(game_state *P)
                     if (b[i / c_s][j / r_s] == 1)
                     {
                         setColor(BLACK);
-                        printf("@");
+                        if(P->black[i].is_king == 0 )
+                            printf("@");
+                        else
+                            printf("W");
                     }
                     else if (b[i / c_s][j / r_s] == 2)
                     {
                         setColor(WHITE);
-                        printf("@");
+                        if(P->white[i].is_king == 0 )
+                            printf("@");
+                        else
+                            printf("W");
                     }
                     else
                         printf(" ");
