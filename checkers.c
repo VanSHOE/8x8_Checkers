@@ -130,7 +130,7 @@ void reached_how(node *final) // will tell how we reached a particular board pos
 
     for(int i=0;i<=id;i++)
     {
-        print_board(&stack[i]);
+        print_board(&(stack[i].board));
         printf("\n");  
     } 
 }
@@ -140,7 +140,7 @@ void print_k_state();// have to be completed ***********************************
 // #define bottomRight 2
 // #define topLeft 3
 // #define bottomLeft 4
-
+/*
 void filling_node(node *current, game_state p) // takes a node , find which colors turn it is , and then fills the array accodingly if the move can be played by that color
 {
     if (p.cur_turn == 0) // means black pieces will have to move
@@ -527,7 +527,7 @@ void filling_node(node *current, game_state p) // takes a node , find which colo
     }
 }
 
-
+*/
 
 bool move_entries(game_state *g, pawn P, int horizontal, int vertical)
 {
@@ -1562,7 +1562,7 @@ int main()
         if(key == 't')
         toss();
         
-        else if(key == '\n')
+        else if(key == KEY_ENTER)
         start(head);
     }
     return 0;
