@@ -938,6 +938,8 @@ void print_board(game_state *P)
                     if (b[i / c_s][j / r_s] == 1)
                     {
                         setColor(BLACK);
+                        if(P->black[i].y == 0) 
+                            P->black[i].is_king == 1;
                         if(P->black[i].is_king == 0 )
                             printf("@");
                         else
@@ -946,6 +948,8 @@ void print_board(game_state *P)
                     else if (b[i / c_s][j / r_s] == 2)
                     {
                         setColor(WHITE);
+                        if(P->white[i].y == 7) 
+                            P->white[i].is_king == 1;
                         if(P->white[i].is_king == 0 )
                             printf("@");
                         else
