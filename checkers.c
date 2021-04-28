@@ -8,11 +8,11 @@
 #include <stdbool.h>
 int lim = 4;
 
-ll bot_helper(game_state g_o, int lim)
+long double bot_helper(game_state g_o, int lim)
 {
     if (!lim)
         return 0;
-    ll scores[48] = {0};
+    long double scores[48] = {0};
     g_o.cur_turn = colorFlip(g_o.cur_turn);
     game_state g = g_o;
     if (g.cur_turn == BLACK)
@@ -24,50 +24,50 @@ ll bot_helper(game_state g_o, int lim)
             if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 1, g.black[pc_i].y + 1))
             {
                 scores[4 * i] = 1;
-                scores[4 * i] += bot_helper(g, lim - 1);
+                scores[4 * i] += 0.9 * bot_helper(g, lim - 1);
                 g = g_o;
             }
 
             else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 2, g.black[pc_i].y + 2))
             {
                 scores[4 * i] = 10;
-                scores[4 * i] += bot_helper(g, lim - 1);
+                scores[4 * i] += 0.9 * bot_helper(g, lim - 1);
                 g = g_o;
             }
             if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 1, g.black[pc_i].y - 1))
             {
                 scores[4 * i + 1] = 2;
-                scores[4 * i + 1] += bot_helper(g, lim - 1);
+                scores[4 * i + 1] += 0.9 * bot_helper(g, lim - 1);
                 g = g_o;
             }
             else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 2, g.black[pc_i].y - 2))
             {
                 scores[4 * i + 1] = 10;
-                scores[4 * i + 1] += bot_helper(g, lim - 1);
+                scores[4 * i + 1] += 0.9 * bot_helper(g, lim - 1);
                 g = g_o;
             }
             if (move_entries(&g, g.black[pc_i], g.black[pc_i].x - 1, g.black[pc_i].y - 1))
             {
                 scores[4 * i + 2] = 2;
-                scores[4 * i + 2] += bot_helper(g, lim - 1);
+                scores[4 * i + 2] += 0.9 * bot_helper(g, lim - 1);
                 g = g_o;
             }
             else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x - 2, g.black[pc_i].y - 2))
             {
                 scores[4 * i + 2] = 10;
-                scores[4 * i + 2] += bot_helper(g, lim - 1);
+                scores[4 * i + 2] += 0.9 * bot_helper(g, lim - 1);
                 g = g_o;
             }
             if (move_entries(&g, g.black[pc_i], g.black[pc_i].x - 1, g.black[pc_i].y + 1))
             {
                 scores[4 * i + 3] = 1;
-                scores[4 * i + 3] += bot_helper(g, lim - 1);
+                scores[4 * i + 3] += 0.9 * bot_helper(g, lim - 1);
                 g = g_o;
             }
             else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x - 2, g.black[pc_i].y + 2))
             {
                 scores[4 * i + 3] = 10;
-                scores[4 * i + 3] += bot_helper(g, lim - 1);
+                scores[4 * i + 3] += 0.9 * bot_helper(g, lim - 1);
                 g = g_o;
             }
         }
@@ -81,50 +81,50 @@ ll bot_helper(game_state g_o, int lim)
             if (move_entries(&g, g.white[pc_i], g.white[pc_i].x + 1, g.white[pc_i].y + 1))
             {
                 scores[4 * i] = 2;
-                scores[4 * i] += bot_helper(g, lim - 1);
+                scores[4 * i] += 0.9 * bot_helper(g, lim - 1);
                 g = g_o;
             }
 
             else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x + 2, g.white[pc_i].y + 2))
             {
                 scores[4 * i] = 10;
-                scores[4 * i] += bot_helper(g, lim - 1);
+                scores[4 * i] += 0.9 * bot_helper(g, lim - 1);
                 g = g_o;
             }
             if (move_entries(&g, g.white[pc_i], g.white[pc_i].x + 1, g.white[pc_i].y - 1))
             {
                 scores[4 * i + 1] = 1;
-                scores[4 * i + 1] += bot_helper(g, lim - 1);
+                scores[4 * i + 1] += 0.9 * bot_helper(g, lim - 1);
                 g = g_o;
             }
             else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x + 2, g.white[pc_i].y - 2))
             {
                 scores[4 * i + 1] = 10;
-                scores[4 * i + 1] += bot_helper(g, lim - 1);
+                scores[4 * i + 1] += 0.9 * bot_helper(g, lim - 1);
                 g = g_o;
             }
             if (move_entries(&g, g.white[pc_i], g.white[pc_i].x - 1, g.white[pc_i].y - 1))
             {
                 scores[4 * i + 2] = 1;
-                scores[4 * i + 2] += bot_helper(g, lim - 1);
+                scores[4 * i + 2] += 0.9 * bot_helper(g, lim - 1);
                 g = g_o;
             }
             else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x - 2, g.white[pc_i].y - 2))
             {
                 scores[4 * i + 2] = 10;
-                scores[4 * i + 2] += bot_helper(g, lim - 1);
+                scores[4 * i + 2] += 0.9 * bot_helper(g, lim - 1);
                 g = g_o;
             }
             if (move_entries(&g, g.white[pc_i], g.white[pc_i].x - 1, g.white[pc_i].y + 1))
             {
                 scores[4 * i + 3] = 2;
-                scores[4 * i + 3] += bot_helper(g, lim - 1);
+                scores[4 * i + 3] += 0.9 * bot_helper(g, lim - 1);
                 g = g_o;
             }
             else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x - 2, g.white[pc_i].y + 2))
             {
                 scores[4 * i + 3] = 10;
-                scores[4 * i + 3] += bot_helper(g, lim - 1);
+                scores[4 * i + 3] += 0.9 * bot_helper(g, lim - 1);
                 g = g_o;
             }
             scores[4 * i] = -scores[4 * i];
@@ -133,7 +133,7 @@ ll bot_helper(game_state g_o, int lim)
             scores[4 * i + 3] = -scores[4 * i + 3];
         }
     }
-    ll sum = 0;
+    long double sum = 0;
     for (int i = 0; i < 48; i++)
     {
         sum += scores[i];
@@ -144,7 +144,7 @@ ll bot_helper(game_state g_o, int lim)
 void bot()
 {
 
-    ll scores[48] = {0};
+    long double scores[48] = {0};
     game_state g = c_state;
     for (int i = 0; i < 12; i++)
     {
@@ -153,50 +153,50 @@ void bot()
         if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 1, g.black[pc_i].y + 1))
         {
             scores[4 * i] = 1;
-            scores[4 * i] += bot_helper(g, lim - 1);
+            scores[4 * i] += 0.9 * bot_helper(g, lim - 1);
             g = c_state;
         }
 
         else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 2, g.black[pc_i].y + 2))
         {
             scores[4 * i] = 10;
-            scores[4 * i] += bot_helper(g, lim - 1);
+            scores[4 * i] += 0.9 * bot_helper(g, lim - 1);
             g = c_state;
         }
         if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 1, g.black[pc_i].y - 1))
         {
             scores[4 * i + 1] = 2;
-            scores[4 * i + 1] += bot_helper(g, lim - 1);
+            scores[4 * i + 1] += 0.9 * bot_helper(g, lim - 1);
             g = c_state;
         }
         else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 2, g.black[pc_i].y - 2))
         {
             scores[4 * i + 1] = 10;
-            scores[4 * i + 1] += bot_helper(g, lim - 1);
+            scores[4 * i + 1] += 0.9 * bot_helper(g, lim - 1);
             g = c_state;
         }
         if (move_entries(&g, g.black[pc_i], g.black[pc_i].x - 1, g.black[pc_i].y - 1))
         {
             scores[4 * i + 2] = 2;
-            scores[4 * i + 2] += bot_helper(g, lim - 1);
+            scores[4 * i + 2] += 0.9 * bot_helper(g, lim - 1);
             g = c_state;
         }
         else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x - 2, g.black[pc_i].y - 2))
         {
             scores[4 * i + 2] = 10;
-            scores[4 * i + 2] += bot_helper(g, lim - 1);
+            scores[4 * i + 2] += 0.9 * bot_helper(g, lim - 1);
             g = c_state;
         }
         if (move_entries(&g, g.black[pc_i], g.black[pc_i].x - 1, g.black[pc_i].y + 1))
         {
             scores[4 * i + 3] = 1;
-            scores[4 * i + 3] += bot_helper(g, lim - 1);
+            scores[4 * i + 3] += 0.9 * bot_helper(g, lim - 1);
             g = c_state;
         }
         else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x - 2, g.black[pc_i].y + 2))
         {
             scores[4 * i + 3] = 10;
-            scores[4 * i + 3] += bot_helper(g, lim - 1);
+            scores[4 * i + 3] += 0.9 * bot_helper(g, lim - 1);
             g = c_state;
         }
     }
@@ -255,7 +255,7 @@ void bot()
         }
         if (flag == 0)
         {
-            scores[mi] = -999999999;
+            scores[mi] = -9999999999999;
         }
         mi = 0;
         for (int i = 1; i < 48; i++)
@@ -265,7 +265,6 @@ void bot()
                 mi = i;
             }
         }
-        mi = mi;
     }
 }
 
@@ -1416,9 +1415,9 @@ void controller(log *head)
         int c;
         if (c_state.cur_turn == BLACK)
         {
-            //printf("Bot");
-            //bot();
-            
+            printf("Bot");
+            bot();
+            /*
             for (int i = 11; i >= 0; --i)
             {
                 if (c_state.black[i].x != -1 && c_state.black[i].y != -1)
@@ -1557,7 +1556,7 @@ void controller(log *head)
                     }
                 }
             }
-            
+            */
         }
         else
         {
