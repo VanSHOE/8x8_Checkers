@@ -272,6 +272,7 @@ game_state play_capture_move(game_state *g, pawn p, int direction)
 {
     printf("This fxn will be replaced by move entry\n");
 }
+
 game_state play_simple_move(game_state *g, pawn p, int direction)
 {
     int aftermove_x, aftermove_y;
@@ -404,11 +405,13 @@ void reached_how(node *final) // will tell how we reached a particular board pos
 }
 
 void print_k_state(); // have to be completed **************************************************************************************
+
 // #define topRight 1
 // #define bottomRight 2
 // #define topLeft 3
 // #define bottomLeft 4
 /*
+
 void filling_node(node *current, game_state p) // takes a node , find which colors turn it is , and then fills the array accodingly if the move can be played by that color
 {
     if (p.cur_turn == 0) // means black pieces will have to move
@@ -1835,6 +1838,30 @@ void review(log *head)
         free(temp);
         head = head->next;
     }
+}
+
+void max_heapify(node array[],int N, int i) //N is size of array, and afer i it follows max-heap property
+{
+    //sorted according to score.
+    int left_child = 2*i;
+    int right_child = 2*i + 1;
+    int max = i;
+    if(left_child < N && array[i].score < array[left_child].score)
+        max = left_child;
+    if(right_child < N && array[max].score < array[right_child].score)
+        max = right_child;
+    if(max != i) {
+        node temp = array[i];   //swaping nodes
+        array[i] = array[max];
+        array[max] = temp;
+        max_heapify(array,N,max); //if swap than only calling the function, just saving iretration.
+    }
+}
+
+void build_max_heap(node array[],int N) //for bot
+{
+    for(int i = N/2 - 1; i >= 0; --i)
+        max_heapify(array,N,i);
 }
 
 int main()

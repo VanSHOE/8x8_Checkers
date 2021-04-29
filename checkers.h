@@ -23,6 +23,12 @@ int bot_mode; // -1: 2 player mode ; 0: Black is bot ; 15: White is bot
 
 game_state play_simple_move(game_state *g, pawn p, int direction); // have to be completed // dont forget to change the cur_turn
 game_state play_capture_move(game_state *g, pawn p, int direction);
+
+typedef struct {
+    int score; 
+    int index;
+} node; //this struct is for bot heap implementation
+
 struct pieces
 {
     int x;
@@ -30,6 +36,7 @@ struct pieces
     int allegiance; // Whose team is it on?
     bool is_king;   // Is it king yet?
 };
+
 typedef struct coords
 {
     int x;
@@ -58,12 +65,14 @@ struct node
     node *prev_board;   // will store address of previous posn
     game_state board;   // will store the current board  **************** change the variable name board to smthng else and also wherever used********************
 };
+
 struct undo_stack // stores the data using doubly linked list
 {
     game_state g;
     struct undo_stack *next;
     struct undo_stack *prev;
 };
+
 game_state c_state;
 //make bot
 void init_game_2players(void); //starts the game with 2 players mode
