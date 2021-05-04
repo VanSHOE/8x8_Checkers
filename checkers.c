@@ -1864,6 +1864,24 @@ void build_max_heap(node array[],int N) //for bot
         max_heapify(array,N,i);
 }
 
+void insert_element(node array[],int* ptr_size, node element)
+{
+    //insert element at correct place in max_heap, i.e assuming array is max_heap
+    //also i assume array was init by malloc
+    *ptr_size = *ptr_size+1;
+    array = (node*)realloc(array,*ptr_size);
+    assert(array != NULL);
+    max_heapify(array,*ptr_size,*ptr_size-1);
+}
+
+void delete_element(node array[],int* ptr_size)
+{
+    //delete the max element in the heap
+    array[0] = array[*ptr_size-1];
+    *ptr_size = *ptr_size-1; //i.e size of array is now on 
+    max_heapify(array,*ptr_size,0);
+}
+
 int main()
 {
     //cls();
