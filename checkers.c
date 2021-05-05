@@ -14,8 +14,7 @@ long double bot_helper(game_state g_o, int lim)
     if (!lim)
         return 0;
 
-    
-    long double* scores = (long double*)calloc(tp*4,sizeof(long double));
+    long double *scores = (long double *)calloc(tp * 4, sizeof(long double));
     g_o.cur_turn = colorFlip(g_o.cur_turn);
     game_state g = g_o;
     if (g.cur_turn == BLACK)
@@ -39,7 +38,7 @@ long double bot_helper(game_state g_o, int lim)
             }
             if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 1, g.black[pc_i].y - 1))
             {
-                scores[4 * i + 1] = 2;
+                scores[4 * i + 1] = (g.black[pc_i].is_king) ? 1 : 2;
                 scores[4 * i + 1] += 0.9 * bot_helper(g, lim - 1);
                 g = g_o;
             }
@@ -51,7 +50,7 @@ long double bot_helper(game_state g_o, int lim)
             }
             if (move_entries(&g, g.black[pc_i], g.black[pc_i].x - 1, g.black[pc_i].y - 1))
             {
-                scores[4 * i + 2] = 2;
+                scores[4 * i + 2] = (g.black[pc_i].is_king) ? 1 : 2;
                 scores[4 * i + 2] += 0.9 * bot_helper(g, lim - 1);
                 g = g_o;
             }
@@ -83,7 +82,7 @@ long double bot_helper(game_state g_o, int lim)
 
             if (move_entries(&g, g.white[pc_i], g.white[pc_i].x + 1, g.white[pc_i].y + 1))
             {
-                scores[4 * i] = 2;
+                scores[4 * i] = (g.white[pc_i].is_king) ? 1 : 2;
                 scores[4 * i] += 0.9 * bot_helper(g, lim - 1);
                 g = g_o;
             }
@@ -120,7 +119,7 @@ long double bot_helper(game_state g_o, int lim)
             }
             if (move_entries(&g, g.white[pc_i], g.white[pc_i].x - 1, g.white[pc_i].y + 1))
             {
-                scores[4 * i + 3] = 2;
+                scores[4 * i + 3] = (g.white[pc_i].is_king) ? 1 : 2;
                 scores[4 * i + 3] += 0.9 * bot_helper(g, lim - 1);
                 g = g_o;
             }
@@ -137,7 +136,7 @@ long double bot_helper(game_state g_o, int lim)
         }
     }
     long double sum = 0;
-    for (int i = 0; i < 4*tp; i++)
+    for (int i = 0; i < 4 * tp; i++)
     {
         sum += scores[i];
     }
@@ -148,7 +147,7 @@ long double bot_helper(game_state g_o, int lim)
 void bot()
 {
 
-    long double* scores = (long double*)calloc(tp*4,sizeof(long double));
+    long double *scores = (long double *)calloc(tp * 4, sizeof(long double));
     game_state g = c_state;
     for (int i = 0; i < tp; i++)
     {
@@ -205,7 +204,7 @@ void bot()
         }
     }
     int mi = 0;
-    for (int i = 1; i < 4*tp; i++)
+    for (int i = 1; i < 4 * tp; i++)
     {
         if (scores[mi] < scores[i])
         {
@@ -805,6 +804,114 @@ void filling_node(node *current, game_state p) // takes a node , find which colo
 
 */
 
+void multi_Capture_BLACK(game_state *g)
+{
+    int cnt = 0;
+    pawn P;
+    P.allegiance = BLACK;
+    coords new;
+    for (int i = 0; i < tp; ++i)
+    {
+        if (g->black[i].x != -1)
+        {
+            if (capturePossible(g, g->black[i], bottomRight))
+            {
+                P = g->black[i];
+                new.x = g->black[i].x + 1;
+                new.y = g->black[i].y - 1;
+                cnt++;
+            }
+            if (capturePossible(g, g->black[i], bottomLeft))
+            {
+                P = g->black[i];
+                new.x = g->black[i].x - 1;
+                new.y = g->black[i].y - 1;
+                cnt++;
+            }
+            if (g->black[i].is_king)
+            {
+                if (capturePossible(g, g->black[i], topRight))
+                {
+                    P = g->black[i];
+                    new.x = g->black[i].x + 1;
+                    new.y = g->black[i].y + 1;
+                    cnt++;
+                }
+                if (capturePossible(g, g->black[i], topLeft))
+                {
+                    P = g->black[i];
+                    new.x = g->black[i].x - 1;
+                    new.y = g->black[i].y + 1;
+                    cnt++;
+                }
+            }
+            if (cnt > 1)
+                break;
+        }
+    }
+    if (cnt > 1 || cnt == 0)
+        return;
+    else
+    {
+        if (!move_entries(g, P, new.x, new.y))
+            return;
+    }
+}
+
+void multi_Capture_WHITE(game_state *g)
+{
+    int cnt = 0;
+    pawn P;
+    P.allegiance = WHITE;
+    coords new;
+    for (int i = 0; i < tp; ++i)
+    {
+        if (g->white[i].x != -1)
+        {
+            if (capturePossible(g, g->white[i], topRight))
+            {
+                P = g->white[i];
+                new.x = g->white[i].x + 1;
+                new.y = g->white[i].y + 1;
+                cnt++;
+            }
+            if (capturePossible(g, g->white[i], topLeft))
+            {
+                P = g->white[i];
+                new.x = g->white[i].x - 1;
+                new.y = g->white[i].y + 1;
+                cnt++;
+            }
+            if (g->white[i].is_king)
+            {
+                if (capturePossible(g, g->white[i], bottomRight))
+                {
+                    P = g->white[i];
+                    new.x = g->white[i].x + 1;
+                    new.y = g->white[i].y - 1;
+                    cnt++;
+                }
+                if (capturePossible(g, g->white[i], bottomLeft))
+                {
+                    P = g->white[i];
+                    new.x = g->white[i].x - 1;
+                    new.y = g->white[i].y - 1;
+                    cnt++;
+                }
+            }
+            if (cnt > 1)
+                break;
+        }
+    }
+    if (cnt > 1 || cnt == 0)
+        return;
+    else
+    {
+        if (!move_entries(g, P, new.x, new.y))
+            return;
+    }
+}
+
 bool move_entries(game_state *g, pawn P, int horizontal, int vertical)
 {
     if (!is_present(g, P))
@@ -845,7 +952,9 @@ bool move_entries(game_state *g, pawn P, int horizontal, int vertical)
                 g->black[i].y = vertical;
 
                 if (g->black[i].y == 0) // black piece reached to row 0
-                    g->black[i].is_king = 1;
+                    g->black[i].is_king = true;
+                multi_Capture_BLACK(g);
+                break;
             }
         }
     }
@@ -873,8 +982,10 @@ bool move_entries(game_state *g, pawn P, int horizontal, int vertical)
                 g->white[i].x = horizontal;
                 g->white[i].y = vertical;
 
-                if (g->white[i].y == 7) // white piece reached to row 7
-                    g->white[i].is_king = 1;
+                if (g->white[i].y == sb - 1) // white piece reached to row 7
+                    g->white[i].is_king = true;
+                multi_Capture_WHITE(g);
+                break;
             }
         }
     }
@@ -885,9 +996,9 @@ void print_board(game_state *P)
 {
     int c_s = 4, r_s = 8;
     int b[sb][sb];
-    for(int i = 0;i<sb;i++)
+    for (int i = 0; i < sb; i++)
     {
-        for(int j = 0;j<sb;j++)
+        for (int j = 0; j < sb; j++)
         {
             b[i][j] = 0;
         }
@@ -924,9 +1035,9 @@ void print_board(game_state *P)
         }
         printf("\n");
     }
-    for (int i = 0; i <= (sb) * c_s; i++)
+    for (int i = 0; i <= (sb)*c_s; i++)
     {
-        for (int j = 0; j <= (sb) * r_s; j++)
+        for (int j = 0; j <= (sb)*r_s; j++)
         {
             setBackgroundColor(BLACK);
             if (i % (c_s) == 0 && j % (r_s) == 0)
@@ -1037,19 +1148,19 @@ bool simple_Move_Possible(game_state *g, pawn P, int direction)
     switch (direction)
     {
     case topRight:
-        if (P.x + 1 > 7 || P.y + 1 > 7)
+        if (P.x + 1 > sb - 1 || P.y + 1 > sb - 1)
             return false;
         AfterMove_X = P.x + 1;
         AfterMove_Y = P.y + 1;
         break;
     case bottomRight:
-        if (P.x + 1 > 7 || P.y - 1 < 0)
+        if (P.x + 1 > sb - 1 || P.y - 1 < 0)
             return false;
         AfterMove_X = P.x + 1;
         AfterMove_Y = P.y - 1;
         break;
     case topLeft:
-        if (P.x - 1 < 0 || P.y + 1 > 7)
+        if (P.x - 1 < 0 || P.y + 1 > sb - 1)
             return false;
         AfterMove_X = P.x - 1;
         AfterMove_Y = P.y + 1;
@@ -1321,7 +1432,7 @@ void result(game_state *P, log *head)
     {
         bool white_draw_Check = true, black_draw_Check = true; // if both are true -> DRAW
 
-        for (int i = 0; i < 12; ++i)
+        for (int i = 0; i < tp; ++i)
         {
             if (P->black[i].x != -1)
             {
@@ -1876,22 +1987,22 @@ void build_max_heap(nodeb array[], int N) //for bot
     for (int i = N / 2 - 1; i >= 0; --i)
         max_heapify(array, N, i);
 }
-void insert_element(nodeb array[],int* ptr_size, nodeb element)
+void insert_element(nodeb array[], int *ptr_size, nodeb element)
 {
     //insert element at correct place in max_heap, i.e assuming array is max_heap
     //also i assume array was init by malloc
-    *ptr_size = *ptr_size+1;
-    array = (nodeb*)realloc(array,*ptr_size);
+    *ptr_size = *ptr_size + 1;
+    array = (nodeb *)realloc(array, *ptr_size);
     assert(array != NULL);
-    max_heapify(array,*ptr_size,*ptr_size-1);
+    max_heapify(array, *ptr_size, *ptr_size - 1);
 }
 
-void delete_element(nodeb array[],int* ptr_size)
+void delete_element(nodeb array[], int *ptr_size)
 {
     //delete the max element in the heap
-    array[0] = array[*ptr_size-1];
-    *ptr_size = *ptr_size-1; //i.e size of array is now on 
-    max_heapify(array,*ptr_size,0);
+    array[0] = array[*ptr_size - 1];
+    *ptr_size = *ptr_size - 1; //i.e size of array is now on
+    max_heapify(array, *ptr_size, 0);
 }
 int main()
 {
