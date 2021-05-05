@@ -16,6 +16,8 @@ typedef struct node node;
 //const int WHITE = 15, BLACK = 0;
 //At start of game white occupies row 0,1,2 and black occupies row 5,6,7.
 
+#define sb 10 //size of board
+const int tp = sb + (sb + 1)/2; // total pieces
 #define colorFlip(i) (i ^ (1 << 0) ^ (1 << 1) ^ (1 << 2) ^ (1 << 3))
 // if i is WHITE, converts it to black and vice-versa
 
@@ -27,7 +29,7 @@ game_state play_capture_move(game_state *g, pawn p, int direction);
 typedef struct {
     int score; 
     int index;
-} node; //this struct is for bot heap implementation
+} nodeb; //this struct is for bot heap implementation
 
 struct pieces
 {
@@ -45,8 +47,8 @@ typedef struct coords
 
 struct board
 {
-    pawn white[12]; // stores info about 12 white elements
-    pawn black[12]; // stores info about 12 black elements
+    pawn white[sb + (sb + 1)/2]; // stores info about 12 white elements
+    pawn black[sb + (sb + 1)/2]; // stores info about 12 black elements
     coords hover[2];
     int cur_turn; // Whose turn is it at this particular state // assuming 0 is for black , 1 is for white
 };
@@ -60,7 +62,7 @@ struct move // move will store new posn of piece after a move is made // to be r
 
 struct node
 {
-    node *array[12][4]; // at each turn , at max all 12 pieces of that color can move in at max 4 dirn
+    node *array[sb + (sb + 1)/2][4]; // at each turn , at max all 12 pieces of that color can move in at max 4 dirn
     node *next_board;   // i guess not needed , dont know why I made this
     node *prev_board;   // will store address of previous posn
     game_state board;   // will store the current board  **************** change the variable name board to smthng else and also wherever used********************

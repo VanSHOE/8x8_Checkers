@@ -6,18 +6,21 @@
 #include "rlutil.h"
 #include "checkers.h"
 #include <stdbool.h>
+#include <assert.h>
 int lim = 4;
 
 long double bot_helper(game_state g_o, int lim)
 {
     if (!lim)
         return 0;
-    long double scores[48] = {0};
+
+    
+    long double* scores = (long double*)calloc(tp*4,sizeof(long double));
     g_o.cur_turn = colorFlip(g_o.cur_turn);
     game_state g = g_o;
     if (g.cur_turn == BLACK)
     {
-        for (int i = 0; i < 12; i++)
+        for (int i = 0; i < tp; i++)
         {
             int pc_i = i;
 
@@ -74,7 +77,7 @@ long double bot_helper(game_state g_o, int lim)
     }
     else
     {
-        for (int i = 0; i < 12; i++)
+        for (int i = 0; i < tp; i++)
         {
             int pc_i = i;
 
@@ -134,19 +137,20 @@ long double bot_helper(game_state g_o, int lim)
         }
     }
     long double sum = 0;
-    for (int i = 0; i < 48; i++)
+    for (int i = 0; i < 4*tp; i++)
     {
         sum += scores[i];
     }
+    free(scores);
     return sum;
 }
 
 void bot()
 {
 
-    long double scores[48] = {0};
+    long double* scores = (long double*)calloc(tp*4,sizeof(long double));
     game_state g = c_state;
-    for (int i = 0; i < 12; i++)
+    for (int i = 0; i < tp; i++)
     {
         int pc_i = i;
 
@@ -201,7 +205,7 @@ void bot()
         }
     }
     int mi = 0;
-    for (int i = 1; i < 48; i++)
+    for (int i = 1; i < 4*tp; i++)
     {
         if (scores[mi] < scores[i])
         {
@@ -266,6 +270,7 @@ void bot()
             }
         }
     }
+    free(scores);
 }
 
 game_state play_capture_move(game_state *g, pawn p, int direction)
@@ -818,7 +823,7 @@ bool move_entries(game_state *g, pawn P, int horizontal, int vertical)
     // printf("WORKING\n");
     if (P.allegiance == BLACK)
     { //printf("WORKINGb\n");
-        for (int i = 0; i < 12; ++i)
+        for (int i = 0; i < tp; ++i)
         {
             if (P.x == g->black[i].x && P.y == g->black[i].y)
             {
@@ -827,7 +832,7 @@ bool move_entries(game_state *g, pawn P, int horizontal, int vertical)
                     coords captured_piece = {0, 0};
                     captured_piece.x = (P.x < horizontal) ? (P.x + 1) : (P.x - 1);
                     captured_piece.y = (P.y < vertical) ? (P.y + 1) : (P.y - 1);
-                    for (int i = 0; i < 12; ++i)
+                    for (int i = 0; i < tp; ++i)
                     {
                         if (g->white[i].x == captured_piece.x && g->white[i].y == captured_piece.y)
                         {
@@ -847,7 +852,7 @@ bool move_entries(game_state *g, pawn P, int horizontal, int vertical)
     else if (P.allegiance == WHITE)
     {
 
-        for (int i = 0; i < 12; ++i)
+        for (int i = 0; i < tp; ++i)
         {
             if (P.x == g->white[i].x && P.y == g->white[i].y)
             { //   printf("OLD:%d, %d ; New: %d , %d\n",g->white[i].x, g->white[i].y,horizontal,vertical);
@@ -856,7 +861,7 @@ bool move_entries(game_state *g, pawn P, int horizontal, int vertical)
                     coords captured_piece = {0, 0};
                     captured_piece.x = (P.x < horizontal) ? (P.x + 1) : (P.x - 1);
                     captured_piece.y = (P.y < vertical) ? (P.y + 1) : (P.y - 1);
-                    for (int i = 0; i < 12; ++i)
+                    for (int i = 0; i < tp; ++i)
                     {
                         if (g->black[i].x == captured_piece.x && g->black[i].y == captured_piece.y)
                         {
@@ -879,42 +884,49 @@ bool move_entries(game_state *g, pawn P, int horizontal, int vertical)
 void print_board(game_state *P)
 {
     int c_s = 4, r_s = 8;
-    int b[8][8] = {0};
+    int b[sb][sb];
+    for(int i = 0;i<sb;i++)
+    {
+        for(int j = 0;j<sb;j++)
+        {
+            b[i][j] = 0;
+        }
+    }
     resetColor();
-    int yc1 = 7 - P->hover[0].y;
+    int yc1 = sb - 1 - P->hover[0].y;
     int xc1 = P->hover[0].x;
-    int yc2 = 7 - P->hover[1].y;
+    int yc2 = sb - 1 - P->hover[1].y;
     int xc2 = P->hover[1].x;
 
-    for (int i = 0; i < 12; i++)
+    for (int i = 0; i < tp; i++)
     {
         if (P->black[i].y != -1)
         {
             if (P->black[i].is_king)
-                b[7 - P->black[i].y][P->black[i].x] = 3;
+                b[sb - 1 - P->black[i].y][P->black[i].x] = 3;
             else
-                b[7 - P->black[i].y][P->black[i].x] = 1;
+                b[sb - 1 - P->black[i].y][P->black[i].x] = 1;
         }
         if (P->white[i].y != -1)
         {
             if (P->white[i].is_king)
-                b[7 - P->white[i].y][P->white[i].x] = 4;
+                b[sb - 1 - P->white[i].y][P->white[i].x] = 4;
             else
-                b[7 - P->white[i].y][P->white[i].x] = 2;
+                b[sb - 1 - P->white[i].y][P->white[i].x] = 2;
         }
     }
 
-    for (int i = 0; i < 8; i++)
+    for (int i = 0; i < sb; i++)
     {
-        for (int j = 0; j < 8; j++)
+        for (int j = 0; j < sb; j++)
         {
             printf("%d ", b[i][j]);
         }
         printf("\n");
     }
-    for (int i = 0; i <= 8 * c_s; i++)
+    for (int i = 0; i <= (sb) * c_s; i++)
     {
-        for (int j = 0; j <= 8 * r_s; j++)
+        for (int j = 0; j <= (sb) * r_s; j++)
         {
             setBackgroundColor(BLACK);
             if (i % (c_s) == 0 && j % (r_s) == 0)
@@ -983,7 +995,7 @@ void print_board(game_state *P)
 
 bool isOccupied(game_state *g, int x, int y)
 {
-    for (int i = 0; i < 12; ++i)
+    for (int i = 0; i < tp; ++i)
     {
         if ((x == g->white[i].x && y == g->white[i].y) || (x == g->black[i].x && y == g->black[i].y))
         {
@@ -997,7 +1009,7 @@ bool is_present(game_state *g, pawn P)
 {
     if (P.allegiance == BLACK)
     {
-        for (int i = 0; i < 12; ++i)
+        for (int i = 0; i < tp; ++i)
         {
             if (P.x == g->black[i].x && P.y == g->black[i].y)
                 return true;
@@ -1005,7 +1017,7 @@ bool is_present(game_state *g, pawn P)
     }
     else if (P.allegiance == WHITE)
     {
-        for (int i = 0; i < 12; ++i)
+        for (int i = 0; i < tp; ++i)
         {
             if (P.x == g->white[i].x && P.y == g->white[i].y)
                 return true;
@@ -1062,7 +1074,7 @@ bool capturePossible(game_state *g, pawn P, int direction)
     switch (direction)
     {
     case topRight:
-        if (P.x + 2 > 7 || P.y + 2 > 7)
+        if (P.x + 2 >= sb || P.y + 2 >= sb)
             return false;
         AfterCapture_X = P.x + 2;
         AfterCapture_Y = P.y + 2;
@@ -1071,7 +1083,7 @@ bool capturePossible(game_state *g, pawn P, int direction)
         Enemy.allegiance = colorFlip(P.allegiance);
         break;
     case bottomRight:
-        if (P.x + 2 > 7 || P.y - 2 < 0)
+        if (P.x + 2 >= sb || P.y - 2 < 0)
             return false;
         AfterCapture_X = P.x + 2;
         AfterCapture_Y = P.y - 2;
@@ -1080,7 +1092,7 @@ bool capturePossible(game_state *g, pawn P, int direction)
         Enemy.allegiance = colorFlip(P.allegiance);
         break;
     case topLeft:
-        if (P.x - 2 < 0 || P.y + 2 > 7)
+        if (P.x - 2 < 0 || P.y + 2 >= sb)
             return false;
         AfterCapture_X = P.x - 2;
         AfterCapture_Y = P.y + 2;
@@ -1109,9 +1121,9 @@ bool capturePossible(game_state *g, pawn P, int direction)
 
 bool isLegal(pawn p, pawn new_pos, game_state *g)
 {
-    if (p.x < 0 || p.y < 0 || p.x > 7 || p.y > 7) // x and y between 0 and 7
+    if (p.x < 0 || p.y < 0 || p.x >= sb || p.y >= sb) // x and y between 0 and 7
         return false;
-    if (new_pos.x < 0 || new_pos.y < 0 || new_pos.x > 7 || new_pos.y > 7)
+    if (new_pos.x < 0 || new_pos.y < 0 || new_pos.x >= sb || new_pos.y >= sb)
         return false;
 
     if (!p.is_king) // if not a king
@@ -1147,7 +1159,7 @@ bool isLegal(pawn p, pawn new_pos, game_state *g)
 
         if (p.allegiance == WHITE)
         {
-            for (int i = 0; i < 12; ++i)
+            for (int i = 0; i < tp; ++i)
             {
                 if (g->white[i].x != -1)
                 {
@@ -1163,7 +1175,7 @@ bool isLegal(pawn p, pawn new_pos, game_state *g)
         }
         else if (p.allegiance == BLACK)
         {
-            for (int i = 0; i < 12; ++i)
+            for (int i = 0; i < tp; ++i)
             {
                 if (g->black[i].x != -1)
                 {
@@ -1234,7 +1246,7 @@ void start(log *head)
     int cur_pc = 0;
     for (int i = 0; i < 3; i++)
     {
-        for (int j = 0; j < 8; j++)
+        for (int j = 0; j < sb; j++)
         {
             if ((i + j) % 2 == 0)
             {
@@ -1246,9 +1258,9 @@ void start(log *head)
         }
     }
     cur_pc = 0;
-    for (int i = 7; i >= 5; i--)
+    for (int i = sb - 1; i >= sb - 3; i--)
     {
-        for (int j = 0; j < 8; j++)
+        for (int j = 0; j < sb; j++)
         {
             if ((i + j) % 2 == 0)
             {
@@ -1275,7 +1287,7 @@ void result(game_state *P, log *head)
     int white_pieces_left = 0;
     int black_pieces_left = 0;
 
-    for (int i = 0; i < 12; i++)
+    for (int i = 0; i < tp; i++)
     {
         if (P->white[i].x != -1) // for piece that has got out , its x and y position will be -1
         {
@@ -1563,7 +1575,7 @@ void controller(log *head)
         }
         else
         {
-            for (int i = 11; i >= 0; --i)
+            for (int i = tp - 1; i >= 0; --i)
             {
                 if (c_state.white[i].x != -1 && c_state.white[i].y != -1)
                 {
@@ -1591,23 +1603,23 @@ void controller(log *head)
                 char ch = getkey();
                 if (ch == 'd')
                 {
-                    x[cur] = (x[cur] + 1) % 8;
+                    x[cur] = (x[cur] + 1) % sb;
                 }
                 else if (ch == 's')
                 {
-                    y[cur] = (y[cur] - 1) % 8;
+                    y[cur] = (y[cur] - 1) % sb;
                     if (y[cur] < 0)
-                        y[cur] += 8;
+                        y[cur] += sb;
                 }
                 else if (ch == 'w')
                 {
-                    y[cur] = (y[cur] + 1) % 8;
+                    y[cur] = (y[cur] + 1) % sb;
                 }
                 else if (ch == 'a')
                 {
-                    x[cur] = (x[cur] - 1) % 8;
+                    x[cur] = (x[cur] - 1) % sb;
                     if (x[cur] < 0)
-                        x[cur] += 8;
+                        x[cur] += sb;
                 }
                 else if (ch == 'r')
                 {
@@ -1654,7 +1666,7 @@ void controller(log *head)
                     if (cur == 0)
                     {
                         int flag = -1;
-                        for (int i = 0; i < 12; ++i)
+                        for (int i = 0; i < tp; ++i)
                         {
                             if (x[0] == c_state.white[i].x && y[0] == c_state.white[i].y)
                             {
@@ -1840,48 +1852,47 @@ void review(log *head)
     }
 }
 
-void max_heapify(node array[],int N, int i) //N is size of array, and afer i it follows max-heap property
+void max_heapify(nodeb array[], int N, int i) //N is size of array, and afer i it follows max-heap property
 {
     //sorted according to score.
-    int left_child = 2*i;
-    int right_child = 2*i + 1;
+    int left_child = 2 * i;
+    int right_child = 2 * i + 1;
     int max = i;
-    if(left_child < N && array[i].score < array[left_child].score)
+    if (left_child < N && array[i].score < array[left_child].score)
         max = left_child;
-    if(right_child < N && array[max].score < array[right_child].score)
+    if (right_child < N && array[max].score < array[right_child].score)
         max = right_child;
-    if(max != i) {
-        node temp = array[i];   //swaping nodes
+    if (max != i)
+    {
+        nodeb temp = array[i]; //swaping nodes
         array[i] = array[max];
         array[max] = temp;
-        max_heapify(array,N,max); //if swap than only calling the function, just saving iretration.
+        max_heapify(array, N, max); //if swap than only calling the function, just saving iretration.
     }
 }
 
-void build_max_heap(node array[],int N) //for bot
+void build_max_heap(nodeb array[], int N) //for bot
 {
-    for(int i = N/2 - 1; i >= 0; --i)
-        max_heapify(array,N,i);
+    for (int i = N / 2 - 1; i >= 0; --i)
+        max_heapify(array, N, i);
 }
-
-void insert_element(node array[],int* ptr_size, node element)
+void insert_element(nodeb array[],int* ptr_size, nodeb element)
 {
     //insert element at correct place in max_heap, i.e assuming array is max_heap
     //also i assume array was init by malloc
     *ptr_size = *ptr_size+1;
-    array = (node*)realloc(array,*ptr_size);
+    array = (nodeb*)realloc(array,*ptr_size);
     assert(array != NULL);
     max_heapify(array,*ptr_size,*ptr_size-1);
 }
 
-void delete_element(node array[],int* ptr_size)
+void delete_element(nodeb array[],int* ptr_size)
 {
     //delete the max element in the heap
     array[0] = array[*ptr_size-1];
     *ptr_size = *ptr_size-1; //i.e size of array is now on 
     max_heapify(array,*ptr_size,0);
 }
-
 int main()
 {
     //cls();
