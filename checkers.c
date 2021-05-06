@@ -804,7 +804,7 @@ void filling_node(node *current, game_state p) // takes a node , find which colo
 
 */
 
-int multi_Capture_BLACK(game_state *g)
+void multi_Capture_BLACK(game_state *g)
 {
     int cnt = 0;
     pawn P;
@@ -850,15 +850,15 @@ int multi_Capture_BLACK(game_state *g)
         }
     }
     if (cnt > 1 || cnt == 0)
-        return 0;
+        return ;
     else
     {
         if (!move_entries(g, P, new.x, new.y))
-            return 1;
+            return ;
     }
 }
 
-int multi_Capture_WHITE(game_state *g)
+void multi_Capture_WHITE(game_state *g)
 {
     int cnt = 0;
     pawn P;
@@ -904,11 +904,11 @@ int multi_Capture_WHITE(game_state *g)
         }
     }
     if (cnt > 1 || cnt == 0)
-        return 0;
+        return ;
     else
     {
         if (!move_entries(g, P, new.x, new.y))
-            return 1;
+            return ;
     }
 }
 
@@ -1180,6 +1180,16 @@ bool simple_Move_Possible(game_state *g, pawn P, int direction)
 
 bool capturePossible(game_state *g, pawn P, int direction)
 {
+    if(P.allegiance == BLACK && P.is_king == false)
+    {
+        if(direction == topRight || direction == topLeft)
+        return false;
+    }
+    else if(P.allegiance == WHITE && P.is_king == false)
+    {
+        if(direction == bottomRight || direction == bottomLeft)
+        return false;
+    }
     pawn Enemy;
     int AfterCapture_X, AfterCapture_Y;
     switch (direction)
