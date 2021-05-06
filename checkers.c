@@ -804,7 +804,7 @@ void filling_node(node *current, game_state p) // takes a node , find which colo
 
 */
 
-void multi_Capture_BLACK(game_state *g)
+int multi_Capture_BLACK(game_state *g)
 {
     int cnt = 0;
     pawn P;
@@ -850,15 +850,15 @@ void multi_Capture_BLACK(game_state *g)
         }
     }
     if (cnt > 1 || cnt == 0)
-        return;
+        return 0;
     else
     {
         if (!move_entries(g, P, new.x, new.y))
-            return;
+            return 1;
     }
 }
 
-void multi_Capture_WHITE(game_state *g)
+int multi_Capture_WHITE(game_state *g)
 {
     int cnt = 0;
     pawn P;
@@ -904,11 +904,11 @@ void multi_Capture_WHITE(game_state *g)
         }
     }
     if (cnt > 1 || cnt == 0)
-        return;
+        return 0;
     else
     {
         if (!move_entries(g, P, new.x, new.y))
-            return;
+            return 1;
     }
 }
 
@@ -1541,10 +1541,10 @@ void controller(log *head)
         int c;
         if (c_state.cur_turn == BLACK)
         {
-            printf("Bot");
-            bot();
-            /*
-            for (int i = 11; i >= 0; --i)
+            // printf("Bot");
+            // bot();
+            
+            for (int i = tp-1; i >= 0; --i)
             {
                 if (c_state.black[i].x != -1 && c_state.black[i].y != -1)
                 {
@@ -1573,23 +1573,23 @@ void controller(log *head)
                 char ch = getkey();
                 if (ch == 'd')
                 {
-                    x[cur] = (x[cur] + 1) % 8;
+                    x[cur] = (x[cur] + 1) % sb;
                 }
                 else if (ch == 's')
                 {
-                    y[cur] = (y[cur] - 1) % 8;
+                    y[cur] = (y[cur] - 1) % sb;
                     if (y[cur] < 0)
-                        y[cur] += 8;
+                        y[cur] += sb;
                 }
                 else if (ch == 'w')
                 {
-                    y[cur] = (y[cur] + 1) % 8;
+                    y[cur] = (y[cur] + 1) % sb;
                 }
                 else if (ch == 'a')
                 {
-                    x[cur] = (x[cur] - 1) % 8;
+                    x[cur] = (x[cur] - 1) % sb;
                     if (x[cur] < 0)
-                        x[cur] += 8;
+                        x[cur] += sb;
                 }
                 else if (ch == 'r')
                 {
@@ -1636,7 +1636,7 @@ void controller(log *head)
                     if (cur == 0)
                     {
                         int flag = -1;
-                        for (int i = 0; i < 12; ++i)
+                        for (int i = 0; i < tp; ++i)
                         {
                             if (x[0] == c_state.black[i].x && y[0] == c_state.black[i].y)
                             {
@@ -1664,6 +1664,17 @@ void controller(log *head)
                         pawn n;
                         n.x = x[1];
                         n.y = y[1];
+                        int count_w = 0;
+                        if(capturePossible(&c_state,p,bottomLeft) || capturePossible(&c_state,p,bottomRight))
+                        {
+                            count_w = 1;
+                        }
+                        else if(p.is_king == 1)
+                        {
+                            if(capturePossible(&c_state,p,topLeft) || capturePossible(&c_state,p,topRight))
+                            count_w = 1;
+                        }
+
                         if (!move_entries(&c_state, p, x[1], y[1]))
                         {
                             continue;
@@ -1676,13 +1687,32 @@ void controller(log *head)
                             y[0] = y[1];
                             x[1] = -1;
                             y[1] = -1;
-
-                            break;
+                            if(count_w == 1)
+                            {
+                                pawn temp;
+                                temp.x = x[0];
+                                temp.y = y[0];
+                                if(x[0] == 0)
+                                temp.is_king = 1;
+                                temp.allegiance = BLACK;
+                                if(capturePossible(&c_state,temp,bottomLeft) || capturePossible(&c_state,temp,bottomRight))
+                                {
+                                    continue;
+                                }
+                                else if(temp.is_king == 1)
+                                {
+                                    if(capturePossible(&c_state,temp,topLeft) || capturePossible(&c_state,temp,topRight))
+                                    continue;
+                                }
+                                count_w  = 0;
+                            }
+                                break;
+                            
                         }
                     }
                 }
             }
-            */
+            
         }
         else
         {
@@ -1805,6 +1835,17 @@ void controller(log *head)
                         pawn n;
                         n.x = x[1];
                         n.y = y[1];
+                        int count_b = 0;
+                        if(capturePossible(&c_state,p,topLeft) || capturePossible(&c_state,p,topRight))
+                        {
+                            count_b = 1;
+                        }
+                        else if(p.is_king == 1)
+                        {
+                            if(capturePossible(&c_state,p,bottomLeft) || capturePossible(&c_state,p,bottomRight))
+                            count_b = 1;
+                        }
+                            
                         if (!move_entries(&c_state, p, x[1], y[1]))
                         {
                             continue;
@@ -1817,7 +1858,27 @@ void controller(log *head)
                             y[0] = y[1];
                             x[1] = -1;
                             y[1] = -1;
-                            break;
+                            if(count_b == 1)
+                            {
+                                pawn temp;
+                                temp.x = x[0];
+                                temp.y = y[0];
+                                if(x[0] == sb-1)
+                                temp.is_king = 1;
+                                temp.allegiance = WHITE;
+                                if(capturePossible(&c_state,temp,topLeft) || capturePossible(&c_state,temp,topRight))
+                                {
+                                    continue;
+                                }
+                                else if(p.is_king == 1)
+                                {
+                                    if(capturePossible(&c_state,temp,bottomLeft) || capturePossible(&c_state,temp,bottomRight))
+                                    continue;
+                                }
+                                count_b = 0;
+                            }
+                                break;
+                            
                         }
                     }
                 }
