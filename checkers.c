@@ -1373,7 +1373,7 @@ bool isLegal(pawn p, pawn new_pos, game_state *g)
 void start(log *head)
 {
     int cur_pc = 0;
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < (sb - 2)/2; i++)
     {
         for (int j = 0; j < sb; j++)
         {
@@ -1387,7 +1387,7 @@ void start(log *head)
         }
     }
     cur_pc = 0;
-    for (int i = sb - 1; i >= sb - 3; i--)
+    for (int i = sb - 1; i >= sb - (sb - 2)/2; i--)
     {
         for (int j = 0; j < sb; j++)
         {
@@ -2156,6 +2156,7 @@ void delete_element(nodeb array[], int *ptr_size)
 int main()
 {
     //cls();
+    if(sb % 2 != 0) exit(1);
     resetColor();
     log *head = CreateEmptyStackNode(); // start of linked list which is going to store table after every move
 

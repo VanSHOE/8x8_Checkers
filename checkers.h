@@ -16,8 +16,8 @@ typedef struct node node;
 //const int WHITE = 15, BLACK = 0;
 //At start of game white occupies row 0,1,2 and black occupies row 5,6,7.
 
-#define sb 8                      //size of board
-const int tp = sb + (sb + 1) / 2; // total pieces
+#define sb 10                           //size of board
+const int tp = (sb / 2) * ((sb - 2) / 2); // total pieces
 #define colorFlip(i) (i ^ (1 << 0) ^ (1 << 1) ^ (1 << 2) ^ (1 << 3))
 // if i is WHITE, converts it to black and vice-versa
 
@@ -48,8 +48,8 @@ typedef struct coords
 
 struct board
 {
-    pawn white[sb + (sb + 1) / 2]; // stores info about 12 white elements
-    pawn black[sb + (sb + 1) / 2]; // stores info about 12 black elements
+    pawn white[(sb / 2) * ((sb - 2) / 2)]; // stores info about 12 white elements
+    pawn black[(sb / 2) * ((sb - 2) / 2)]; // stores info about 12 black elements
     coords hover[2];
     int cur_turn; // Whose turn is it at this particular state // assuming 0 is for black , 1 is for white
 };
@@ -63,7 +63,7 @@ struct move // move will store new posn of piece after a move is made // to be r
 
 struct node
 {
-    node *array[sb + (sb + 1) / 2][4]; // at each turn , at max all 12 pieces of that color can move in at max 4 dirn
+    node *array[(sb / 2) * ((sb - 2) / 2)][4]; // at each turn , at max all 12 pieces of that color can move in at max 4 dirn
     node *next_board;                  // i guess not needed , dont know why I made this
     node *prev_board;                  // will store address of previous posn
     game_state board;                  // will store the current board  **************** change the variable name board to smthng else and also wherever used********************
@@ -83,11 +83,11 @@ void init_game_bot(void);      //starts the game with bot
 
 void start(log *head);
 void restart(log *head);
-void Quit(log* head);
+void Quit(log *head);
 void draw(game_state *g, log *head);
 void toss(void);
 void instruction();
-void clear_stack(log* head); // used in restart function to empty the stack
+void clear_stack(log *head); // used in restart function to empty the stack
 
 //update board
 // horz and vert will tell in which direction we have to move the pawn p
