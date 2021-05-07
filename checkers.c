@@ -850,11 +850,11 @@ void multi_Capture_BLACK(game_state *g)
         }
     }
     if (cnt > 1 || cnt == 0)
-        return ;
+        return;
     else
     {
         if (!move_entries(g, P, new.x, new.y))
-            return ;
+            return;
     }
 }
 
@@ -904,11 +904,11 @@ void multi_Capture_WHITE(game_state *g)
         }
     }
     if (cnt > 1 || cnt == 0)
-        return ;
+        return;
     else
     {
         if (!move_entries(g, P, new.x, new.y))
-            return ;
+            return;
     }
 }
 
@@ -1102,6 +1102,12 @@ void print_board(game_state *P)
         resetColor();
         printf("\n");
     }
+    if (c_state.cur_turn == BLACK)
+    {
+        printf("BLACK\n");
+    }
+    else
+        printf("WHITE\n");
 }
 
 bool isOccupied(game_state *g, int x, int y)
@@ -1180,15 +1186,15 @@ bool simple_Move_Possible(game_state *g, pawn P, int direction)
 
 bool capturePossible(game_state *g, pawn P, int direction)
 {
-    if(P.allegiance == BLACK && P.is_king == false)
+    if (P.allegiance == BLACK && P.is_king == false)
     {
-        if(direction == topRight || direction == topLeft)
-        return false;
+        if (direction == topRight || direction == topLeft)
+            return false;
     }
-    else if(P.allegiance == WHITE && P.is_king == false)
+    else if (P.allegiance == WHITE && P.is_king == false)
     {
-        if(direction == bottomRight || direction == bottomLeft)
-        return false;
+        if (direction == bottomRight || direction == bottomLeft)
+            return false;
     }
     pawn Enemy;
     int AfterCapture_X, AfterCapture_Y;
@@ -1553,8 +1559,8 @@ void controller(log *head)
         {
             // printf("Bot");
             // bot();
-            
-            for (int i = tp-1; i >= 0; --i)
+
+            for (int i = tp - 1; i >= 0; --i)
             {
                 if (c_state.black[i].x != -1 && c_state.black[i].y != -1)
                 {
@@ -1622,6 +1628,7 @@ void controller(log *head)
                 else if (ch == 'u')
                 {
                     c_state = undo(head);
+                    break;
                 }
                 else if (ch == 'N')
                 {
@@ -1675,14 +1682,14 @@ void controller(log *head)
                         n.x = x[1];
                         n.y = y[1];
                         int count_w = 0;
-                        if(capturePossible(&c_state,p,bottomLeft) || capturePossible(&c_state,p,bottomRight))
+                        if (capturePossible(&c_state, p, bottomLeft) || capturePossible(&c_state, p, bottomRight))
                         {
                             count_w = 1;
                         }
-                        else if(p.is_king == 1)
+                        else if (p.is_king == 1)
                         {
-                            if(capturePossible(&c_state,p,topLeft) || capturePossible(&c_state,p,topRight))
-                            count_w = 1;
+                            if (capturePossible(&c_state, p, topLeft) || capturePossible(&c_state, p, topRight))
+                                count_w = 1;
                         }
 
                         if (!move_entries(&c_state, p, x[1], y[1]))
@@ -1691,38 +1698,41 @@ void controller(log *head)
                         }
                         else
                         {
-                            push(head, &c_state);
                             cur--;
                             x[0] = x[1];
                             y[0] = y[1];
                             x[1] = -1;
                             y[1] = -1;
-                            if(count_w == 1)
+                            if (count_w == 1)
                             {
                                 pawn temp;
                                 temp.x = x[0];
                                 temp.y = y[0];
-                                if(x[0] == 0)
-                                temp.is_king = 1;
+                                if (x[0] == 0)
+                                    temp.is_king = 1;
                                 temp.allegiance = BLACK;
-                                if(capturePossible(&c_state,temp,bottomLeft) || capturePossible(&c_state,temp,bottomRight))
+                                if (capturePossible(&c_state, temp, bottomLeft) || capturePossible(&c_state, temp, bottomRight))
                                 {
+                                    push(head, &c_state);
                                     continue;
                                 }
-                                else if(temp.is_king == 1)
+                                else if (temp.is_king == 1)
                                 {
-                                    if(capturePossible(&c_state,temp,topLeft) || capturePossible(&c_state,temp,topRight))
-                                    continue;
+                                    if (capturePossible(&c_state, temp, topLeft) || capturePossible(&c_state, temp, topRight))
+                                    {
+                                        push(head, &c_state);
+                                        continue;
+                                    }
                                 }
-                                count_w  = 0;
+                                count_w = 0;
                             }
-                                break;
-                            
+                            c_state.cur_turn = colorFlip(c_state.cur_turn);
+                            push(head, &c_state);
+                            break;
                         }
                     }
                 }
             }
-            
         }
         else
         {
@@ -1793,6 +1803,7 @@ void controller(log *head)
                 else if (ch == 'u')
                 {
                     c_state = undo(head);
+                    break;
                 }
                 else if (ch == 'N')
                 {
@@ -1846,56 +1857,59 @@ void controller(log *head)
                         n.x = x[1];
                         n.y = y[1];
                         int count_b = 0;
-                        if(capturePossible(&c_state,p,topLeft) || capturePossible(&c_state,p,topRight))
+                        if (capturePossible(&c_state, p, topLeft) || capturePossible(&c_state, p, topRight))
                         {
                             count_b = 1;
                         }
-                        else if(p.is_king == 1)
+                        else if (p.is_king == 1)
                         {
-                            if(capturePossible(&c_state,p,bottomLeft) || capturePossible(&c_state,p,bottomRight))
-                            count_b = 1;
+                            if (capturePossible(&c_state, p, bottomLeft) || capturePossible(&c_state, p, bottomRight))
+                                count_b = 1;
                         }
-                            
+
                         if (!move_entries(&c_state, p, x[1], y[1]))
                         {
                             continue;
                         }
                         else
                         {
-                            push(head, &c_state);
                             cur--;
                             x[0] = x[1];
                             y[0] = y[1];
                             x[1] = -1;
                             y[1] = -1;
-                            if(count_b == 1)
+                            if (count_b == 1)
                             {
                                 pawn temp;
                                 temp.x = x[0];
                                 temp.y = y[0];
-                                if(x[0] == sb-1)
-                                temp.is_king = 1;
+                                if (x[0] == sb - 1)
+                                    temp.is_king = 1;
                                 temp.allegiance = WHITE;
-                                if(capturePossible(&c_state,temp,topLeft) || capturePossible(&c_state,temp,topRight))
+                                if (capturePossible(&c_state, temp, topLeft) || capturePossible(&c_state, temp, topRight))
                                 {
+                                    push(head, &c_state);
                                     continue;
                                 }
-                                else if(p.is_king == 1)
+                                else if (p.is_king == 1)
                                 {
-                                    if(capturePossible(&c_state,temp,bottomLeft) || capturePossible(&c_state,temp,bottomRight))
-                                    continue;
+                                    if (capturePossible(&c_state, temp, bottomLeft) || capturePossible(&c_state, temp, bottomRight))
+                                    {
+                                        push(head, &c_state);
+                                        continue;
+                                    }
                                 }
                                 count_b = 0;
                             }
-                                break;
-                            
+                            c_state.cur_turn = colorFlip(c_state.cur_turn);
+                            push(head, &c_state);
+                            break;
                         }
                     }
                 }
             }
         }
         result(&c_state, head);
-        c_state.cur_turn = colorFlip(c_state.cur_turn);
     }
 }
 
