@@ -2002,26 +2002,20 @@ void push(log *head, game_state *preState)
 game_state undo(log *head) //undo fxn go one steps back and deletes the current state
 {
 
-    if (head->next == NULL)
+    if (head->next->next == NULL)
     {
         printf("Stack is Empty\n");
         return c_state;
     }
-
-    log *temp = head->next;
+    log *t = head->next;
+    log *temp = head->next->next;
     game_state s = temp->g;
-    if (head->next->next != NULL)
-    {
-        head->next = temp->next;
-        head->next->prev = head;
-    }
-    else
-    {
-        head->next = NULL;
-    }
-    cls();
-    print_board(&(temp->g));
-    free(temp);
+    head->next = temp;
+    temp->prev = head;
+
+    //    cls();
+    //   print_board(&(temp->g));
+    free(t);
     return s;
 }
 
