@@ -83,10 +83,11 @@ void init_game_bot(void);      //starts the game with bot
 
 void start(log *head);
 void restart(log *head);
-void resign(game_state *g);
+void Quit(log* head);
 void draw(game_state *g, log *head);
 void toss(void);
 void instruction();
+void clear_stack(log* head); // used in restart function to empty the stack
 
 //update board
 // horz and vert will tell in which direction we have to move the pawn p

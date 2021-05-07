@@ -1108,6 +1108,8 @@ void print_board(game_state *P)
     }
     else
         printf("WHITE\n");
+
+    printf("Press 'H' to see instructions\n");
 }
 
 bool isOccupied(game_state *g, int x, int y)
@@ -1406,7 +1408,27 @@ void start(log *head)
 
 void restart(log *head)
 {
+    clear_stack(head);
     start(head);
+}
+
+void clear_stack(log *head)
+{
+    log *temp;
+    while (head->next != NULL)
+    {
+        temp = head->next;
+        if (head->next->next != NULL)
+        {
+            head->next = head->next->next;
+            head->next->prev = head;
+        }
+        else
+        {
+            head->next = NULL;
+        }
+        free(temp);
+    }
 }
 
 void result(game_state *P, log *head)
@@ -1533,6 +1555,31 @@ void draw(game_state *P, log *head) // just call this fxn and it will print who 
     print_board(P);
 }
 
+void Quit(log *head)
+{
+    printf("Do you want to quit the game? [y/n]\n");
+    char ch = getkey();
+    if (ch == 'y')
+    {
+        printf("Do you want to Review the game?[y/n]\n");
+        char key = getkey();
+        if (key == 'y')
+        {
+            review(head);
+        }
+        else
+        {
+            cls();
+            exit(0);
+        }
+    }
+    else if (ch == 'n')
+    {
+        cls();
+        return;
+    }
+}
+
 void add_board(game_state p, log *head) // after every move , add game state to it
 {
     log *temp = (log *)malloc(sizeof(log));
@@ -1648,6 +1695,10 @@ void controller(log *head)
                         }
                     }
                 }
+                else if (ch == 'Q')
+                {
+                    Quit(head);
+                }
                 else if (ch == KEY_SPACE)
                 {
                     if (cur == 0)
@@ -1703,29 +1754,36 @@ void controller(log *head)
                             y[0] = y[1];
                             x[1] = -1;
                             y[1] = -1;
+
+                            int flag1 = 0;
                             if (count_w == 1)
                             {
-                                pawn temp;
-                                temp.x = x[0];
-                                temp.y = y[0];
-                                if (x[0] == 0)
-                                    temp.is_king = 1;
-                                temp.allegiance = BLACK;
-                                if (capturePossible(&c_state, temp, bottomLeft) || capturePossible(&c_state, temp, bottomRight))
+                                for (int i = 0; i < tp; i++)
                                 {
-                                    push(head, &c_state);
-                                    continue;
-                                }
-                                else if (temp.is_king == 1)
-                                {
-                                    if (capturePossible(&c_state, temp, topLeft) || capturePossible(&c_state, temp, topRight))
+                                    if (capturePossible(&c_state, c_state.black[i], bottomLeft) || capturePossible(&c_state, c_state.black[i], bottomRight))
                                     {
                                         push(head, &c_state);
-                                        continue;
+                                        flag1 = 1;
+                                        break;
+                                    }
+                                    else if (c_state.black[i].is_king == 1)
+                                    {
+                                        if (capturePossible(&c_state, c_state.black[i], topLeft) || capturePossible(&c_state, c_state.black[i], topRight))
+                                        {
+                                            flag1 = 1;
+                                            push(head, &c_state);
+                                            break;
+                                        }
                                     }
                                 }
                                 count_w = 0;
                             }
+                            if (flag1 == 1)
+                            {
+                                flag1 = 0;
+                                continue;
+                            }
+
                             c_state.cur_turn = colorFlip(c_state.cur_turn);
                             push(head, &c_state);
                             break;
@@ -1823,6 +1881,10 @@ void controller(log *head)
                         }
                     }
                 }
+                else if (ch == 'Q')
+                {
+                    Quit(head);
+                }
                 else if (ch == KEY_SPACE)
                 {
                     if (cur == 0)
@@ -1878,29 +1940,35 @@ void controller(log *head)
                             y[0] = y[1];
                             x[1] = -1;
                             y[1] = -1;
+                            int flag2 = 0;
                             if (count_b == 1)
                             {
-                                pawn temp;
-                                temp.x = x[0];
-                                temp.y = y[0];
-                                if (x[0] == sb - 1)
-                                    temp.is_king = 1;
-                                temp.allegiance = WHITE;
-                                if (capturePossible(&c_state, temp, topLeft) || capturePossible(&c_state, temp, topRight))
+                                for (int i = 0; i < tp; i++)
                                 {
-                                    push(head, &c_state);
-                                    continue;
-                                }
-                                else if (p.is_king == 1)
-                                {
-                                    if (capturePossible(&c_state, temp, bottomLeft) || capturePossible(&c_state, temp, bottomRight))
+                                    if (capturePossible(&c_state, c_state.white[i], topLeft) || capturePossible(&c_state, c_state.white[i], topRight))
                                     {
+                                        flag2 = 1;
                                         push(head, &c_state);
-                                        continue;
+                                        break;
+                                    }
+                                    else if (c_state.white[i].is_king == 1)
+                                    {
+                                        if (capturePossible(&c_state, c_state.white[i], bottomLeft) || capturePossible(&c_state, c_state.white[i], bottomRight))
+                                        {
+                                            flag2 = 1;
+                                            push(head, &c_state);
+                                            break;
+                                        }
                                     }
                                 }
                                 count_b = 0;
                             }
+                            if (flag2 == 1)
+                            {
+                                flag2 = 0;
+                                continue;
+                            }
+
                             c_state.cur_turn = colorFlip(c_state.cur_turn);
                             push(head, &c_state);
                             break;
@@ -2023,7 +2091,7 @@ void review(log *head)
 {
     cls();
     log *temp;
-    while (head->next != NULL)
+    while (head->next->next != NULL)
     {
         temp = head->next;
         game_state s = temp->g;
@@ -2040,6 +2108,8 @@ void review(log *head)
         free(temp);
         head = head->next;
     }
+    print_board(&(head->next)->g);
+    exit(0);
 }
 
 void max_heapify(nodeb array[], int N, int i) //N is size of array, and afer i it follows max-heap property
@@ -2090,6 +2160,8 @@ int main()
     log *head = CreateEmptyStackNode(); // start of linked list which is going to store table after every move
 
     char key;
+    printf("Press 'e' to start and 't' to toss\n");
+
     while (1)
     {
         key = getkey();

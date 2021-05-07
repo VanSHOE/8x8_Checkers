@@ -3,7 +3,7 @@
 Use following keys to run the game.
 
 t        -> toss.
-ENTER    -> to start game.
+e        -> to start game.
 d        -> move right
 a        -> move left
 w        -> move up
@@ -13,8 +13,8 @@ Spacebar -> to select and deselect piece.
 r        -> to reset.
 u        -> to undo
 R        -> to review
-x        -> to resign
-N        -> to restar
+Q        -> to Quit the game
+N        -> to restart
 H        -> To see these INSTRUCTIONs
 
 How to play:
