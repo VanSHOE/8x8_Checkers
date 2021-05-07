@@ -1109,7 +1109,7 @@ void print_board(game_state *P)
     else
         printf("WHITE\n");
 
-    printf("Press 'H' to see instructions\n");
+    printf("Press 'H' to see instructions , 'Q' to Quit game and 'N' to restart game\n");
 }
 
 bool isOccupied(game_state *g, int x, int y)
@@ -1557,6 +1557,7 @@ void draw(game_state *P, log *head) // just call this fxn and it will print who 
 
 void Quit(log *head)
 {
+
     printf("Do you want to quit the game? [y/n]\n");
     char ch = getkey();
     if (ch == 'y')
@@ -1566,9 +1567,11 @@ void Quit(log *head)
         if (key == 'y')
         {
             review(head);
+            clear_stack(head);
         }
         else
         {
+            clear_stack(head);
             cls();
             exit(0);
         }
@@ -1698,6 +1701,10 @@ void controller(log *head)
                 else if (ch == 'Q')
                 {
                     Quit(head);
+                }
+                else if(ch == 'R')
+                {
+                    review(head);
                 }
                 else if (ch == KEY_SPACE)
                 {
@@ -1884,6 +1891,10 @@ void controller(log *head)
                 else if (ch == 'Q')
                 {
                     Quit(head);
+                }
+                else if(ch == 'R')
+                {
+                    review(head);
                 }
                 else if (ch == KEY_SPACE)
                 {
@@ -2091,25 +2102,28 @@ void review(log *head)
 {
     cls();
     log *temp;
-    while (head->next->next != NULL)
+    while (head->next != NULL)
     {
         temp = head->next;
         game_state s = temp->g;
-        if (head->next->next != NULL)
-        {
-            head->next = temp->next;
-            head->next->prev = head;
-        }
-        else
-        {
-            head->next = NULL;
-        }
+        
         print_board(&(temp->g));
-        free(temp);
         head = head->next;
+        
     }
-    print_board(&(head->next)->g);
-    exit(0);
+
+    printf("press 'e' to resume the game or 'Q' to Quit the game\n");
+    char ch = getkey();
+    if(ch == 'e')
+    {
+        cls();
+        return;
+    }
+    if(ch == 'Q')
+    {
+        cls();
+        exit(0);
+    }
 }
 
 void max_heapify(nodeb array[], int N, int i) //N is size of array, and afer i it follows max-heap property
