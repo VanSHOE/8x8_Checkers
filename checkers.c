@@ -328,7 +328,7 @@ game_state play_simple_move(game_state *g, pawn p, int direction)
 
     if (p.allegiance == WHITE)
     {
-        for (int i = 0; i < 12; i++)
+        for (int i = 0; i < tp; i++)
         {
             if (g->white[i].x == p.x && g->white[i].y == p.y)
             {
@@ -340,7 +340,7 @@ game_state play_simple_move(game_state *g, pawn p, int direction)
     }
     else
     {
-        for (int i = 0; i < 12; i++)
+        for (int i = 0; i < tp; i++)
         {
             if (g->black[i].x == p.x && g->black[i].y == p.y)
             {
@@ -351,8 +351,7 @@ game_state play_simple_move(game_state *g, pawn p, int direction)
         }
     }
 
-    g->cur_turn = (g->cur_turn + 1) % 2;
-
+    g->cur_turn = colorFlip(g->cur_turn);
     return *g;
 }
 
@@ -432,6 +431,16 @@ void print_k_state(game_state p, int k)
             {
                 print_k_state(root->array[i][j]->board, k - 1);
             }
+        }
+    }
+    printf("press 'e' to Resume\n");
+    while (1)
+    {
+        char ch = getkey();
+        if (ch == 'e')
+        {
+            cls();
+            return;
         }
     }
 }
@@ -945,7 +954,7 @@ bool move_entries(game_state *g, pawn P, int horizontal, int vertical)
 
                 if (g->black[i].y == 0) // black piece reached to row 0
                     g->black[i].is_king = true;
-                multi_Capture_BLACK(g);
+                // multi_Capture_BLACK(g);
                 break;
             }
         }
@@ -976,7 +985,7 @@ bool move_entries(game_state *g, pawn P, int horizontal, int vertical)
 
                 if (g->white[i].y == sb - 1) // white piece reached to row 7
                     g->white[i].is_king = true;
-                multi_Capture_WHITE(g);
+                // multi_Capture_WHITE(g);
                 break;
             }
         }
@@ -1599,25 +1608,25 @@ void controller(log *head)
         int c;
         if (c_state.cur_turn == BLACK)
         {
-
-        //---------------------------------------------------------------BOT-Playing----------------------------------------------------------------
+            /*
+            //---------------------------------------------------------------BOT-Playing----------------------------------------------------------------
             int count_w = 0;
             for (int i = 0; i < tp; i++)
+            {
+                if (capturePossible(&c_state, c_state.black[i], bottomLeft) || capturePossible(&c_state, c_state.black[i], bottomRight))
                 {
-                    if (capturePossible(&c_state, c_state.black[i], bottomLeft) || capturePossible(&c_state, c_state.black[i], bottomRight))
+                    count_w = 1;
+                    break;
+                }
+                else if (c_state.black[i].is_king == 1)
+                {
+                    if (capturePossible(&c_state, c_state.black[i], topLeft) || capturePossible(&c_state, c_state.black[i], topRight))
                     {
                         count_w = 1;
                         break;
                     }
-                    else if (c_state.black[i].is_king == 1)
-                    {
-                        if (capturePossible(&c_state, c_state.black[i], topLeft) || capturePossible(&c_state, c_state.black[i], topRight))
-                        {
-                            count_w = 1;
-                            break;
-                        }
-                    }
                 }
+            }
             printf("Bot");
             bot();
 
@@ -1650,10 +1659,9 @@ void controller(log *head)
 
             c_state.cur_turn = colorFlip(c_state.cur_turn);
 
-        //-----------------------------------------------------------------------------------------------------------------------------------------------
+            //-----------------------------------------------------------------------------------------------------------------------------------------------
+            */
 
-
-            /*
             for (int i = tp - 1; i >= 0; --i)
             {
                 if (c_state.black[i].x != -1 && c_state.black[i].y != -1)
@@ -1668,7 +1676,7 @@ void controller(log *head)
             y[0] = c_state.black[c].y;
             x[1] = y[1] = -1;
             int cur = 0;
-            
+
             while (1)
             {
                 c_state.hover[0].x = x[0];
@@ -1749,6 +1757,13 @@ void controller(log *head)
                 else if (ch == 'R')
                 {
                     review(head);
+                }
+                else if (ch == 'k')
+                {
+                    printf("Enter 'k' (# next state you want to print)\n");
+                    int k;
+                    scanf("%d", &k);
+                    print_k_state(c_state, k);
                 }
                 else if (ch == KEY_SPACE)
                 {
@@ -1841,7 +1856,7 @@ void controller(log *head)
                         }
                     }
                 }
-            }*/
+            }
         }
 
         else
@@ -1940,6 +1955,13 @@ void controller(log *head)
                 else if (ch == 'R')
                 {
                     review(head);
+                }
+                else if (ch == 'k')
+                {
+                    printf("Enter 'k' (# next state you want to print)\n");
+                    int k;
+                    scanf("%d", &k);
+                    print_k_state(c_state, k);
                 }
                 else if (ch == KEY_SPACE)
                 {
@@ -2136,9 +2158,7 @@ game_state undo(log *head) //undo fxn go one steps back and deletes the current 
     game_state s = temp->g;
     head->next = temp;
     temp->prev = head;
-
-    //    cls();
-    //   print_board(&(temp->g));
+    
     free(t);
     return s;
 }
