@@ -16,12 +16,12 @@ typedef struct node node;
 //const int WHITE = 15, BLACK = 0;
 //At start of game white occupies row 0,1,2 and black occupies row 5,6,7.
 
-#define sb 10                           //size of board
+#define sb 8                           //size of board
 const int tp = (sb / 2) * ((sb - 2) / 2); // total pieces
 #define colorFlip(i) (i ^ (1 << 0) ^ (1 << 1) ^ (1 << 2) ^ (1 << 3))
 // if i is WHITE, converts it to black and vice-versa
 
-int bot_mode; // -1: 2 player mode ; 0: Black is bot ; 15: White is bot
+int bot_mode = WHITE; // -1: 2 player mode ; 0: Black is bot ; 15: White is bot
 
 game_state play_simple_move(game_state *g, pawn p, int direction); // have to be completed // dont forget to change the cur_turn
 game_state play_capture_move(game_state *g, pawn p, int direction);
@@ -86,7 +86,7 @@ void start(log *head);
 void restart(log *head);
 void Quit(log *head);
 void draw(game_state *g, log *head);
-void toss(void);
+int toss(void);
 void instruction();
 void clear_stack(log *head); // used in restart function to empty the stack
 

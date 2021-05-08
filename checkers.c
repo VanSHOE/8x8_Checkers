@@ -1347,8 +1347,68 @@ bool move_entries(game_state *g, pawn P, int horizontal, int vertical)
     return true;
 }
 
-void menu()
+void menu(log *head)
 {
+    int option = 0;
+    while (1)
+    {
+        locate(1, 1);
+        hidecursor();
+        if (option == 0)
+            printf("> Play Singleplayer\n");
+        else
+            printf("  Play Singleplayer\n");
+        if (option == 1)
+            printf("> Play Multiplayer\n");
+        else
+            printf("  Play Multiplayer\n");
+        if (option == 2)
+            printf("> Options\n");
+        else
+            printf("  Options\n");
+        if (option == 3)
+            printf("> Quit\n");
+        else
+            printf("  Quit\n");
+
+        char key = getkey();
+        if (key == 'w')
+        {
+            option = (option - 1) % 4;
+            if (option < 0)
+                option += 4;
+        }
+        else if (key == 's')
+        {
+            option = (option + 1) % 4;
+        }
+        else if (key == KEY_SPACE)
+        {
+            if (option == 0)
+            {
+                int a = toss();
+                if(a == 0)
+                {
+                    bot_mode = WHITE;
+                }
+                else bot_mode = BLACK;
+                start(head);
+            }
+            else if (option == 1)
+            {
+                bot_mode = -1;
+                start(head);
+            }
+            else if (option == 2)
+            {
+            }
+            else if (option == 3)
+            {
+                cls();
+                exit(0);
+            }
+        }
+    }
 }
 
 void print_board(game_state *P)
@@ -2512,25 +2572,34 @@ void instruction()
     fclose(fp);
 }
 
-void toss(void)
+int toss(void)
 {
-    srand(time(0));
+
     int Toss;
-    for (int i = 0; i < 100; i++)
+    int arr[50];
+    Toss = rand() % 2;
+    for (int i = 49; i >= 0; i--)
     {
-        Toss = rand() % 2;
-        if (Toss == 1)
-            printf("HEAD\n");
+        arr[i] = Toss;
+        Toss = (Toss + 1) % 2;
+    }
+    for (int i = 0; i < 50; i++)
+    {
+        if (arr[i] == 1)
+            printf("WHITE\n");
         else
-            printf("TAIL\n");
+            printf("BLACK\n");
 
         msleep(i);
         cls();
     }
-    if (Toss == 1)
-        printf("HEAD\n");
+    if (arr[49] == 1)
+        printf("WHITE\n");
     else
-        printf("TAIL\n");
+        printf("BLACK\n");
+
+    msleep(2000);
+    return arr[49];
 }
 
 void rule(void)
@@ -2673,18 +2742,23 @@ void delete_element(nodeb array[], int *ptr_size)
 }
 int main()
 {
-    //cls();
+    cls();
+        srand(time(0));
     if (sb % 2 != 0)
         exit(1);
     resetColor();
     log *head = CreateEmptyStackNode(); // start of linked list which is going to store table after every move
-
-    char key;
-    printf("Press 'e' to start and 't' to toss\n");
-
+    int i = rand()%50;;
+    while(i--)
+    {
+        rand();
+    }
+    //  char key;
+    //   printf("Press 'e' to start and 't' to toss\n");
+    menu(head);
     while (1)
     {
-        key = getkey();
+        char key = getkey();
         if (key == 't')
             toss();
 
