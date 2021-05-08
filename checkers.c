@@ -1560,27 +1560,32 @@ void Quit(log *head)
 {
 
     printf("Do you want to quit the game? [y/n]\n");
-    char ch = getkey();
-    if (ch == 'y')
+    while (1)
     {
-        printf("Do you want to Review the game?[y/n]\n");
-        char key = getkey();
-        if (key == 'y')
+        char ch = getkey();
+        if (ch == 'y')
         {
-            review(head);
-            clear_stack(head);
+            printf("Do you want to Review the game?[y/n]\n");
+            while (1)
+            {
+                char key = getkey();
+                if (key == 'y')
+                {
+                    review(head);
+                }
+                else if(key == 'n')
+                {
+                    clear_stack(head);
+                    cls();
+                    exit(0);
+                }
+            }
         }
-        else
+        else if (ch == 'n')
         {
-            clear_stack(head);
             cls();
-            exit(0);
+            return;
         }
-    }
-    else if (ch == 'n')
-    {
-        cls();
-        return;
     }
 }
 
@@ -2158,7 +2163,7 @@ game_state undo(log *head) //undo fxn go one steps back and deletes the current 
     game_state s = temp->g;
     head->next = temp;
     temp->prev = head;
-    
+
     free(t);
     return s;
 }
