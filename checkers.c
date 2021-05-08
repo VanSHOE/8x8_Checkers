@@ -54,6 +54,15 @@ void insert(he elem)
 }
 he Extract_min()
 {
+    if (size <= 0)
+    {
+
+        he temp;
+        temp.index = -1;
+        temp.d = -1;
+        return temp;
+    }
+
     he ans = heap[0];
     heap[0] = heap[--size];
     DownHeap(0);
@@ -123,8 +132,8 @@ long double bot_helperb(game_state g_o, int lim)
 
             else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 2, g.black[pc_i].y + 2))
             {
-                if(is_multi_capture_possible(g))
-                g.cur_turn = colorFlip(g.cur_turn);
+                if (is_multi_capture_possible(g))
+                    g.cur_turn = colorFlip(g.cur_turn);
 
                 scores[4 * i] = 10;
                 scores[4 * i] += 0.9 * bot_helperb(g, lim - 1);
@@ -138,8 +147,8 @@ long double bot_helperb(game_state g_o, int lim)
             }
             else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 2, g.black[pc_i].y - 2))
             {
-                if(is_multi_capture_possible(g))
-                g.cur_turn = colorFlip(g.cur_turn);
+                if (is_multi_capture_possible(g))
+                    g.cur_turn = colorFlip(g.cur_turn);
 
                 scores[4 * i + 1] = 10;
                 scores[4 * i + 1] += 0.9 * bot_helperb(g, lim - 1);
@@ -153,9 +162,9 @@ long double bot_helperb(game_state g_o, int lim)
             }
             else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x - 2, g.black[pc_i].y - 2))
             {
-                if(is_multi_capture_possible(g))
-                g.cur_turn = colorFlip(g.cur_turn);
-                
+                if (is_multi_capture_possible(g))
+                    g.cur_turn = colorFlip(g.cur_turn);
+
                 scores[4 * i + 2] = 10;
                 scores[4 * i + 2] += 0.9 * bot_helperb(g, lim - 1);
                 g = g_o;
@@ -168,9 +177,9 @@ long double bot_helperb(game_state g_o, int lim)
             }
             else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x - 2, g.black[pc_i].y + 2))
             {
-                if(is_multi_capture_possible(g))
-                g.cur_turn = colorFlip(g.cur_turn);
-                
+                if (is_multi_capture_possible(g))
+                    g.cur_turn = colorFlip(g.cur_turn);
+
                 scores[4 * i + 3] = 10;
                 scores[4 * i + 3] += 0.9 * bot_helperb(g, lim - 1);
                 g = g_o;
@@ -192,9 +201,9 @@ long double bot_helperb(game_state g_o, int lim)
 
             else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x + 2, g.white[pc_i].y + 2))
             {
-                if(is_multi_capture_possible(g))
-                g.cur_turn = colorFlip(g.cur_turn);
-                
+                if (is_multi_capture_possible(g))
+                    g.cur_turn = colorFlip(g.cur_turn);
+
                 scores[4 * i] = 10;
                 scores[4 * i] += 0.9 * bot_helperb(g, lim - 1);
                 g = g_o;
@@ -207,9 +216,9 @@ long double bot_helperb(game_state g_o, int lim)
             }
             else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x + 2, g.white[pc_i].y - 2))
             {
-                if(is_multi_capture_possible(g))
-                g.cur_turn = colorFlip(g.cur_turn);
-                
+                if (is_multi_capture_possible(g))
+                    g.cur_turn = colorFlip(g.cur_turn);
+
                 scores[4 * i + 1] = 10;
                 scores[4 * i + 1] += 0.9 * bot_helperb(g, lim - 1);
                 g = g_o;
@@ -222,9 +231,9 @@ long double bot_helperb(game_state g_o, int lim)
             }
             else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x - 2, g.white[pc_i].y - 2))
             {
-                if(is_multi_capture_possible(g))
-                g.cur_turn = colorFlip(g.cur_turn);
-                
+                if (is_multi_capture_possible(g))
+                    g.cur_turn = colorFlip(g.cur_turn);
+
                 scores[4 * i + 2] = 10;
                 scores[4 * i + 2] += 0.9 * bot_helperb(g, lim - 1);
                 g = g_o;
@@ -237,9 +246,9 @@ long double bot_helperb(game_state g_o, int lim)
             }
             else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x - 2, g.white[pc_i].y + 2))
             {
-                if(is_multi_capture_possible(g))
-                g.cur_turn = colorFlip(g.cur_turn);
-                
+                if (is_multi_capture_possible(g))
+                    g.cur_turn = colorFlip(g.cur_turn);
+
                 scores[4 * i + 3] = 10;
                 scores[4 * i + 3] += 0.9 * bot_helperb(g, lim - 1);
                 g = g_o;
@@ -277,9 +286,9 @@ void botb()
 
         else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 2, g.black[pc_i].y + 2))
         {
-            if(is_multi_capture_possible(g))
+            if (is_multi_capture_possible(g))
                 g.cur_turn = colorFlip(g.cur_turn);
-                
+
             scores[4 * i] = 10;
             scores[4 * i] += 0.9 * bot_helperb(g, lim - 1);
             g = c_state;
@@ -292,9 +301,9 @@ void botb()
         }
         else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 2, g.black[pc_i].y - 2))
         {
-            if(is_multi_capture_possible(g))
+            if (is_multi_capture_possible(g))
                 g.cur_turn = colorFlip(g.cur_turn);
-                
+
             scores[4 * i + 1] = 10;
             scores[4 * i + 1] += 0.9 * bot_helperb(g, lim - 1);
             g = c_state;
@@ -307,9 +316,9 @@ void botb()
         }
         else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x - 2, g.black[pc_i].y - 2))
         {
-            if(is_multi_capture_possible(g))
+            if (is_multi_capture_possible(g))
                 g.cur_turn = colorFlip(g.cur_turn);
-                
+
             scores[4 * i + 2] = 10;
             scores[4 * i + 2] += 0.9 * bot_helperb(g, lim - 1);
             g = c_state;
@@ -322,9 +331,9 @@ void botb()
         }
         else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x - 2, g.black[pc_i].y + 2))
         {
-            if(is_multi_capture_possible(g))
+            if (is_multi_capture_possible(g))
                 g.cur_turn = colorFlip(g.cur_turn);
-                
+
             scores[4 * i + 3] = 10;
             scores[4 * i + 3] += 0.9 * bot_helperb(g, lim - 1);
             g = c_state;
@@ -442,7 +451,15 @@ void botb()
     }
     while (k--)
         Extract_min();
-    mi = heap[0].index;
+
+    he temp = Extract_min();
+    if (temp.index == -1) // bot is out of move , call result fxn
+    {
+        size = 0;
+        printf("Press R to review and Q to quit\n");
+        return;
+    }
+    mi = temp.index;
     int pc_i = mi / 4;
     printf("Moving %d", mi);
 
@@ -500,9 +517,9 @@ long double bot_helperw(game_state g_o, int lim)
 
             else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 2, g.black[pc_i].y + 2))
             {
-                if(is_multi_capture_possible(g))
-                g.cur_turn = colorFlip(g.cur_turn);
-                
+                if (is_multi_capture_possible(g))
+                    g.cur_turn = colorFlip(g.cur_turn);
+
                 scores[4 * i] = 10;
                 scores[4 * i] += 0.9 * bot_helperw(g, lim - 1);
                 g = g_o;
@@ -515,9 +532,9 @@ long double bot_helperw(game_state g_o, int lim)
             }
             else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 2, g.black[pc_i].y - 2))
             {
-                if(is_multi_capture_possible(g))
-                g.cur_turn = colorFlip(g.cur_turn);
-                
+                if (is_multi_capture_possible(g))
+                    g.cur_turn = colorFlip(g.cur_turn);
+
                 scores[4 * i + 1] = 10;
                 scores[4 * i + 1] += 0.9 * bot_helperw(g, lim - 1);
                 g = g_o;
@@ -530,9 +547,9 @@ long double bot_helperw(game_state g_o, int lim)
             }
             else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x - 2, g.black[pc_i].y - 2))
             {
-                if(is_multi_capture_possible(g))
-                g.cur_turn = colorFlip(g.cur_turn);
-                
+                if (is_multi_capture_possible(g))
+                    g.cur_turn = colorFlip(g.cur_turn);
+
                 scores[4 * i + 2] = 10;
                 scores[4 * i + 2] += 0.9 * bot_helperw(g, lim - 1);
                 g = g_o;
@@ -545,9 +562,9 @@ long double bot_helperw(game_state g_o, int lim)
             }
             else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x - 2, g.black[pc_i].y + 2))
             {
-                if(is_multi_capture_possible(g))
-                g.cur_turn = colorFlip(g.cur_turn);
-                
+                if (is_multi_capture_possible(g))
+                    g.cur_turn = colorFlip(g.cur_turn);
+
                 scores[4 * i + 3] = 10;
                 scores[4 * i + 3] += 0.9 * bot_helperw(g, lim - 1);
                 g = g_o;
@@ -573,9 +590,9 @@ long double bot_helperw(game_state g_o, int lim)
 
             else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x + 2, g.white[pc_i].y + 2))
             {
-                if(is_multi_capture_possible(g))
-                g.cur_turn = colorFlip(g.cur_turn);
-                
+                if (is_multi_capture_possible(g))
+                    g.cur_turn = colorFlip(g.cur_turn);
+
                 scores[4 * i] = 10;
                 scores[4 * i] += 0.9 * bot_helperw(g, lim - 1);
                 g = g_o;
@@ -588,9 +605,9 @@ long double bot_helperw(game_state g_o, int lim)
             }
             else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x + 2, g.white[pc_i].y - 2))
             {
-                if(is_multi_capture_possible(g))
-                g.cur_turn = colorFlip(g.cur_turn);
-                
+                if (is_multi_capture_possible(g))
+                    g.cur_turn = colorFlip(g.cur_turn);
+
                 scores[4 * i + 1] = 10;
                 scores[4 * i + 1] += 0.9 * bot_helperw(g, lim - 1);
                 g = g_o;
@@ -603,9 +620,9 @@ long double bot_helperw(game_state g_o, int lim)
             }
             else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x - 2, g.white[pc_i].y - 2))
             {
-                if(is_multi_capture_possible(g))
-                g.cur_turn = colorFlip(g.cur_turn);
-                
+                if (is_multi_capture_possible(g))
+                    g.cur_turn = colorFlip(g.cur_turn);
+
                 scores[4 * i + 2] = 10;
                 scores[4 * i + 2] += 0.9 * bot_helperw(g, lim - 1);
                 g = g_o;
@@ -618,9 +635,9 @@ long double bot_helperw(game_state g_o, int lim)
             }
             else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x - 2, g.white[pc_i].y + 2))
             {
-                if(is_multi_capture_possible(g))
-                g.cur_turn = colorFlip(g.cur_turn);
-                
+                if (is_multi_capture_possible(g))
+                    g.cur_turn = colorFlip(g.cur_turn);
+
                 scores[4 * i + 3] = 10;
                 scores[4 * i + 3] += 0.9 * bot_helperw(g, lim - 1);
                 g = g_o;
@@ -654,9 +671,9 @@ void botw()
 
         else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x + 2, g.white[pc_i].y + 2))
         {
-            if(is_multi_capture_possible(g))
+            if (is_multi_capture_possible(g))
                 g.cur_turn = colorFlip(g.cur_turn);
-                
+
             scores[4 * i] = 10;
             scores[4 * i] += 0.9 * bot_helperw(g, lim - 1);
             g = c_state;
@@ -669,9 +686,9 @@ void botw()
         }
         else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x + 2, g.white[pc_i].y - 2))
         {
-            if(is_multi_capture_possible(g))
+            if (is_multi_capture_possible(g))
                 g.cur_turn = colorFlip(g.cur_turn);
-                
+
             scores[4 * i + 1] = 10;
             scores[4 * i + 1] += 0.9 * bot_helperw(g, lim - 1);
             g = c_state;
@@ -684,9 +701,9 @@ void botw()
         }
         else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x - 2, g.white[pc_i].y - 2))
         {
-            if(is_multi_capture_possible(g))
+            if (is_multi_capture_possible(g))
                 g.cur_turn = colorFlip(g.cur_turn);
-                
+
             scores[4 * i + 2] = 10;
             scores[4 * i + 2] += 0.9 * bot_helperw(g, lim - 1);
             g = c_state;
@@ -699,9 +716,9 @@ void botw()
         }
         else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x - 2, g.white[pc_i].y + 2))
         {
-            if(is_multi_capture_possible(g))
+            if (is_multi_capture_possible(g))
                 g.cur_turn = colorFlip(g.cur_turn);
-                 
+
             scores[4 * i + 3] = 10;
             scores[4 * i + 3] += 0.9 * bot_helperw(g, lim - 1);
             g = c_state;
@@ -818,7 +835,14 @@ void botw()
     }
     while (k--)
         Extract_min();
-    mi = heap[0].index;
+    he temp = Extract_min();
+    if (temp.index == -1) // bot is out of move , call result fxn
+    {
+        size = 0;
+        printf("Press R to review and Q to quit\n");
+        return;
+    }
+    mi = temp.index;
     printf("Moving %d", mi);
     int pc_i = mi / 4;
     switch (mi % 4)
@@ -853,7 +877,6 @@ void botw()
     free(scores);
     size = 0;
 }
-
 
 void print_all_possible_next_move(node *current) // given a game state , what all possible can be achieved in next move
 {
@@ -1639,6 +1662,8 @@ bool is_present(game_state *g, pawn P)
 
 bool simple_Move_Possible(game_state *g, pawn P, int direction)
 {
+    if (P.x == -1 && P.y == -1)
+        return false;
     int AfterMove_X, AfterMove_Y;
     switch (direction)
     {
@@ -1675,6 +1700,8 @@ bool simple_Move_Possible(game_state *g, pawn P, int direction)
 
 bool capturePossible(game_state *g, pawn P, int direction)
 {
+    if (P.x == -1 && P.y == -1)
+        return false;
     pawn Enemy;
     int AfterCapture_X, AfterCapture_Y;
     switch (direction)
@@ -2268,10 +2295,10 @@ void controller(log *head)
                     {
                         c_state = undo(head);
                         if (bot_mode != -1)
-                        while(c_state.cur_turn == bot_mode)
+                            while (c_state.cur_turn == bot_mode)
                             {
-                                if(head->next->next == NULL)
-                                break;
+                                if (head->next->next == NULL)
+                                    break;
                                 c_state = undo(head);
                             }
                         break;
@@ -2565,10 +2592,10 @@ void controller(log *head)
                     {
                         c_state = undo(head);
                         if (bot_mode != -1)
-                        while(c_state.cur_turn == bot_mode)
+                            while (c_state.cur_turn == bot_mode)
                             {
-                                if(head->next->next == NULL)
-                                break;
+                                if (head->next->next == NULL)
+                                    break;
                                 c_state = undo(head);
                             }
                         break;
@@ -2695,7 +2722,6 @@ void controller(log *head)
         result(&c_state, head);
     }
 }
-
 
 void instruction()
 {
