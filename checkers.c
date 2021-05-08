@@ -10,7 +10,7 @@
 #include <assert.h>
 int lim = 4;
 
-long double bot_helper(game_state g_o, int lim)
+long double bot_helperb(game_state g_o, int lim)
 {
     if (!lim)
         return 0;
@@ -27,50 +27,50 @@ long double bot_helper(game_state g_o, int lim)
             if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 1, g.black[pc_i].y + 1))
             {
                 scores[4 * i] = 1;
-                scores[4 * i] += 0.9 * bot_helper(g, lim - 1);
+                scores[4 * i] += 0.9 * bot_helperb(g, lim - 1);
                 g = g_o;
             }
 
             else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 2, g.black[pc_i].y + 2))
             {
                 scores[4 * i] = 10;
-                scores[4 * i] += 0.9 * bot_helper(g, lim - 1);
+                scores[4 * i] += 0.9 * bot_helperb(g, lim - 1);
                 g = g_o;
             }
             if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 1, g.black[pc_i].y - 1))
             {
                 scores[4 * i + 1] = (g.black[pc_i].is_king) ? 1 : 2;
-                scores[4 * i + 1] += 0.9 * bot_helper(g, lim - 1);
+                scores[4 * i + 1] += 0.9 * bot_helperb(g, lim - 1);
                 g = g_o;
             }
             else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 2, g.black[pc_i].y - 2))
             {
                 scores[4 * i + 1] = 10;
-                scores[4 * i + 1] += 0.9 * bot_helper(g, lim - 1);
+                scores[4 * i + 1] += 0.9 * bot_helperb(g, lim - 1);
                 g = g_o;
             }
             if (move_entries(&g, g.black[pc_i], g.black[pc_i].x - 1, g.black[pc_i].y - 1))
             {
                 scores[4 * i + 2] = (g.black[pc_i].is_king) ? 1 : 2;
-                scores[4 * i + 2] += 0.9 * bot_helper(g, lim - 1);
+                scores[4 * i + 2] += 0.9 * bot_helperb(g, lim - 1);
                 g = g_o;
             }
             else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x - 2, g.black[pc_i].y - 2))
             {
                 scores[4 * i + 2] = 10;
-                scores[4 * i + 2] += 0.9 * bot_helper(g, lim - 1);
+                scores[4 * i + 2] += 0.9 * bot_helperb(g, lim - 1);
                 g = g_o;
             }
             if (move_entries(&g, g.black[pc_i], g.black[pc_i].x - 1, g.black[pc_i].y + 1))
             {
                 scores[4 * i + 3] = 1;
-                scores[4 * i + 3] += 0.9 * bot_helper(g, lim - 1);
+                scores[4 * i + 3] += 0.9 * bot_helperb(g, lim - 1);
                 g = g_o;
             }
             else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x - 2, g.black[pc_i].y + 2))
             {
                 scores[4 * i + 3] = 10;
-                scores[4 * i + 3] += 0.9 * bot_helper(g, lim - 1);
+                scores[4 * i + 3] += 0.9 * bot_helperb(g, lim - 1);
                 g = g_o;
             }
         }
@@ -84,50 +84,50 @@ long double bot_helper(game_state g_o, int lim)
             if (move_entries(&g, g.white[pc_i], g.white[pc_i].x + 1, g.white[pc_i].y + 1))
             {
                 scores[4 * i] = (g.white[pc_i].is_king) ? 1 : 2;
-                scores[4 * i] += 0.9 * bot_helper(g, lim - 1);
+                scores[4 * i] += 0.9 * bot_helperb(g, lim - 1);
                 g = g_o;
             }
 
             else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x + 2, g.white[pc_i].y + 2))
             {
                 scores[4 * i] = 10;
-                scores[4 * i] += 0.9 * bot_helper(g, lim - 1);
+                scores[4 * i] += 0.9 * bot_helperb(g, lim - 1);
                 g = g_o;
             }
             if (move_entries(&g, g.white[pc_i], g.white[pc_i].x + 1, g.white[pc_i].y - 1))
             {
                 scores[4 * i + 1] = 1;
-                scores[4 * i + 1] += 0.9 * bot_helper(g, lim - 1);
+                scores[4 * i + 1] += 0.9 * bot_helperb(g, lim - 1);
                 g = g_o;
             }
             else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x + 2, g.white[pc_i].y - 2))
             {
                 scores[4 * i + 1] = 10;
-                scores[4 * i + 1] += 0.9 * bot_helper(g, lim - 1);
+                scores[4 * i + 1] += 0.9 * bot_helperb(g, lim - 1);
                 g = g_o;
             }
             if (move_entries(&g, g.white[pc_i], g.white[pc_i].x - 1, g.white[pc_i].y - 1))
             {
                 scores[4 * i + 2] = 1;
-                scores[4 * i + 2] += 0.9 * bot_helper(g, lim - 1);
+                scores[4 * i + 2] += 0.9 * bot_helperb(g, lim - 1);
                 g = g_o;
             }
             else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x - 2, g.white[pc_i].y - 2))
             {
                 scores[4 * i + 2] = 10;
-                scores[4 * i + 2] += 0.9 * bot_helper(g, lim - 1);
+                scores[4 * i + 2] += 0.9 * bot_helperb(g, lim - 1);
                 g = g_o;
             }
             if (move_entries(&g, g.white[pc_i], g.white[pc_i].x - 1, g.white[pc_i].y + 1))
             {
                 scores[4 * i + 3] = (g.white[pc_i].is_king) ? 1 : 2;
-                scores[4 * i + 3] += 0.9 * bot_helper(g, lim - 1);
+                scores[4 * i + 3] += 0.9 * bot_helperb(g, lim - 1);
                 g = g_o;
             }
             else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x - 2, g.white[pc_i].y + 2))
             {
                 scores[4 * i + 3] = 10;
-                scores[4 * i + 3] += 0.9 * bot_helper(g, lim - 1);
+                scores[4 * i + 3] += 0.9 * bot_helperb(g, lim - 1);
                 g = g_o;
             }
             scores[4 * i] = -scores[4 * i];
@@ -145,7 +145,7 @@ long double bot_helper(game_state g_o, int lim)
     return sum;
 }
 
-void bot()
+void botb()
 {
 
     long double *scores = (long double *)calloc(tp * 4, sizeof(long double));
@@ -157,50 +157,50 @@ void bot()
         if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 1, g.black[pc_i].y + 1))
         {
             scores[4 * i] = 1;
-            scores[4 * i] += 0.9 * bot_helper(g, lim - 1);
+            scores[4 * i] += 0.9 * bot_helperb(g, lim - 1);
             g = c_state;
         }
 
         else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 2, g.black[pc_i].y + 2))
         {
             scores[4 * i] = 10;
-            scores[4 * i] += 0.9 * bot_helper(g, lim - 1);
+            scores[4 * i] += 0.9 * bot_helperb(g, lim - 1);
             g = c_state;
         }
         if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 1, g.black[pc_i].y - 1))
         {
             scores[4 * i + 1] = 2;
-            scores[4 * i + 1] += 0.9 * bot_helper(g, lim - 1);
+            scores[4 * i + 1] += 0.9 * bot_helperb(g, lim - 1);
             g = c_state;
         }
         else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 2, g.black[pc_i].y - 2))
         {
             scores[4 * i + 1] = 10;
-            scores[4 * i + 1] += 0.9 * bot_helper(g, lim - 1);
+            scores[4 * i + 1] += 0.9 * bot_helperb(g, lim - 1);
             g = c_state;
         }
         if (move_entries(&g, g.black[pc_i], g.black[pc_i].x - 1, g.black[pc_i].y - 1))
         {
             scores[4 * i + 2] = 2;
-            scores[4 * i + 2] += 0.9 * bot_helper(g, lim - 1);
+            scores[4 * i + 2] += 0.9 * bot_helperb(g, lim - 1);
             g = c_state;
         }
         else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x - 2, g.black[pc_i].y - 2))
         {
             scores[4 * i + 2] = 10;
-            scores[4 * i + 2] += 0.9 * bot_helper(g, lim - 1);
+            scores[4 * i + 2] += 0.9 * bot_helperb(g, lim - 1);
             g = c_state;
         }
         if (move_entries(&g, g.black[pc_i], g.black[pc_i].x - 1, g.black[pc_i].y + 1))
         {
             scores[4 * i + 3] = 1;
-            scores[4 * i + 3] += 0.9 * bot_helper(g, lim - 1);
+            scores[4 * i + 3] += 0.9 * bot_helperb(g, lim - 1);
             g = c_state;
         }
         else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x - 2, g.black[pc_i].y + 2))
         {
             scores[4 * i + 3] = 10;
-            scores[4 * i + 3] += 0.9 * bot_helper(g, lim - 1);
+            scores[4 * i + 3] += 0.9 * bot_helperb(g, lim - 1);
             g = c_state;
         }
     }
@@ -272,94 +272,268 @@ void bot()
     }
     free(scores);
 }
-game_state play_simple_move(game_state *g, pawn p, int direction)
+long double bot_helperw(game_state g_o, int lim)
 {
-    int aftermove_x, aftermove_y;
-    if (direction == topLeft)
-    {
-        aftermove_x = p.x - 1;
-        aftermove_y = p.y + 1;
-    }
-    else if (direction == topRight)
-    {
-        aftermove_x = p.x + 1;
-        aftermove_y = p.x + 1;
-    }
-    else if (direction == bottomLeft)
-    {
-        aftermove_x = p.x - 1;
-        aftermove_y = p.y - 1;
-    }
-    else
-    {
-        aftermove_x = p.x + 1;
-        aftermove_y = p.y - 1;
-    }
+    if (!lim)
+        return 0;
 
-    pawn new;
-    new.x = aftermove_x;
-    new.y = aftermove_y;
-    new.allegiance = p.allegiance;
-    new.is_king = p.is_king;
-
-    if (!isLegal(p, new, g))
+    long double *scores = (long double *)calloc(tp * 4, sizeof(long double));
+    g_o.cur_turn = colorFlip(g_o.cur_turn);
+    game_state g = g_o;
+    if (g.cur_turn == BLACK)
     {
-        printf("Invalid move!\n");
-        return *g;
-    }
-
-    if (isOccupied(g, aftermove_x, aftermove_y))
-    {
-        printf("Position is already occupied!\n");
-        return *g;
-    }
-
-    if (!is_present(g, p))
-    {
-        printf("Piece is Not present\n");
-        return *g;
-    }
-
-    //checking if it becomes king due to move
-    if (p.allegiance == WHITE && aftermove_y == sb - 1)
-    {
-        new.is_king = true;
-    }
-    if (p.allegiance == BLACK && aftermove_y == 0)
-    {
-        new.is_king = true;
-    }
-
-    if (p.allegiance == WHITE)
-    {
-        for (int i = 0; i < 12; i++)
+        for (int i = 0; i < tp; i++)
         {
-            if (g->white[i].x == p.x && g->white[i].y == p.y)
+            int pc_i = i;
+
+            if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 1, g.black[pc_i].y + 1))
             {
-                g->white[i].x = aftermove_x;
-                g->black[i].y = aftermove_y;
-                break;
+                scores[4 * i] = 1;
+                scores[4 * i] += 0.9 * bot_helperw(g, lim - 1);
+                g = g_o;
             }
+
+            else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 2, g.black[pc_i].y + 2))
+            {
+                scores[4 * i] = 10;
+                scores[4 * i] += 0.9 * bot_helperw(g, lim - 1);
+                g = g_o;
+            }
+            if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 1, g.black[pc_i].y - 1))
+            {
+                scores[4 * i + 1] = (g.black[pc_i].is_king) ? 1 : 2;
+                scores[4 * i + 1] += 0.9 * bot_helperw(g, lim - 1);
+                g = g_o;
+            }
+            else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 2, g.black[pc_i].y - 2))
+            {
+                scores[4 * i + 1] = 10;
+                scores[4 * i + 1] += 0.9 * bot_helperw(g, lim - 1);
+                g = g_o;
+            }
+            if (move_entries(&g, g.black[pc_i], g.black[pc_i].x - 1, g.black[pc_i].y - 1))
+            {
+                scores[4 * i + 2] = (g.black[pc_i].is_king) ? 1 : 2;
+                scores[4 * i + 2] += 0.9 * bot_helperw(g, lim - 1);
+                g = g_o;
+            }
+            else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x - 2, g.black[pc_i].y - 2))
+            {
+                scores[4 * i + 2] = 10;
+                scores[4 * i + 2] += 0.9 * bot_helperw(g, lim - 1);
+                g = g_o;
+            }
+            if (move_entries(&g, g.black[pc_i], g.black[pc_i].x - 1, g.black[pc_i].y + 1))
+            {
+                scores[4 * i + 3] = 1;
+                scores[4 * i + 3] += 0.9 * bot_helperw(g, lim - 1);
+                g = g_o;
+            }
+            else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x - 2, g.black[pc_i].y + 2))
+            {
+                scores[4 * i + 3] = 10;
+                scores[4 * i + 3] += 0.9 * bot_helperw(g, lim - 1);
+                g = g_o;
+            }
+            scores[4 * i] = -scores[4 * i];
+            scores[4 * i + 1] = -scores[4 * i + 1];
+            scores[4 * i + 2] = -scores[4 * i + 2];
+            scores[4 * i + 3] = -scores[4 * i + 3];
         }
     }
     else
     {
-        for (int i = 0; i < 12; i++)
+        for (int i = 0; i < tp; i++)
         {
-            if (g->black[i].x == p.x && g->black[i].y == p.y)
+            int pc_i = i;
+
+            if (move_entries(&g, g.white[pc_i], g.white[pc_i].x + 1, g.white[pc_i].y + 1))
             {
-                g->black[i].x = aftermove_x;
-                g->black[i].y = aftermove_y;
-                break;
+                scores[4 * i] = (g.white[pc_i].is_king) ? 1 : 2;
+                scores[4 * i] += 0.9 * bot_helperw(g, lim - 1);
+                g = g_o;
+            }
+
+            else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x + 2, g.white[pc_i].y + 2))
+            {
+                scores[4 * i] = 10;
+                scores[4 * i] += 0.9 * bot_helperw(g, lim - 1);
+                g = g_o;
+            }
+            if (move_entries(&g, g.white[pc_i], g.white[pc_i].x + 1, g.white[pc_i].y - 1))
+            {
+                scores[4 * i + 1] = 1;
+                scores[4 * i + 1] += 0.9 * bot_helperw(g, lim - 1);
+                g = g_o;
+            }
+            else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x + 2, g.white[pc_i].y - 2))
+            {
+                scores[4 * i + 1] = 10;
+                scores[4 * i + 1] += 0.9 * bot_helperw(g, lim - 1);
+                g = g_o;
+            }
+            if (move_entries(&g, g.white[pc_i], g.white[pc_i].x - 1, g.white[pc_i].y - 1))
+            {
+                scores[4 * i + 2] = 1;
+                scores[4 * i + 2] += 0.9 * bot_helperw(g, lim - 1);
+                g = g_o;
+            }
+            else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x - 2, g.white[pc_i].y - 2))
+            {
+                scores[4 * i + 2] = 10;
+                scores[4 * i + 2] += 0.9 * bot_helperw(g, lim - 1);
+                g = g_o;
+            }
+            if (move_entries(&g, g.white[pc_i], g.white[pc_i].x - 1, g.white[pc_i].y + 1))
+            {
+                scores[4 * i + 3] = (g.white[pc_i].is_king) ? 1 : 2;
+                scores[4 * i + 3] += 0.9 * bot_helperw(g, lim - 1);
+                g = g_o;
+            }
+            else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x - 2, g.white[pc_i].y + 2))
+            {
+                scores[4 * i + 3] = 10;
+                scores[4 * i + 3] += 0.9 * bot_helperw(g, lim - 1);
+                g = g_o;
             }
         }
     }
-
-    g->cur_turn = (g->cur_turn + 1) % 2;
-
-    return *g;
+    long double sum = 0;
+    for (int i = 0; i < 4 * tp; i++)
+    {
+        sum += scores[i];
+    }
+    free(scores);
+    return sum;
 }
 
+void botw()
+{
+
+    long double *scores = (long double *)calloc(tp * 4, sizeof(long double));
+    game_state g = c_state;
+    for (int i = 0; i < tp; i++)
+    {
+        int pc_i = i;
+
+        if (move_entries(&g, g.white[pc_i], g.white[pc_i].x + 1, g.white[pc_i].y + 1))
+        {
+            scores[4 * i] = 1;
+            scores[4 * i] += 0.9 * bot_helperw(g, lim - 1);
+            g = c_state;
+        }
+
+        else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x + 2, g.white[pc_i].y + 2))
+        {
+            scores[4 * i] = 10;
+            scores[4 * i] += 0.9 * bot_helperw(g, lim - 1);
+            g = c_state;
+        }
+        if (move_entries(&g, g.white[pc_i], g.white[pc_i].x + 1, g.white[pc_i].y - 1))
+        {
+            scores[4 * i + 1] = 2;
+            scores[4 * i + 1] += 0.9 * bot_helperw(g, lim - 1);
+            g = c_state;
+        }
+        else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x + 2, g.white[pc_i].y - 2))
+        {
+            scores[4 * i + 1] = 10;
+            scores[4 * i + 1] += 0.9 * bot_helperw(g, lim - 1);
+            g = c_state;
+        }
+        if (move_entries(&g, g.white[pc_i], g.white[pc_i].x - 1, g.white[pc_i].y - 1))
+        {
+            scores[4 * i + 2] = 2;
+            scores[4 * i + 2] += 0.9 * bot_helperw(g, lim - 1);
+            g = c_state;
+        }
+        else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x - 2, g.white[pc_i].y - 2))
+        {
+            scores[4 * i + 2] = 10;
+            scores[4 * i + 2] += 0.9 * bot_helperw(g, lim - 1);
+            g = c_state;
+        }
+        if (move_entries(&g, g.white[pc_i], g.white[pc_i].x - 1, g.white[pc_i].y + 1))
+        {
+            scores[4 * i + 3] = 1;
+            scores[4 * i + 3] += 0.9 * bot_helperw(g, lim - 1);
+            g = c_state;
+        }
+        else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x - 2, g.white[pc_i].y + 2))
+        {
+            scores[4 * i + 3] = 10;
+            scores[4 * i + 3] += 0.9 * bot_helperw(g, lim - 1);
+            g = c_state;
+        }
+    }
+    int mi = 0;
+    for (int i = 1; i < 4 * tp; i++)
+    {
+        if (scores[mi] < scores[i])
+        {
+            mi = i;
+        }
+    }
+
+    printf("Moving %d", mi);
+    int flag = 0;
+    while (!flag)
+    {
+        int pc_i = mi / 4;
+        switch (mi % 4)
+        {
+        case 0:
+            if (!move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x + 1, c_state.white[pc_i].y + 1))
+            {
+                if (move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x + 2, c_state.white[pc_i].y + 2))
+                    flag = 1;
+            }
+            else
+                flag = 1;
+            break;
+        case 1:
+            if (!move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x + 1, c_state.white[pc_i].y - 1))
+            {
+                if (move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x + 2, c_state.white[pc_i].y - 2))
+                    flag = 1;
+            }
+            else
+                flag = 1;
+            break;
+        case 2:
+            if (!move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x - 1, c_state.white[pc_i].y - 1))
+            {
+                if (move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x - 2, c_state.white[pc_i].y - 2))
+                    flag = 1;
+            }
+            else
+                flag = 1;
+            break;
+        case 3:
+            if (!move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x - 1, c_state.white[pc_i].y + 1))
+            {
+                if (move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x - 2, c_state.white[pc_i].y + 2))
+                    flag = 1;
+            }
+            else
+                flag = 1;
+            break;
+        }
+        if (flag == 0)
+        {
+            scores[mi] = -9999999999999;
+        }
+        mi = 0;
+        for (int i = 1; i < 48; i++)
+        {
+            if (scores[mi] < scores[i])
+            {
+                mi = i;
+            }
+        }
+    }
+    free(scores);
+}
 game_state play_capture_move(game_state *g, pawn p, int direction)
 {
     int aftermove_x, aftermove_y;
@@ -433,6 +607,93 @@ game_state play_capture_move(game_state *g, pawn p, int direction)
     else
     {
         for (int i = 0; i < 12; i++)
+        {
+            if (g->black[i].x == p.x && g->black[i].y == p.y)
+            {
+                g->black[i].x = aftermove_x;
+                g->black[i].y = aftermove_y;
+                break;
+            }
+        }
+    }
+
+    g->cur_turn = colorFlip(g->cur_turn);
+
+    return *g;
+}
+game_state play_simple_move(game_state *g, pawn p, int direction)
+{
+    int aftermove_x, aftermove_y;
+    if (direction == topLeft)
+    {
+        aftermove_x = p.x - 1;
+        aftermove_y = p.y + 1;
+    }
+    else if (direction == topRight)
+    {
+        aftermove_x = p.x + 1;
+        aftermove_y = p.x + 1;
+    }
+    else if (direction == bottomLeft)
+    {
+        aftermove_x = p.x - 1;
+        aftermove_y = p.y - 1;
+    }
+    else
+    {
+        aftermove_x = p.x + 1;
+        aftermove_y = p.y - 1;
+    }
+
+    pawn new;
+    new.x = aftermove_x;
+    new.y = aftermove_y;
+    new.allegiance = p.allegiance;
+    new.is_king = p.is_king;
+
+    if (!isLegal(p, new, g))
+    {
+        printf("Invalid move!\n");
+        return *g;
+    }
+
+    if (isOccupied(g, aftermove_x, aftermove_y))
+    {
+        printf("Position is already occupied!\n");
+        return *g;
+    }
+
+    if (!is_present(g, p))
+    {
+        printf("Piece is Not present\n");
+        return *g;
+    }
+
+    //checking if it becomes king due to move
+    if (p.allegiance == WHITE && aftermove_y == sb - 1)
+    {
+        new.is_king = true;
+    }
+    if (p.allegiance == BLACK && aftermove_y == 0)
+    {
+        new.is_king = true;
+    }
+
+    if (p.allegiance == WHITE)
+    {
+        for (int i = 0; i < tp; i++)
+        {
+            if (g->white[i].x == p.x && g->white[i].y == p.y)
+            {
+                g->white[i].x = aftermove_x;
+                g->black[i].y = aftermove_y;
+                break;
+            }
+        }
+    }
+    else
+    {
+        for (int i = 0; i < tp; i++)
         {
             if (g->black[i].x == p.x && g->black[i].y == p.y)
             {
@@ -1086,6 +1347,10 @@ bool move_entries(game_state *g, pawn P, int horizontal, int vertical)
     return true;
 }
 
+void menu()
+{
+}
+
 void print_board(game_state *P)
 {
     int c_s = 4, r_s = 8;
@@ -1666,7 +1931,7 @@ void Quit(log *head)
                 {
                     review(head);
                 }
-                else if(key == 'n')
+                else if (key == 'n')
                 {
                     clear_stack(head);
                     cls();
@@ -1706,251 +1971,265 @@ void controller(log *head)
         int c;
         if (c_state.cur_turn == BLACK)
         {
-            /*
-            //---------------------------------------------------------------BOT-Playing----------------------------------------------------------------
-            int count_w = 0;
-            for (int i = 0; i < tp; i++)
+            //  char c = getkey();
+            /*   if(c == 'u') 
             {
-                if (capturePossible(&c_state, c_state.black[i], bottomLeft) || capturePossible(&c_state, c_state.black[i], bottomRight))
-                {
-                    count_w = 1;
-                    break;
-                }
-                else if (c_state.black[i].is_king == 1)
-                {
-                    if (capturePossible(&c_state, c_state.black[i], topLeft) || capturePossible(&c_state, c_state.black[i], topRight))
-                    {
-                        count_w = 1;
-                        break;
-                    }
-                }
-            }
-            printf("Bot");
-            bot();
-
-            int flag1 = 0;
-            if (count_w == 1)
+                c_state = undo(head);
+                print_board(&c_state);
+                continue;
+            }*/
+            if (bot_mode == BLACK)
             {
+                //---------------------------------------------------------------BOT-Playing----------------------------------------------------------------
+                int count_w = 0;
                 for (int i = 0; i < tp; i++)
                 {
                     if (capturePossible(&c_state, c_state.black[i], bottomLeft) || capturePossible(&c_state, c_state.black[i], bottomRight))
                     {
-                        flag1 = 1;
+                        count_w = 1;
                         break;
                     }
                     else if (c_state.black[i].is_king == 1)
                     {
                         if (capturePossible(&c_state, c_state.black[i], topLeft) || capturePossible(&c_state, c_state.black[i], topRight))
                         {
+                            count_w = 1;
+                            break;
+                        }
+                    }
+                }
+                printf("Bot");
+                botb();
+                //    print_board(&c_state);
+                int flag1 = 0;
+                if (count_w == 1)
+                {
+                    for (int i = 0; i < tp; i++)
+                    {
+                        if (capturePossible(&c_state, c_state.black[i], bottomLeft) || capturePossible(&c_state, c_state.black[i], bottomRight))
+                        {
                             flag1 = 1;
                             break;
                         }
-                    }
-                }
-                count_w = 0;
-            }
-            if (flag1 == 1)
-            {
-                flag1 = 0;
-                continue;
-            }
-
-            c_state.cur_turn = colorFlip(c_state.cur_turn);
-
-            //-----------------------------------------------------------------------------------------------------------------------------------------------
-            */
-
-            for (int i = tp - 1; i >= 0; --i)
-            {
-                if (c_state.black[i].x != -1 && c_state.black[i].y != -1)
-                {
-                    c = i;
-                    break;
-                }
-            }
-            int x[2];
-            int y[2];
-            x[0] = c_state.black[c].x;
-            y[0] = c_state.black[c].y;
-            x[1] = y[1] = -1;
-            int cur = 0;
-
-            while (1)
-            {
-                c_state.hover[0].x = x[0];
-                c_state.hover[0].y = y[0];
-                c_state.hover[1].x = x[1];
-                c_state.hover[1].y = y[1];
-
-                //    cls();
-                locate(1, 1);
-                hidecursor();
-                print_board(&c_state);
-                char ch = getkey();
-                if (ch == 'd')
-                {
-                    x[cur] = (x[cur] + 1) % sb;
-                }
-                else if (ch == 's')
-                {
-                    y[cur] = (y[cur] - 1) % sb;
-                    if (y[cur] < 0)
-                        y[cur] += sb;
-                }
-                else if (ch == 'w')
-                {
-                    y[cur] = (y[cur] + 1) % sb;
-                }
-                else if (ch == 'a')
-                {
-                    x[cur] = (x[cur] - 1) % sb;
-                    if (x[cur] < 0)
-                        x[cur] += sb;
-                }
-                else if (ch == 'r')
-                {
-                    cls();
-                }
-                else if (ch == 'b')
-                {
-                    cls();
-                    while (1)
-                    {
-                        rule();
-                        char key = getkey();
-                        if (key == 'e')
+                        else if (c_state.black[i].is_king == 1)
                         {
-                            cls();
-                            break;
-                        }
-                    }
-                }
-                else if (ch == 'u')
-                {
-                    c_state = undo(head);
-                    break;
-                }
-                else if (ch == 'N')
-                {
-                    restart(head);
-                }
-                else if (ch == 'H')
-                {
-                    cls();
-                    while (1)
-                    {
-                        instruction();
-                        char key = getkey();
-                        if (key == 'e')
-                        {
-                            cls();
-                            break;
-                        }
-                    }
-                }
-                else if (ch == 'Q')
-                {
-                    Quit(head);
-                }
-                else if (ch == 'R')
-                {
-                    review(head);
-                }
-                else if (ch == 'k')
-                {
-                    printf("Enter 'k' (# next state you want to print)\n");
-                    int k;
-                    scanf("%d", &k);
-                    print_k_state(c_state, k);
-                }
-                else if (ch == KEY_SPACE)
-                {
-                    if (cur == 0)
-                    {
-                        int flag = -1;
-                        for (int i = 0; i < tp; ++i)
-                        {
-                            if (x[0] == c_state.black[i].x && y[0] == c_state.black[i].y)
+                            if (capturePossible(&c_state, c_state.black[i], topLeft) || capturePossible(&c_state, c_state.black[i], topRight))
                             {
-                                flag = i;
-                                x[1] = x[0];
-                                y[1] = y[0];
-                                p = c_state.black[i];
+                                flag1 = 1;
                                 break;
                             }
                         }
-                        if (flag == -1)
-                            continue;
-                        cur++;
                     }
-                    else
+                    count_w = 0;
+                }
+                if (flag1 == 1)
+                {
+                    flag1 = 0;
+                    push(head, &c_state);
+                    continue;
+                }
+
+                c_state.cur_turn = colorFlip(c_state.cur_turn);
+                push(head, &c_state);
+                //-----------------------------------------------------------------------------------------------------------------------------------------------
+            }
+            else
+            {
+
+                for (int i = tp - 1; i >= 0; --i)
+                {
+                    if (c_state.black[i].x != -1 && c_state.black[i].y != -1)
                     {
-                        if (x[1] == x[0] && y[0] == y[1])
-                        {
-                            cur--;
-                            x[1] = -1;
-                            y[1] = -1;
-                            continue;
-                        }
+                        c = i;
+                        break;
+                    }
+                }
+                int x[2];
+                int y[2];
+                x[0] = c_state.black[c].x;
+                y[0] = c_state.black[c].y;
+                x[1] = y[1] = -1;
+                int cur = 0;
 
-                        pawn n;
-                        n.x = x[1];
-                        n.y = y[1];
-                        int count_w = 0;
-                        if (capturePossible(&c_state, p, bottomLeft) || capturePossible(&c_state, p, bottomRight))
-                        {
-                            count_w = 1;
-                        }
-                        else if (p.is_king == 1)
-                        {
-                            if (capturePossible(&c_state, p, topLeft) || capturePossible(&c_state, p, topRight))
-                                count_w = 1;
-                        }
+                while (1)
+                {
+                    c_state.hover[0].x = x[0];
+                    c_state.hover[0].y = y[0];
+                    c_state.hover[1].x = x[1];
+                    c_state.hover[1].y = y[1];
 
-                        if (!move_entries(&c_state, p, x[1], y[1]))
+                    //    cls();
+                    locate(1, 1);
+                    hidecursor();
+                    print_board(&c_state);
+                    char ch = getkey();
+                    if (ch == 'd')
+                    {
+                        x[cur] = (x[cur] + 1) % sb;
+                    }
+                    else if (ch == 's')
+                    {
+                        y[cur] = (y[cur] - 1) % sb;
+                        if (y[cur] < 0)
+                            y[cur] += sb;
+                    }
+                    else if (ch == 'w')
+                    {
+                        y[cur] = (y[cur] + 1) % sb;
+                    }
+                    else if (ch == 'a')
+                    {
+                        x[cur] = (x[cur] - 1) % sb;
+                        if (x[cur] < 0)
+                            x[cur] += sb;
+                    }
+                    else if (ch == 'r')
+                    {
+                        cls();
+                    }
+                    else if (ch == 'b')
+                    {
+                        cls();
+                        while (1)
                         {
-                            continue;
+                            rule();
+                            char key = getkey();
+                            if (key == 'e')
+                            {
+                                cls();
+                                break;
+                            }
+                        }
+                    }
+                    else if (ch == 'u')
+                    {
+                        c_state = undo(head);
+                        if (bot_mode != -1)
+                            c_state = undo(head);
+                        break;
+                    }
+                    else if (ch == 'N')
+                    {
+                        restart(head);
+                    }
+                    else if (ch == 'H')
+                    {
+                        cls();
+                        while (1)
+                        {
+                            instruction();
+                            char key = getkey();
+                            if (key == 'e')
+                            {
+                                cls();
+                                break;
+                            }
+                        }
+                    }
+                    else if (ch == 'Q')
+                    {
+                        Quit(head);
+                    }
+                    else if (ch == 'R')
+                    {
+                        review(head);
+                    }
+                    else if (ch == 'k')
+                    {
+                        printf("Enter 'k' (# next state you want to print)\n");
+                        int k;
+                        scanf("%d", &k);
+                        print_k_state(c_state, k);
+                    }
+                    else if (ch == KEY_SPACE)
+                    {
+                        if (cur == 0)
+                        {
+                            int flag = -1;
+                            for (int i = 0; i < tp; ++i)
+                            {
+                                if (x[0] == c_state.black[i].x && y[0] == c_state.black[i].y)
+                                {
+                                    flag = i;
+                                    x[1] = x[0];
+                                    y[1] = y[0];
+                                    p = c_state.black[i];
+                                    break;
+                                }
+                            }
+                            if (flag == -1)
+                                continue;
+                            cur++;
                         }
                         else
                         {
-                            cur--;
-                            x[0] = x[1];
-                            y[0] = y[1];
-                            x[1] = -1;
-                            y[1] = -1;
-
-                            int flag1 = 0;
-                            if (count_w == 1)
+                            if (x[1] == x[0] && y[0] == y[1])
                             {
-                                for (int i = 0; i < tp; i++)
-                                {
-                                    if (capturePossible(&c_state, c_state.black[i], bottomLeft) || capturePossible(&c_state, c_state.black[i], bottomRight))
-                                    {
-                                        push(head, &c_state);
-                                        flag1 = 1;
-                                        break;
-                                    }
-                                    else if (c_state.black[i].is_king == 1)
-                                    {
-                                        if (capturePossible(&c_state, c_state.black[i], topLeft) || capturePossible(&c_state, c_state.black[i], topRight))
-                                        {
-                                            flag1 = 1;
-                                            push(head, &c_state);
-                                            break;
-                                        }
-                                    }
-                                }
-                                count_w = 0;
-                            }
-                            if (flag1 == 1)
-                            {
-                                flag1 = 0;
+                                cur--;
+                                x[1] = -1;
+                                y[1] = -1;
                                 continue;
                             }
 
-                            c_state.cur_turn = colorFlip(c_state.cur_turn);
-                            push(head, &c_state);
-                            break;
+                            pawn n;
+                            n.x = x[1];
+                            n.y = y[1];
+                            int count_w = 0;
+                            if (capturePossible(&c_state, p, bottomLeft) || capturePossible(&c_state, p, bottomRight))
+                            {
+                                count_w = 1;
+                            }
+                            else if (p.is_king == 1)
+                            {
+                                if (capturePossible(&c_state, p, topLeft) || capturePossible(&c_state, p, topRight))
+                                    count_w = 1;
+                            }
+
+                            if (!move_entries(&c_state, p, x[1], y[1]))
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                cur--;
+                                x[0] = x[1];
+                                y[0] = y[1];
+                                x[1] = -1;
+                                y[1] = -1;
+
+                                int flag1 = 0;
+                                if (count_w == 1)
+                                {
+                                    for (int i = 0; i < tp; i++)
+                                    {
+                                        if (capturePossible(&c_state, c_state.black[i], bottomLeft) || capturePossible(&c_state, c_state.black[i], bottomRight))
+                                        {
+                                            push(head, &c_state);
+                                            flag1 = 1;
+                                            break;
+                                        }
+                                        else if (c_state.black[i].is_king == 1)
+                                        {
+                                            if (capturePossible(&c_state, c_state.black[i], topLeft) || capturePossible(&c_state, c_state.black[i], topRight))
+                                            {
+                                                flag1 = 1;
+                                                push(head, &c_state);
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    count_w = 0;
+                                }
+                                if (flag1 == 1)
+                                {
+                                    flag1 = 0;
+                                    continue;
+                                }
+
+                                c_state.cur_turn = colorFlip(c_state.cur_turn);
+                                push(head, &c_state);
+                                break;
+                            }
                         }
                     }
                 }
@@ -1959,195 +2238,253 @@ void controller(log *head)
 
         else
         {
-            for (int i = tp - 1; i >= 0; --i)
+            if (bot_mode == WHITE)
             {
-                if (c_state.white[i].x != -1 && c_state.white[i].y != -1)
+                int count_w = 0;
+                for (int i = 0; i < tp; i++)
                 {
-                    c = i;
-                    break;
-                }
-            }
-            int x[2];
-            int y[2];
-            x[0] = c_state.white[c].x;
-            y[0] = c_state.white[c].y;
-            x[1] = y[1] = -1;
-            int cur = 0;
-            while (1)
-            {
-                c_state.hover[0].x = x[0];
-                c_state.hover[0].y = y[0];
-                c_state.hover[1].x = x[1];
-                c_state.hover[1].y = y[1];
-
-                //    cls();
-                locate(1, 1);
-                hidecursor();
-                print_board(&c_state);
-                char ch = getkey();
-                if (ch == 'd')
-                {
-                    x[cur] = (x[cur] + 1) % sb;
-                }
-                else if (ch == 's')
-                {
-                    y[cur] = (y[cur] - 1) % sb;
-                    if (y[cur] < 0)
-                        y[cur] += sb;
-                }
-                else if (ch == 'w')
-                {
-                    y[cur] = (y[cur] + 1) % sb;
-                }
-                else if (ch == 'a')
-                {
-                    x[cur] = (x[cur] - 1) % sb;
-                    if (x[cur] < 0)
-                        x[cur] += sb;
-                }
-                else if (ch == 'r')
-                {
-                    cls();
-                }
-                else if (ch == 'b')
-                {
-                    cls();
-                    while (1)
+                    if (capturePossible(&c_state, c_state.white[i], topLeft) || capturePossible(&c_state, c_state.white[i], topRight))
                     {
-                        rule();
-                        char key = getkey();
-                        if (key == 'e')
+                        count_w = 1;
+                        break;
+                    }
+                    else if (c_state.white[i].is_king == 1)
+                    {
+                        if (capturePossible(&c_state, c_state.white[i], bottomLeft) || capturePossible(&c_state, c_state.white[i], bottomRight))
                         {
-                            cls();
+                            count_w = 1;
                             break;
                         }
                     }
                 }
-                else if (ch == 'u')
+                printf("Bot");
+                botw();
+                //    print_board(&c_state);
+                int flag1 = 0;
+                if (count_w == 1)
                 {
-                    c_state = undo(head);
-                    break;
-                }
-                else if (ch == 'N')
-                {
-                    restart(head);
-                }
-                else if (ch == 'H')
-                {
-                    cls();
-                    while (1)
+                    for (int i = 0; i < tp; i++)
                     {
-                        instruction();
-                        char key = getkey();
-                        if (key == 'e')
+                        if (capturePossible(&c_state, c_state.white[i], topLeft) || capturePossible(&c_state, c_state.white[i], topRight))
                         {
-                            cls();
+                            flag1 = 1;
                             break;
                         }
-                    }
-                }
-                else if (ch == 'Q')
-                {
-                    Quit(head);
-                }
-                else if (ch == 'R')
-                {
-                    review(head);
-                }
-                else if (ch == 'k')
-                {
-                    printf("Enter 'k' (# next state you want to print)\n");
-                    int k;
-                    scanf("%d", &k);
-                    print_k_state(c_state, k);
-                }
-                else if (ch == KEY_SPACE)
-                {
-                    if (cur == 0)
-                    {
-                        int flag = -1;
-                        for (int i = 0; i < tp; ++i)
+                        else if (c_state.white[i].is_king == 1)
                         {
-                            if (x[0] == c_state.white[i].x && y[0] == c_state.white[i].y)
+                            if (capturePossible(&c_state, c_state.white[i], bottomLeft) || capturePossible(&c_state, c_state.white[i], bottomRight))
                             {
-                                flag = i;
-                                x[1] = x[0];
-                                y[1] = y[0];
-                                p = c_state.white[i];
+                                flag1 = 1;
                                 break;
                             }
                         }
-                        if (flag == -1)
-                            continue;
-                        cur++;
                     }
-                    else
+                    count_w = 0;
+                }
+                if (flag1 == 1)
+                {
+                    flag1 = 0;
+                    push(head, &c_state);
+                    continue;
+                }
+
+                c_state.cur_turn = colorFlip(c_state.cur_turn);
+                push(head, &c_state);
+            }
+            else
+            {
+                for (int i = tp - 1; i >= 0; --i)
+                {
+                    if (c_state.white[i].x != -1 && c_state.white[i].y != -1)
                     {
-                        if (x[1] == x[0] && y[0] == y[1])
-                        {
-                            cur--;
-                            x[1] = -1;
-                            y[1] = -1;
-                            continue;
-                        }
+                        c = i;
+                        break;
+                    }
+                }
+                int x[2];
+                int y[2];
+                x[0] = c_state.white[c].x;
+                y[0] = c_state.white[c].y;
+                x[1] = y[1] = -1;
+                int cur = 0;
+                while (1)
+                {
+                    c_state.hover[0].x = x[0];
+                    c_state.hover[0].y = y[0];
+                    c_state.hover[1].x = x[1];
+                    c_state.hover[1].y = y[1];
 
-                        pawn n;
-                        n.x = x[1];
-                        n.y = y[1];
-                        int count_b = 0;
-                        if (capturePossible(&c_state, p, topLeft) || capturePossible(&c_state, p, topRight))
+                    //    cls();
+                    locate(1, 1);
+                    hidecursor();
+                    print_board(&c_state);
+                    char ch = getkey();
+                    if (ch == 'd')
+                    {
+                        x[cur] = (x[cur] + 1) % sb;
+                    }
+                    else if (ch == 's')
+                    {
+                        y[cur] = (y[cur] - 1) % sb;
+                        if (y[cur] < 0)
+                            y[cur] += sb;
+                    }
+                    else if (ch == 'w')
+                    {
+                        y[cur] = (y[cur] + 1) % sb;
+                    }
+                    else if (ch == 'a')
+                    {
+                        x[cur] = (x[cur] - 1) % sb;
+                        if (x[cur] < 0)
+                            x[cur] += sb;
+                    }
+                    else if (ch == 'r')
+                    {
+                        cls();
+                    }
+                    else if (ch == 'b')
+                    {
+                        cls();
+                        while (1)
                         {
-                            count_b = 1;
+                            rule();
+                            char key = getkey();
+                            if (key == 'e')
+                            {
+                                cls();
+                                break;
+                            }
                         }
-                        else if (p.is_king == 1)
+                    }
+                    else if (ch == 'u')
+                    {
+                        c_state = undo(head);
+                        if (bot_mode != -1)
+                            c_state = undo(head);
+                        break;
+                    }
+                    else if (ch == 'N')
+                    {
+                        restart(head);
+                    }
+                    else if (ch == 'H')
+                    {
+                        cls();
+                        while (1)
                         {
-                            if (capturePossible(&c_state, p, bottomLeft) || capturePossible(&c_state, p, bottomRight))
-                                count_b = 1;
+                            instruction();
+                            char key = getkey();
+                            if (key == 'e')
+                            {
+                                cls();
+                                break;
+                            }
                         }
-
-                        if (!move_entries(&c_state, p, x[1], y[1]))
+                    }
+                    else if (ch == 'Q')
+                    {
+                        Quit(head);
+                    }
+                    else if (ch == 'R')
+                    {
+                        review(head);
+                    }
+                    else if (ch == 'k')
+                    {
+                        printf("Enter 'k' (# next state you want to print)\n");
+                        int k;
+                        scanf("%d", &k);
+                        print_k_state(c_state, k);
+                    }
+                    else if (ch == KEY_SPACE)
+                    {
+                        if (cur == 0)
                         {
-                            continue;
+                            int flag = -1;
+                            for (int i = 0; i < tp; ++i)
+                            {
+                                if (x[0] == c_state.white[i].x && y[0] == c_state.white[i].y)
+                                {
+                                    flag = i;
+                                    x[1] = x[0];
+                                    y[1] = y[0];
+                                    p = c_state.white[i];
+                                    break;
+                                }
+                            }
+                            if (flag == -1)
+                                continue;
+                            cur++;
                         }
                         else
                         {
-                            cur--;
-                            x[0] = x[1];
-                            y[0] = y[1];
-                            x[1] = -1;
-                            y[1] = -1;
-                            int flag2 = 0;
-                            if (count_b == 1)
+                            if (x[1] == x[0] && y[0] == y[1])
                             {
-                                for (int i = 0; i < tp; i++)
+                                cur--;
+                                x[1] = -1;
+                                y[1] = -1;
+                                continue;
+                            }
+
+                            pawn n;
+                            n.x = x[1];
+                            n.y = y[1];
+                            int count_b = 0;
+                            if (capturePossible(&c_state, p, topLeft) || capturePossible(&c_state, p, topRight))
+                            {
+                                count_b = 1;
+                            }
+                            else if (p.is_king == 1)
+                            {
+                                if (capturePossible(&c_state, p, bottomLeft) || capturePossible(&c_state, p, bottomRight))
+                                    count_b = 1;
+                            }
+
+                            if (!move_entries(&c_state, p, x[1], y[1]))
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                cur--;
+                                x[0] = x[1];
+                                y[0] = y[1];
+                                x[1] = -1;
+                                y[1] = -1;
+                                int flag2 = 0;
+                                if (count_b == 1)
                                 {
-                                    if (capturePossible(&c_state, c_state.white[i], topLeft) || capturePossible(&c_state, c_state.white[i], topRight))
+                                    for (int i = 0; i < tp; i++)
                                     {
-                                        flag2 = 1;
-                                        push(head, &c_state);
-                                        break;
-                                    }
-                                    else if (c_state.white[i].is_king == 1)
-                                    {
-                                        if (capturePossible(&c_state, c_state.white[i], bottomLeft) || capturePossible(&c_state, c_state.white[i], bottomRight))
+                                        if (capturePossible(&c_state, c_state.white[i], topLeft) || capturePossible(&c_state, c_state.white[i], topRight))
                                         {
                                             flag2 = 1;
                                             push(head, &c_state);
                                             break;
                                         }
+                                        else if (c_state.white[i].is_king == 1)
+                                        {
+                                            if (capturePossible(&c_state, c_state.white[i], bottomLeft) || capturePossible(&c_state, c_state.white[i], bottomRight))
+                                            {
+                                                flag2 = 1;
+                                                push(head, &c_state);
+                                                break;
+                                            }
+                                        }
                                     }
+                                    count_b = 0;
                                 }
-                                count_b = 0;
-                            }
-                            if (flag2 == 1)
-                            {
-                                flag2 = 0;
-                                continue;
-                            }
+                                if (flag2 == 1)
+                                {
+                                    flag2 = 0;
+                                    continue;
+                                }
 
-                            c_state.cur_turn = colorFlip(c_state.cur_turn);
-                            push(head, &c_state);
-                            break;
+                                c_state.cur_turn = colorFlip(c_state.cur_turn);
+                                push(head, &c_state);
+                                break;
+                            }
                         }
                     }
                 }
@@ -2237,6 +2574,7 @@ void push(log *head, game_state *preState)
     }
     else
     {
+        //      assert(0); // should never happen now
         S->next = head->next;
         head->next = S;
         S->prev = head;
