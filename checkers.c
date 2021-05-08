@@ -2261,6 +2261,31 @@ void controller(log *head)
                         if (x[cur] < 0)
                             x[cur] += sb;
                     }
+                    else if (ch == 'm')
+                    {
+                        char a;
+                        printf("Do you want to draw the game ? [y/N] ");
+                        a = getkey();
+                        if (a == 'y' || a == 'Y')
+                        {
+                            printf("Match has been drawed\n");
+                            printf("Do you want to Review the game? [y/N]\n");
+                            while (1)
+                            {
+                                char key = getkey();
+                                if (key == 'y' || key == 'Y')
+                                {
+                                    review(head);
+                                }
+                                else if (key == 'n' || key == 'N')
+                                {
+                                    clear_stack(head);
+                                    cls();
+                                    exit(0);
+                                }
+                            }
+                        }
+                    }
                     else if (ch == 'k')
                     {
                         int x;
@@ -2528,6 +2553,31 @@ void controller(log *head)
                         x[cur] = (x[cur] - 1) % sb;
                         if (x[cur] < 0)
                             x[cur] += sb;
+                    }
+                    else if (ch == 'm')
+                    {
+                        char a;
+                        printf("Do you want to draw the game ? [y/N] ");
+                        a = getkey();
+                        if (a == 'y' || a == 'Y')
+                        {
+                            printf("Match has been drawed\n");
+                            printf("Do you want to Review the game? [y/N]\n");
+                            while (1)
+                            {
+                                char key = getkey();
+                                if (key == 'y' || key == 'Y')
+                                {
+                                    review(head);
+                                }
+                                else if (key == 'n' || key == 'N')
+                                {
+                                    clear_stack(head);
+                                    cls();
+                                    exit(0);
+                                }
+                            }
+                        }
                     }
                     else if (ch == 'k')
                     {

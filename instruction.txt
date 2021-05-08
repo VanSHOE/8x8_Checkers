@@ -16,6 +16,7 @@ R        -> to review
 Q        -> to Quit the game
 N        -> to restart
 H        -> To see these INSTRUCTIONs
+m        -> draw 
 
 How to play:
 
