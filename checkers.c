@@ -779,7 +779,7 @@ void botw()
     int prob = rand() % 100 + 1;
     if (difficulty == 0)
     {
-        if (prob <= 80)
+        if (prob <= 95)
         {
             k = 0;
         }
@@ -788,11 +788,11 @@ void botw()
     }
     else if (difficulty == 1)
     {
-        if (prob <= 60)
+        if (prob <= 80)
         {
             k = 0;
         }
-        else if (prob <= 85)
+        else if (prob <= 98)
         {
             k = 1;
         }
@@ -801,11 +801,11 @@ void botw()
     }
     else
     {
-        if (prob <= 50)
+        if (prob <= 70)
         {
             k = 0;
         }
-        else if (prob <= 85)
+        else if (prob <= 95)
         {
             k = 1;
         }
