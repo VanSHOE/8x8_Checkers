@@ -1402,6 +1402,7 @@ bool move_entries(game_state *g, pawn P, int horizontal, int vertical)
 void menu(log *head)
 {
     int option = 0;
+    cls();
     while (1)
     {
         locate(1, 1);
