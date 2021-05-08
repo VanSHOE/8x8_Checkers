@@ -1,10 +1,9 @@
-8x8 Checkers project by Team 34
-Alphabetically - Hardik, Mayank, Nachiket, Rahul, Sukhjinder
+# 8x8 Checkers project by Team 34
+### Alphabetically - Hardik, Mayank, Nachiket, Rahul, Sukhjinder
 
 
 
-External Libraries used
-rlutil: https://github.com/tapio/rlutil
+
 
 
 The game can be compiled simply by cloning the git repo and running gcc checkers.c with additional parameters if desired
@@ -23,3 +22,9 @@ At any point in time, the user can see the instructions to use several of the av
 
 Note- The undo function while reverses a single move in 2 player mode, it will go back to the last player-made move when it comes to singleplayer 
 That is it on how to run and play this game, have fun :)
+
+
+
+
+#### External Libraries used
+rlutil: https://github.com/tapio/rlutil
