@@ -1,0 +1,48 @@
+            for (int j = 0; j < 4; j++)
+            {
+                game_state board_next = p;
+                bool fl = false;
+
+                switch (j + 1)
+                {
+                case topRight:
+                    if (p.white[i].is_king)
+                    {
+                        fl = move_entries(&board_next, p.white[i], p.white[i].x + 2, p.white[i].y + 2);
+                        if (!fl)
+                            fl = move_entries(&board_next, p.white[i], p.white[i].x + 1, p.white[i].y + 1);
+                    }
+                    break;
+                case bottomRight:
+                    fl = move_entries(&board_next, p.white[i], p.white[i].x + 2, p.white[i].y - 2);
+                    if (!fl)
+                        fl = move_entries(&board_next, p.white[i], p.white[i].x + 1, p.white[i].y - 1);
+                case topLeft:
+                    if (p.white[i].is_king)
+                    {
+                        fl = move_entries(&board_next, p.white[i], p.white[i].x - 2, p.white[i].y + 2);
+                        if (!fl)
+                            fl = move_entries(&board_next, p.white[i], p.white[i].x - 1, p.white[i].y + 1);
+                    }
+                    break;
+                case bottomLeft:
+                    fl = move_entries(&board_next, p.white[i], p.white[i].x - 2, p.white[i].y - 2));
+                    if (!fl)
+                        fl = move_entries(&board_next, p.white[i], p.white[i].x - 1, p.white[i].y - 1);
+                    break;
+                }
+
+                current->array[i][j] = (node *)malloc(sizeof(node));
+                current->array[i][j]->prev_board = current;
+
+                // if some change is there...
+                if (fl)
+                {
+                    board_next.cur_turn = colorFlip(board_next.cur_turn);
+                    current->array[i][j]->board = board_next;
+                }
+
+                if (current->array[i][j] != NULL)
+                {
+                    print_k_state(current->array[i][j]->board, k);
+                }

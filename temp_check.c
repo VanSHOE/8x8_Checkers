@@ -9,56 +9,6 @@
 #include <stdbool.h>
 #include <assert.h>
 int lim = 4;
-typedef struct he
-{
-    int index;
-    ll d;
-} he;
-
-he heap[10000007];
-ll size = 0;
-
-void siftup(int index)
-{
-    if (index == 0)
-        return;
-    if (heap[(index - 1) / 2].d < heap[index].d)
-    {
-        he temp = heap[index];
-        heap[index] = heap[(index - 1) / 2];
-        heap[(index - 1) / 2] = temp;
-        siftup((index - 1) / 2);
-    }
-}
-void DownHeap(int index)
-{
-    int w1 = 2 * index + 1;
-    if (w1 >= size)
-        return;
-
-    if (w1 + 1 < size)
-        if (heap[w1].d < heap[w1 + 1].d)
-            w1++;
-
-    if (heap[index].d >= heap[w1].d)
-        return;
-    he temp = heap[w1];
-    heap[w1] = heap[index];
-    heap[index] = temp;
-    DownHeap(w1);
-}
-void insert(he elem)
-{
-    heap[size++] = elem;
-    siftup(size - 1);
-}
-he Extract_min()
-{
-    he ans = heap[0];
-    heap[0] = heap[--size];
-    DownHeap(0);
-    return ans;
-}
 
 long double bot_helperb(game_state g_o, int lim)
 {
@@ -255,147 +205,71 @@ void botb()
         }
     }
     int mi = 0;
-
-    for (int i = 0; i < 4 * tp; i++)
+    for (int i = 1; i < 4 * tp; i++)
     {
-        he q;
-        int pc_i = i / 4;
-        q.index = i;
-        q.d = scores[i];
-        pawn n;
-        int flag = 0;
-        switch (i % 4)
+        if (scores[mi] < scores[i])
+        {
+            mi = i;
+        }
+    }
+
+    printf("Moving %d", mi);
+    int flag = 0;
+    while (!flag)
+    {
+        int pc_i = mi / 4;
+        switch (mi % 4)
         {
         case 0:
-            n.x = c_state.black[pc_i].x + 1;
-            n.y = c_state.black[pc_i].y + 1;
-            if (!isLegal(c_state.black[pc_i], n, &c_state))
+            if (!move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x + 1, c_state.black[pc_i].y + 1))
             {
-                n.x = c_state.black[pc_i].x + 2;
-                n.y = c_state.black[pc_i].y + 2;
-                if (isLegal(c_state.black[pc_i], n, &c_state))
+                if (move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x + 2, c_state.black[pc_i].y + 2))
                     flag = 1;
             }
             else
                 flag = 1;
             break;
         case 1:
-            n.x = c_state.black[pc_i].x + 1;
-            n.y = c_state.black[pc_i].y - 1;
-            if (!isLegal(c_state.black[pc_i], n, &c_state))
+            if (!move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x + 1, c_state.black[pc_i].y - 1))
             {
-                n.x = c_state.black[pc_i].x + 2;
-                n.y = c_state.black[pc_i].y - 2;
-                if (isLegal(c_state.black[pc_i], n, &c_state))
+                if (move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x + 2, c_state.black[pc_i].y - 2))
                     flag = 1;
             }
             else
                 flag = 1;
             break;
         case 2:
-            n.x = c_state.black[pc_i].x - 1;
-            n.y = c_state.black[pc_i].y - 1;
-            if (!isLegal(c_state.black[pc_i], n, &c_state))
+            if (!move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x - 1, c_state.black[pc_i].y - 1))
             {
-                n.x = c_state.black[pc_i].x - 2;
-                n.y = c_state.black[pc_i].y - 2;
-                if (isLegal(c_state.black[pc_i], n, &c_state))
+                if (move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x - 2, c_state.black[pc_i].y - 2))
                     flag = 1;
             }
             else
                 flag = 1;
             break;
         case 3:
-            n.x = c_state.black[pc_i].x - 1;
-            n.y = c_state.black[pc_i].y + 1;
-            if (!isLegal(c_state.black[pc_i], n, &c_state))
+            if (!move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x - 1, c_state.black[pc_i].y + 1))
             {
-                n.x = c_state.black[pc_i].x - 2;
-                n.y = c_state.black[pc_i].y + 2;
-                if (isLegal(c_state.black[pc_i], n, &c_state))
+                if (move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x - 2, c_state.black[pc_i].y + 2))
                     flag = 1;
             }
             else
                 flag = 1;
             break;
         }
-        if (flag)
-            insert(q);
+        if (flag == 0)
+        {
+            scores[mi] = -9999999999999;
+        }
+        mi = 0;
+        for (int i = 1; i < 48; i++)
+        {
+            if (scores[mi] < scores[i])
+            {
+                mi = i;
+            }
+        }
     }
-
-    int prob = rand()%100 + 1;
-    int k;
-    if(difficulty == 0)
-    {
-        if(prob<=80)
-        {
-            k = 0;
-        }
-        else k = 1;
-    }
-    else if (difficulty == 1)
-    {
-        if(prob<=60)
-        {
-            k = 0;
-        }
-        else if(prob<=85)
-        {
-            k = 1;
-        }
-        else k = 2;
-    }
-    else
-    {
-        if(prob<=50)
-        {
-            k = 0;
-        }
-        else if(prob<=85)
-        {
-            k = 1;
-        }
-        else k = 2;
-    }
-    if (k >= size)
-    {
-        k = size - 1;
-    }
-    while (k--)
-        Extract_min();
-    mi = heap[0].index;
-    int pc_i = mi / 4;
-    printf("Moving %d", mi);
-
-    switch (mi % 4)
-    {
-    case 0:
-        if (!move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x + 1, c_state.black[pc_i].y + 1))
-        {
-            move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x + 2, c_state.black[pc_i].y + 2);
-        }
-        break;
-    case 1:
-        if (!move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x + 1, c_state.black[pc_i].y - 1))
-        {
-            move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x + 2, c_state.black[pc_i].y - 2);
-        };
-        break;
-    case 2:
-        if (!move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x - 1, c_state.black[pc_i].y - 1))
-        {
-            move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x - 2, c_state.black[pc_i].y - 2);
-        }
-
-        break;
-    case 3:
-        if (!move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x - 1, c_state.black[pc_i].y + 1))
-        {
-            move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x - 2, c_state.black[pc_i].y + 2);
-        }
-        break;
-    }
-    size = 0;
     free(scores);
 }
 long double bot_helperw(game_state g_o, int lim)
@@ -593,147 +467,72 @@ void botw()
         }
     }
     int mi = 0;
-
-    for (int i = 0; i < 4 * tp; i++)
+    for (int i = 1; i < 4 * tp; i++)
     {
-        he q;
-        int pc_i = i / 4;
-        q.index = i;
-        q.d = scores[i];
-        pawn n;
-        int flag = 0;
-        switch (i % 4)
+        if (scores[mi] < scores[i])
+        {
+            mi = i;
+        }
+    }
+
+    printf("Moving %d", mi);
+    int flag = 0;
+    while (!flag)
+    {
+        int pc_i = mi / 4;
+        switch (mi % 4)
         {
         case 0:
-            n.x = c_state.white[pc_i].x + 1;
-            n.y = c_state.white[pc_i].y + 1;
-            if (!isLegal(c_state.white[pc_i], n, &c_state))
+            if (!move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x + 1, c_state.white[pc_i].y + 1))
             {
-                n.x = c_state.white[pc_i].x + 2;
-                n.y = c_state.white[pc_i].y + 2;
-                if (isLegal(c_state.white[pc_i], n, &c_state))
+                if (move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x + 2, c_state.white[pc_i].y + 2))
                     flag = 1;
             }
             else
                 flag = 1;
             break;
         case 1:
-            n.x = c_state.white[pc_i].x + 1;
-            n.y = c_state.white[pc_i].y - 1;
-            if (!isLegal(c_state.white[pc_i], n, &c_state))
+            if (!move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x + 1, c_state.white[pc_i].y - 1))
             {
-                n.x = c_state.white[pc_i].x + 2;
-                n.y = c_state.white[pc_i].y - 2;
-                if (isLegal(c_state.white[pc_i], n, &c_state))
+                if (move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x + 2, c_state.white[pc_i].y - 2))
                     flag = 1;
             }
             else
                 flag = 1;
             break;
         case 2:
-            n.x = c_state.white[pc_i].x - 1;
-            n.y = c_state.white[pc_i].y - 1;
-            if (!isLegal(c_state.white[pc_i], n, &c_state))
+            if (!move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x - 1, c_state.white[pc_i].y - 1))
             {
-                n.x = c_state.white[pc_i].x - 2;
-                n.y = c_state.white[pc_i].y - 2;
-                if (isLegal(c_state.white[pc_i], n, &c_state))
+                if (move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x - 2, c_state.white[pc_i].y - 2))
                     flag = 1;
             }
             else
                 flag = 1;
             break;
         case 3:
-            n.x = c_state.white[pc_i].x - 1;
-            n.y = c_state.white[pc_i].y + 1;
-            if (!isLegal(c_state.white[pc_i], n, &c_state))
+            if (!move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x - 1, c_state.white[pc_i].y + 1))
             {
-                n.x = c_state.white[pc_i].x - 2;
-                n.y = c_state.white[pc_i].y + 2;
-                if (isLegal(c_state.white[pc_i], n, &c_state))
+                if (move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x - 2, c_state.white[pc_i].y + 2))
                     flag = 1;
             }
             else
                 flag = 1;
             break;
         }
-        if (flag)
-            insert(q);
+        if (flag == 0)
+        {
+            scores[mi] = -9999999999999;
+        }
+        mi = 0;
+        for (int i = 1; i < 48; i++)
+        {
+            if (scores[mi] < scores[i])
+            {
+                mi = i;
+            }
+        }
     }
-    int k;
-    int prob = rand()%100 + 1;
-    if(difficulty == 0)
-    {
-        if(prob<=80)
-        {
-            k = 0;
-        }
-        else k = 1;
-    }
-    else if (difficulty == 1)
-    {
-        if(prob<=60)
-        {
-            k = 0;
-        }
-        else if(prob<=85)
-        {
-            k = 1;
-        }
-        else k = 2;
-    }
-    else
-    {
-        if(prob<=50)
-        {
-            k = 0;
-        }
-        else if(prob<=85)
-        {
-            k = 1;
-        }
-        else k = 2;
-    }
-    if (k >= size)
-    {
-        k = size - 1;
-    }
-    while (k--)
-        Extract_min();
-    mi = heap[0].index;
-    printf("Moving %d", mi);
-    int pc_i = mi / 4;
-    switch (mi % 4)
-    {
-    case 0:
-        if (!move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x + 1, c_state.white[pc_i].y + 1))
-        {
-            move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x + 2, c_state.white[pc_i].y + 2);
-        }
-        break;
-    case 1:
-        if (!move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x + 1, c_state.white[pc_i].y - 1))
-        {
-            move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x + 2, c_state.white[pc_i].y - 2);
-        };
-        break;
-    case 2:
-        if (!move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x - 1, c_state.white[pc_i].y - 1))
-        {
-            move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x - 2, c_state.white[pc_i].y - 2);
-        }
-
-        break;
-    case 3:
-        if (!move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x - 1, c_state.white[pc_i].y + 1))
-        {
-            move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x - 2, c_state.white[pc_i].y + 2);
-        }
-        break;
-    }
-
     free(scores);
-    size = 0;
 }
 game_state play_capture_move(game_state g, pawn p, int direction)
 {
@@ -960,18 +759,6 @@ void print_k_state(game_state p, int k)
     point_to_null(root);
 
     filling_node(root, p, k - 1);
-
-    // for (int i = 0; i < tp; i++)
-    // {
-    //     for (int j = 0; j < 4; j++)
-    //     {
-    //         if (root->array[i][j] != NULL) //  not equal to null means that a move is possible in this dirn
-    //         {
-    //             printf("%d %d %d\n" , i , j , k-1);
-    //             print_k_state(root->array[i][j]->board, k - 1);
-    //         }
-    //     }
-    // }
 }
 // #define topRight 1
 // #define bottomRight 2
@@ -988,195 +775,64 @@ void filling_node(node *current, game_state p, int k) // takes a node , find whi
             if (!is_present(&p, p.black[i]))
                 continue;
             // taking j  0 -> top left/ 1 -> top right / 2 -> left bottom / 3 -> right bottom
-            for (int j = 0; j < 4; j++) // selecting if that piece can move in that dirn or not
+            for (int j = 0; j < 4; j++)
             {
-                // first checking if this piece is king or not
-                if (p.black[i].is_king == true) // have to check all 4 directions
-                {
-                    if (j == 0)
-                    {
-                        //checking if simple move is poosible in this direction
-                        if (simple_Move_Possible(&p, p.black[i], topLeft))
-                        {
-                            // finding the board after the move is made
-                            game_state board_next = p;
-                            bool tmp = move_entries(&board_next, p.black[i], p.black[i].x - 1, p.black[i].y + 1);
-                            board_next.cur_turn = colorFlip(board_next.cur_turn);
+                game_state board_next = p;
+                bool fl = false;
 
-                            //allocating memory
-                            current->array[i][j] = (node *)malloc(sizeof(node));
-                            //current->array[i][j]->next_board = NULL;
-                            current->array[i][j]->prev_board = current;
-                            current->array[i][j]->board = board_next;
-                            //current->array[i][j]->depth = current->depth + 1; // have to conform  ************************
-                        }
-                        //else we will check if capturing another color piece is possible in that direction
-                        else if (capturePossible(&p, p.black[i], topLeft))
-                        {
-                            game_state board_next = p;
-                            bool tmp = move_entries(&board_next, p.black[i], p.black[i].x - 2, p.black[i].y + 2);
-                            board_next.cur_turn = colorFlip(board_next.cur_turn);
-                            current->array[i][j] = (node *)malloc(sizeof(node));
-                            current->array[i][j]->next_board = NULL;
-                            current->array[i][j]->prev_board = current;
-                            current->array[i][j]->board = board_next;
-                            current->array[i][j]->depth = current->depth + 1; // have to conform  ************************
-                        }
-                    }
-                    else if (j == 1)
-                    {
-                        //checking if simple move is poosible in this direction
-                        if (simple_Move_Possible(&p, p.black[i], topRight))
-                        {
-                            // finding the board after the move is made
-                            game_state board_next = p;
-                            bool tmp = move_entries(&board_next, p.black[i], p.black[i].x + 1, p.black[i].y + 1);
-                            board_next.cur_turn = colorFlip(board_next.cur_turn);
-                            //allocating memory
-                            current->array[i][j] = (node *)malloc(sizeof(node));
-                            current->array[i][j]->next_board = NULL;
-                            current->array[i][j]->prev_board = current;
-                            current->array[i][j]->board = board_next;
-                            current->array[i][j]->depth = current->depth + 1; // have to conform  ************************
-                        }
-                        //else we will check if capturing another color piece is possible in that direction
-                        else if (capturePossible(&p, p.black[i], topRight))
-                        {
-                            game_state board_next = p;
-                            bool tmp = move_entries(&board_next, p.black[i], p.black[i].x + 2, p.black[i].y + 2);
-                            board_next.cur_turn = colorFlip(board_next.cur_turn);
-                            current->array[i][j] = (node *)malloc(sizeof(node));
-                            current->array[i][j]->next_board = NULL;
-                            current->array[i][j]->prev_board = current;
-                            current->array[i][j]->board = board_next;
-                            current->array[i][j]->depth = current->depth + 1; // have to conform  ************************
-                        }
-                    }
-                    else if (j == 2)
-                    {
-                        //checking if simple move is poosible in this direction
-                        if (simple_Move_Possible(&p, p.black[i], bottomLeft))
-                        {
-                            // finding the board after the move is made
-                            game_state board_next = p;
-                            bool tmp = move_entries(&board_next, p.black[i], p.black[i].x - 1, p.black[i].y - 1);
-                            board_next.cur_turn = colorFlip(board_next.cur_turn);
-                            //allocating memory
-                            current->array[i][j] = (node *)malloc(sizeof(node));
-                            current->array[i][j]->next_board = NULL;
-                            current->array[i][j]->prev_board = current;
-                            current->array[i][j]->board = board_next;
-                            current->array[i][j]->depth = current->depth + 1; // have to conform  ************************
-                        }
-                        //else we will check if capturing another color piece is possible in that direction
-                        else if (capturePossible(&p, p.black[i], bottomLeft))
-                        {
-                            game_state board_next = p;
-                            bool tmp = move_entries(&board_next, p.black[i], p.black[i].x - 2, p.black[i].y - 2);
-                            board_next.cur_turn = colorFlip(board_next.cur_turn);
-                            current->array[i][j] = (node *)malloc(sizeof(node));
-                            current->array[i][j]->next_board = NULL;
-                            current->array[i][j]->prev_board = current;
-                            current->array[i][j]->board = board_next;
-                            current->array[i][j]->depth = current->depth + 1; // have to conform  ************************
-                        }
-                    }
-                    else if (j == 3)
-                    {
-                        //checking if simple move is poosible in this direction
-                        if (simple_Move_Possible(&p, p.black[i], bottomRight))
-                        {
-                            // finding the board after the move is made
-                            game_state board_next = p;
-                            bool tmp = move_entries(&board_next, p.black[i], p.black[i].x + 1, p.black[i].y - 1);
-                            board_next.cur_turn = colorFlip(board_next.cur_turn);
-                            //allocating memory
-                            current->array[i][j] = (node *)malloc(sizeof(node));
-                            current->array[i][j]->next_board = NULL;
-                            current->array[i][j]->prev_board = current;
-                            current->array[i][j]->board = board_next;
-                            current->array[i][j]->depth = current->depth + 1; // have to conform  ************************
-                        }
-                        //else we will check if capturing another color piece is possible in that direction
-                        else if (capturePossible(&p, p.black[i], bottomRight))
-                        {
-                            game_state board_next = p;
-                            bool tmp = move_entries(&board_next, p.black[i], p.black[i].x + 2, p.black[i].y - 2);
-                            board_next.cur_turn = colorFlip(board_next.cur_turn);
-                            current->array[i][j] = (node *)malloc(sizeof(node));
-                            current->array[i][j]->next_board = NULL;
-                            current->array[i][j]->prev_board = current;
-                            current->array[i][j]->board = board_next;
-                            current->array[i][j]->depth = current->depth + 1; // have to conform  ************************
-                        }
-                    }
-                }
-                else // have to check only bottomLeft and bottomRight only
+                switch (j + 1)
                 {
-                    if (j == 2)
+                case topRight:
+                    if (p.black[i].is_king)
                     {
-                        //checking if simple move is poosible in this direction
-                        if (simple_Move_Possible(&p, p.black[i], bottomLeft))
-                        {
-                            // finding the board after the move is made
-                            game_state board_next = p;
-                            bool tmp = move_entries(&board_next, p.black[i], p.black[i].x - 1, p.black[i].y - 1);
-                            board_next.cur_turn = colorFlip(board_next.cur_turn);
-                            //allocating memory
-                            current->array[i][j] = (node *)malloc(sizeof(node));
-                            current->array[i][j]->next_board = NULL;
-                            current->array[i][j]->prev_board = current;
-                            current->array[i][j]->board = board_next;
-                            current->array[i][j]->depth = current->depth + 1; // have to conform  ************************
-                        }
-                        //else we will check if capturing another color piece is possible in that direction
-                        else if (capturePossible(&p, p.black[i], bottomLeft))
-                        {
-                            game_state board_next = p;
-                            bool tmp = move_entries(&board_next, p.black[i], p.black[i].x - 2, p.black[i].y - 2);
-                            board_next.cur_turn = colorFlip(board_next.cur_turn);
-                            current->array[i][j] = (node *)malloc(sizeof(node));
-                            current->array[i][j]->next_board = NULL;
-                            current->array[i][j]->prev_board = current;
-                            current->array[i][j]->board = board_next;
-                            current->array[i][j]->depth = current->depth + 1; // have to conform  ************************
-                        }
+                        fl = move_entries(&board_next, p.black[i], p.black[i].x + 2, p.black[i].y + 2);
+                        if (!fl)
+                            fl = move_entries(&board_next, p.black[i], p.black[i].x + 1, p.black[i].y + 1);
                     }
-                    else if (j == 3)
+                    break;
+                case bottomRight:
+                    fl = move_entries(&board_next, p.black[i], p.black[i].x + 2, p.black[i].y - 2);
+                    if (!fl)
+                        fl = move_entries(&board_next, p.black[i], p.black[i].x + 1, p.black[i].y - 1);
+                    break;
+                case topLeft:
+                    if (p.black[i].is_king)
                     {
-                        //checking if simple move is poosible in this direction
-                        if (simple_Move_Possible(&p, p.black[i], bottomRight))
-                        {
-                            // finding the board after the move is made
-                            game_state board_next = p;
-                            bool tmp = move_entries(&board_next, p.black[i], p.black[i].x + 1, p.black[i].y - 1);
-                            board_next.cur_turn = colorFlip(board_next.cur_turn);
-                            //allocating memory
-                            current->array[i][j] = (node *)malloc(sizeof(node));
-                            current->array[i][j]->next_board = NULL;
-                            current->array[i][j]->prev_board = current;
-                            current->array[i][j]->board = board_next;
-                            current->array[i][j]->depth = current->depth + 1; // have to conform  ************************
-                        }
-                        //else we will check if capturing another color piece is possible in that direction
-                        else if (capturePossible(&p, p.black[i], bottomRight))
-                        {
-                            game_state board_next = p;
-                            bool tmp = move_entries(&board_next, p.black[i], p.black[i].x + 2, p.black[i].y - 2);
-                            board_next.cur_turn = colorFlip(board_next.cur_turn);
-                            current->array[i][j] = (node *)malloc(sizeof(node));
-                            current->array[i][j]->next_board = NULL;
-                            current->array[i][j]->prev_board = current;
-                            current->array[i][j]->board = board_next;
-                            current->array[i][j]->depth = current->depth + 1; // have to conform  ************************
-                        }
+                        fl = move_entries(&board_next, p.black[i], p.black[i].x - 2, p.black[i].y + 2);
+                        if (!fl)
+                            fl = move_entries(&board_next, p.black[i], p.black[i].x - 1, p.black[i].y + 1);
                     }
+                    break;
+                case bottomLeft:
+                    fl = move_entries(&board_next, p.black[i], p.black[i].x - 2, p.black[i].y - 2);
+                    if (!fl)
+                        fl = move_entries(&board_next, p.black[i], p.black[i].x - 1, p.black[i].y - 1);
+                    break;
+                }
+
+                current->array[i][j] = (node *)malloc(sizeof(node));
+                current->array[i][j]->prev_board = current;
+
+                // if some change is there...
+                if (fl)
+                {
+                    board_next.cur_turn = colorFlip(board_next.cur_turn);
+                    current->array[i][j]->board = board_next;
                 }
 
                 if (current->array[i][j] != NULL)
                 {
-                    // printf("%d %d %d\n", i, j, current->array[i][j]->board.cur_turn);
                     print_k_state(current->array[i][j]->board, k);
+                }
+            }
+            printf("press 'e' to Resume\n");
+            while (1)
+            {
+                char ch = getkey();
+                if (ch == 'e')
+                {
+                    cls();
+                    return;
                 }
             }
         }
@@ -1189,195 +845,167 @@ void filling_node(node *current, game_state p, int k) // takes a node , find whi
             if (!is_present(&p, p.white[i]))
                 continue;
             // taking j  0 -> top left/ 1 -> top right / 2 -> left bottom / 3 -> right bottom
-            for (int j = 0; j < 4; j++) // selecting if that piece can move in that dirn or not
+            for (int j = 0; j < 4; j++)
             {
-                // first checking if this piece is king or not
-                if (p.white[i].is_king == true) // have to check all 4 directions
+                game_state board_next = p;
+                bool fl = false;
+
+                switch (j + 1)
                 {
-                    if (j == 0)
+                case topRight:
+                    fl = move_entries(&board_next, p.white[i], p.white[i].x + 2, p.white[i].y + 2);
+                    if (!fl)
+                        fl = move_entries(&board_next, p.white[i], p.white[i].x + 1, p.white[i].y + 1);
+
+                    break;
+                case bottomRight:
+                    if (p.white[i].is_king)
                     {
-                        //checking if simple move is poosible in this direction
-                        if (simple_Move_Possible(&p, p.white[i], topLeft))
-                        {
-                            // finding the board after the move is made
-                            game_state board_next = p;
-                            bool tmp = move_entries(&board_next, p.white[i], p.white[i].x - 1, p.white[i].y + 1);
-                            board_next.cur_turn = colorFlip(board_next.cur_turn);
-                            //allocating memory
-                            current->array[i][j] = (node *)malloc(sizeof(node));
-                            current->array[i][j]->next_board = NULL;
-                            current->array[i][j]->prev_board = current;
-                            current->array[i][j]->board = board_next;
-                        }
-                        //else we will check if capturing another color piece is possible in that direction
-                        else if (capturePossible(&p, p.white[i], topLeft))
-                        {
-                            game_state board_next = p;
-                            bool tmp = move_entries(&board_next, p.white[i], p.white[i].x - 2, p.white[i].y + 2);
-                            board_next.cur_turn = colorFlip(board_next.cur_turn);
-                            current->array[i][j] = (node *)malloc(sizeof(node));
-                            current->array[i][j]->next_board = NULL;
-                            current->array[i][j]->prev_board = current;
-                            current->array[i][j]->board = board_next;
-                        }
+                        fl = move_entries(&board_next, p.white[i], p.white[i].x + 2, p.white[i].y - 2);
+                        if (!fl)
+                            fl = move_entries(&board_next, p.white[i], p.white[i].x + 1, p.white[i].y - 1);
                     }
-                    else if (j == 1)
+                    break;
+                case topLeft:
+                    fl = move_entries(&board_next, p.white[i], p.white[i].x - 2, p.white[i].y + 2);
+                    if (!fl)
+                        fl = move_entries(&board_next, p.white[i], p.white[i].x - 1, p.white[i].y + 1);
+
+                    break;
+                case bottomLeft:
+                    if (p.white[i].is_king)
                     {
-                        //checking if simple move is poosible in this direction
-                        if (simple_Move_Possible(&p, p.white[i], topRight))
-                        {
-                            // finding the board after the move is made
-                            game_state board_next = p;
-                            bool tmp = move_entries(&board_next, p.white[i], p.white[i].x + 1, p.white[i].y + 1);
-                            board_next.cur_turn = colorFlip(board_next.cur_turn);
-                            //allocating memory
-                            current->array[i][j] = (node *)malloc(sizeof(node));
-                            current->array[i][j]->next_board = NULL;
-                            current->array[i][j]->prev_board = current;
-                            current->array[i][j]->board = board_next;
-                        }
-                        //else we will check if capturing another color piece is possible in that direction
-                        else if (capturePossible(&p, p.white[i], topRight))
-                        {
-                            game_state board_next = p;
-                            bool tmp = move_entries(&board_next, p.white[i], p.white[i].x + 2, p.white[i].y + 2);
-                            board_next.cur_turn = colorFlip(board_next.cur_turn);
-                            current->array[i][j] = (node *)malloc(sizeof(node));
-                            current->array[i][j]->next_board = NULL;
-                            current->array[i][j]->prev_board = current;
-                            current->array[i][j]->board = board_next;
-                        }
+                        fl = move_entries(&board_next, p.white[i], p.white[i].x - 2, p.white[i].y - 2);
+                        if (!fl)
+                            fl = move_entries(&board_next, p.white[i], p.white[i].x - 1, p.white[i].y - 1);
                     }
-                    else if (j == 2)
-                    {
-                        //checking if simple move is poosible in this direction
-                        if (simple_Move_Possible(&p, p.white[i], bottomLeft))
-                        {
-                            // finding the board after the move is made
-                            game_state board_next = p;
-                            bool tmp = move_entries(&board_next, p.white[i], p.white[i].x - 1, p.white[i].y - 1);
-                            board_next.cur_turn = colorFlip(board_next.cur_turn);
-                            //allocating memory
-                            current->array[i][j] = (node *)malloc(sizeof(node));
-                            current->array[i][j]->next_board = NULL;
-                            current->array[i][j]->prev_board = current;
-                            current->array[i][j]->board = board_next;
-                        }
-                        //else we will check if capturing another color piece is possible in that direction
-                        else if (capturePossible(&p, p.white[i], bottomLeft))
-                        {
-                            game_state board_next = p;
-                            bool tmp = move_entries(&board_next, p.white[i], p.white[i].x - 2, p.white[i].y - 2);
-                            board_next.cur_turn = colorFlip(board_next.cur_turn);
-                            current->array[i][j] = (node *)malloc(sizeof(node));
-                            current->array[i][j]->next_board = NULL;
-                            current->array[i][j]->prev_board = current;
-                            current->array[i][j]->board = board_next;
-                        }
-                    }
-                    else if (j == 3)
-                    {
-                        //checking if simple move is poosible in this direction
-                        if (simple_Move_Possible(&p, p.white[i], bottomRight))
-                        {
-                            // finding the board after the move is made
-                            game_state board_next = p;
-                            bool tmp = move_entries(&board_next, p.white[i], p.white[i].x + 1, p.white[i].y - 1);
-                            board_next.cur_turn = colorFlip(board_next.cur_turn);
-                            //allocating memory
-                            current->array[i][j] = (node *)malloc(sizeof(node));
-                            current->array[i][j]->next_board = NULL;
-                            current->array[i][j]->prev_board = current;
-                            current->array[i][j]->board = board_next;
-                        }
-                        //else we will check if capturing another color piece is possible in that direction
-                        else if (capturePossible(&p, p.white[i], bottomRight))
-                        {
-                            game_state board_next = p;
-                            bool tmp = move_entries(&board_next, p.white[i], p.white[i].x + 2, p.white[i].y - 2);
-                            board_next.cur_turn = colorFlip(board_next.cur_turn);
-                            current->array[i][j] = (node *)malloc(sizeof(node));
-                            current->array[i][j]->next_board = NULL;
-                            current->array[i][j]->prev_board = current;
-                            current->array[i][j]->board = board_next;
-                        }
-                    }
+                    break;
                 }
-                else // have to check only topRight and topLeft only
+
+                current->array[i][j] = (node *)malloc(sizeof(node));
+                current->array[i][j]->prev_board = current;
+
+                // if some change is there...
+                if (fl)
                 {
-                    if (j == 0)
-                    {
-                        //checking if simple move is poosible in this direction
-                        if (simple_Move_Possible(&p, p.white[i], topLeft))
-                        {
-                            // finding the board after the move is made
-                            game_state board_next = p;
-                            bool tmp = move_entries(&board_next, p.white[i], p.white[i].x - 1, p.white[i].y + 1);
-                            board_next.cur_turn = colorFlip(board_next.cur_turn);
-                            //allocating memory
-                            current->array[i][j] = (node *)malloc(sizeof(node));
-                            current->array[i][j]->next_board = NULL;
-                            current->array[i][j]->prev_board = current;
-                            current->array[i][j]->board = board_next;
-                        }
-                        //else we will check if capturing another color piece is possible in that direction
-                        else if (capturePossible(&p, p.white[i], topLeft))
-                        {
-                            game_state board_next = p;
-                            bool tmp = move_entries(&board_next, p.white[i], p.white[i].x - 2, p.white[i].y + 2);
-                            board_next.cur_turn = colorFlip(board_next.cur_turn);
-                            current->array[i][j] = (node *)malloc(sizeof(node));
-                            current->array[i][j]->next_board = NULL;
-                            current->array[i][j]->prev_board = current;
-                            current->array[i][j]->board = board_next;
-                        }
-                    }
-                    else if (j == 1)
-                    {
-                        //checking if simple move is poosible in this direction
-                        if (simple_Move_Possible(&p, p.white[i], topRight))
-                        {
-                            // finding the board after the move is made
-                            game_state board_next = p;
-                            bool tmp = move_entries(&board_next, p.white[i], p.white[i].x + 1, p.white[i].y + 1);
-                            board_next.cur_turn = colorFlip(board_next.cur_turn);
-                            //allocating memory
-                            current->array[i][j] = (node *)malloc(sizeof(node));
-                            current->array[i][j]->next_board = NULL;
-                            current->array[i][j]->prev_board = current;
-                            current->array[i][j]->board = board_next;
-                        }
-                        //else we will check if capturing another color piece is possible in that direction
-                        else if (capturePossible(&p, p.white[i], topRight))
-                        {
-                            game_state board_next = p;
-                            bool tmp = move_entries(&board_next, p.white[i], p.white[i].x + 2, p.white[i].y + 2);
-                            board_next.cur_turn = colorFlip(board_next.cur_turn);
-                            current->array[i][j] = (node *)malloc(sizeof(node));
-                            current->array[i][j]->next_board = NULL;
-                            current->array[i][j]->prev_board = current;
-                            current->array[i][j]->board = board_next;
-                        }
-                    }
+                    board_next.cur_turn = colorFlip(board_next.cur_turn);
+                    current->array[i][j]->board = board_next;
                 }
 
                 if (current->array[i][j] != NULL)
+                {
                     print_k_state(current->array[i][j]->board, k);
-
-                //printf("%d %d HI\n", i, j);
+                }
             }
         }
+    }
+}
 
-        // printf("press 'e' to Resume\n");
-        // while (1)
-        // {
-        //     char ch = getkey();
-        //     if (ch == 'e')
-        //     {
-        //         cls();
-        //         return;
-        //     }
-        // }
+void multi_Capture_BLACK(game_state *g)
+{
+    int cnt = 0;
+    pawn P;
+    P.allegiance = BLACK;
+    coords new;
+    for (int i = 0; i < tp; ++i)
+    {
+        if (g->black[i].x != -1)
+        {
+            if (capturePossible(g, g->black[i], bottomRight))
+            {
+                P = g->black[i];
+                new.x = g->black[i].x + 1;
+                new.y = g->black[i].y - 1;
+                cnt++;
+            }
+            if (capturePossible(g, g->black[i], bottomLeft))
+            {
+                P = g->black[i];
+                new.x = g->black[i].x - 1;
+                new.y = g->black[i].y - 1;
+                cnt++;
+            }
+            if (g->black[i].is_king)
+            {
+                if (capturePossible(g, g->black[i], topRight))
+                {
+                    P = g->black[i];
+                    new.x = g->black[i].x + 1;
+                    new.y = g->black[i].y + 1;
+                    cnt++;
+                }
+                if (capturePossible(g, g->black[i], topLeft))
+                {
+                    P = g->black[i];
+                    new.x = g->black[i].x - 1;
+                    new.y = g->black[i].y + 1;
+                    cnt++;
+                }
+            }
+            if (cnt > 1)
+                break;
+        }
+    }
+    if (cnt > 1 || cnt == 0)
+        return;
+    else
+    {
+        if (!move_entries(g, P, new.x, new.y))
+            return;
+    }
+}
+
+void multi_Capture_WHITE(game_state *g)
+{
+    int cnt = 0;
+    pawn P;
+    P.allegiance = WHITE;
+    coords new;
+    for (int i = 0; i < tp; ++i)
+    {
+        if (g->white[i].x != -1)
+        {
+            if (capturePossible(g, g->white[i], topRight))
+            {
+                P = g->white[i];
+                new.x = g->white[i].x + 1;
+                new.y = g->white[i].y + 1;
+                cnt++;
+            }
+            if (capturePossible(g, g->white[i], topLeft))
+            {
+                P = g->white[i];
+                new.x = g->white[i].x - 1;
+                new.y = g->white[i].y + 1;
+                cnt++;
+            }
+            if (g->white[i].is_king)
+            {
+                if (capturePossible(g, g->white[i], bottomRight))
+                {
+                    P = g->white[i];
+                    new.x = g->white[i].x + 1;
+                    new.y = g->white[i].y - 1;
+                    cnt++;
+                }
+                if (capturePossible(g, g->white[i], bottomLeft))
+                {
+                    P = g->white[i];
+                    new.x = g->white[i].x - 1;
+                    new.y = g->white[i].y - 1;
+                    cnt++;
+                }
+            }
+            if (cnt > 1)
+                break;
+        }
+    }
+    if (cnt > 1 || cnt == 0)
+        return;
+    else
+    {
+        if (!move_entries(g, P, new.x, new.y))
+            return;
     }
 }
 
@@ -1477,9 +1105,9 @@ void menu(log *head)
         else
             printf("  Play Multiplayer\n");
         if (option == 2)
-            printf("> Difficulty: %d\n",difficulty);
+            printf("> Options\n");
         else
-            printf("  Difficulty: %d\n",difficulty);
+            printf("  Options\n");
         if (option == 3)
             printf("> Quit\n");
         else
@@ -1514,26 +1142,13 @@ void menu(log *head)
                 bot_mode = -1;
                 start(head);
             }
+            else if (option == 2)
+            {
+            }
             else if (option == 3)
             {
                 cls();
                 exit(0);
-            }
-        }
-        else if ((key == 'd' || key == 'a') && option == 2)
-        {
-            if(key == 'a')
-            {
-                difficulty--;
-                if(difficulty<0) difficulty = 0;
-            }
-            else 
-            {
-                difficulty++;
-                if(difficulty>2)
-                {
-                    difficulty = 2;
-                }
             }
         }
     }
@@ -1735,6 +1350,16 @@ bool simple_Move_Possible(game_state *g, pawn P, int direction)
 
 bool capturePossible(game_state *g, pawn P, int direction)
 {
+    if (P.allegiance == BLACK && P.is_king == false)
+    {
+        if (direction == topRight || direction == topLeft)
+            return false;
+    }
+    else if (P.allegiance == WHITE && P.is_king == false)
+    {
+        if (direction == bottomRight || direction == bottomLeft)
+            return false;
+    }
     pawn Enemy;
     int AfterCapture_X, AfterCapture_Y;
     switch (direction)
@@ -2267,17 +1892,6 @@ void controller(log *head)
                         printf("enter the value of k");
                         scanf("%d", &x);
                         print_k_state(c_state, x);
-
-                        printf("press 'e' to Resume\n");
-                        while (1)
-                        {
-                            char ch = getkey();
-                            if (ch == 'e')
-                            {
-                                cls();
-                                return;
-                            }
-                        }
                     }
                     else if (ch == 'r')
                     {
@@ -2301,7 +1915,6 @@ void controller(log *head)
                     {
                         c_state = undo(head);
                         if (bot_mode != -1)
-                        while(c_state.cur_turn == bot_mode)
                             c_state = undo(head);
                         break;
                     }
@@ -2558,7 +2171,6 @@ void controller(log *head)
                     {
                         c_state = undo(head);
                         if (bot_mode != -1)
-                        while(c_state.cur_turn == bot_mode)
                             c_state = undo(head);
                         break;
                     }
