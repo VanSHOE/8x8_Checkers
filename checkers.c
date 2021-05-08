@@ -1159,114 +1159,6 @@ void filling_node(node *current, game_state p) // takes a node , find which colo
     }
 }
 
-void multi_Capture_BLACK(game_state *g)
-{
-    int cnt = 0;
-    pawn P;
-    P.allegiance = BLACK;
-    coords new;
-    for (int i = 0; i < tp; ++i)
-    {
-        if (g->black[i].x != -1)
-        {
-            if (capturePossible(g, g->black[i], bottomRight))
-            {
-                P = g->black[i];
-                new.x = g->black[i].x + 1;
-                new.y = g->black[i].y - 1;
-                cnt++;
-            }
-            if (capturePossible(g, g->black[i], bottomLeft))
-            {
-                P = g->black[i];
-                new.x = g->black[i].x - 1;
-                new.y = g->black[i].y - 1;
-                cnt++;
-            }
-            if (g->black[i].is_king)
-            {
-                if (capturePossible(g, g->black[i], topRight))
-                {
-                    P = g->black[i];
-                    new.x = g->black[i].x + 1;
-                    new.y = g->black[i].y + 1;
-                    cnt++;
-                }
-                if (capturePossible(g, g->black[i], topLeft))
-                {
-                    P = g->black[i];
-                    new.x = g->black[i].x - 1;
-                    new.y = g->black[i].y + 1;
-                    cnt++;
-                }
-            }
-            if (cnt > 1)
-                break;
-        }
-    }
-    if (cnt > 1 || cnt == 0)
-        return;
-    else
-    {
-        if (!move_entries(g, P, new.x, new.y))
-            return;
-    }
-}
-
-void multi_Capture_WHITE(game_state *g)
-{
-    int cnt = 0;
-    pawn P;
-    P.allegiance = WHITE;
-    coords new;
-    for (int i = 0; i < tp; ++i)
-    {
-        if (g->white[i].x != -1)
-        {
-            if (capturePossible(g, g->white[i], topRight))
-            {
-                P = g->white[i];
-                new.x = g->white[i].x + 1;
-                new.y = g->white[i].y + 1;
-                cnt++;
-            }
-            if (capturePossible(g, g->white[i], topLeft))
-            {
-                P = g->white[i];
-                new.x = g->white[i].x - 1;
-                new.y = g->white[i].y + 1;
-                cnt++;
-            }
-            if (g->white[i].is_king)
-            {
-                if (capturePossible(g, g->white[i], bottomRight))
-                {
-                    P = g->white[i];
-                    new.x = g->white[i].x + 1;
-                    new.y = g->white[i].y - 1;
-                    cnt++;
-                }
-                if (capturePossible(g, g->white[i], bottomLeft))
-                {
-                    P = g->white[i];
-                    new.x = g->white[i].x - 1;
-                    new.y = g->white[i].y - 1;
-                    cnt++;
-                }
-            }
-            if (cnt > 1)
-                break;
-        }
-    }
-    if (cnt > 1 || cnt == 0)
-        return;
-    else
-    {
-        if (!move_entries(g, P, new.x, new.y))
-            return;
-    }
-}
-
 bool move_entries(game_state *g, pawn P, int horizontal, int vertical)
 {
     if (!is_present(g, P))
@@ -1607,16 +1499,6 @@ bool simple_Move_Possible(game_state *g, pawn P, int direction)
 
 bool capturePossible(game_state *g, pawn P, int direction)
 {
-    if (P.allegiance == BLACK && P.is_king == false)
-    {
-        if (direction == topRight || direction == topLeft)
-            return false;
-    }
-    else if (P.allegiance == WHITE && P.is_king == false)
-    {
-        if (direction == bottomRight || direction == bottomLeft)
-            return false;
-    }
     pawn Enemy;
     int AfterCapture_X, AfterCapture_Y;
     switch (direction)
