@@ -15,7 +15,7 @@ typedef struct node node;
 #define bottomLeft 4 
 // WHITE = 15, BLACK = 0;
 //At start of game white occupies row 0,1,2 and black occupies row 5,6,7.
-
+int difficulty = 0; // 0 - hardest, 1 - medium , 2 - easy 
 #define sb 8                           //size of board
 const int tp = (sb / 2) * ((sb - 2) / 2); // total pieces
 #define colorFlip(i) (i ^ (1 << 0) ^ (1 << 1) ^ (1 << 2) ^ (1 << 3))
