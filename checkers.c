@@ -2231,7 +2231,7 @@ void controller(log *head)
                     else if (ch == 'k')
                     {
                         int x;
-                        printf("enter the value of k");
+                        printf("Enter the value of k: ");
                         scanf("%d", &x);
                         print_k_state(c_state, x);
 
@@ -2242,7 +2242,7 @@ void controller(log *head)
                             if (ch == 'e')
                             {
                                 cls();
-                                return;
+                                break;
                             }
                         }
                     }
@@ -2528,9 +2528,20 @@ void controller(log *head)
                     else if (ch == 'k')
                     {
                         int x;
-                        printf("enter the value of k");
+                        printf("Enter the value of k: ");
                         scanf("%d", &x);
                         print_k_state(c_state, x);
+
+                        printf("press 'e' to Resume\n");
+                        while (1)
+                        {
+                            char ch = getkey();
+                            if (ch == 'e')
+                            {
+                                cls();
+                                break;
+                            }
+                        }
                     }
                     else if (ch == 'r')
                     {
