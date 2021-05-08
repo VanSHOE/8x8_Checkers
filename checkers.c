@@ -272,12 +272,6 @@ void bot()
     }
     free(scores);
 }
-
-game_state play_capture_move(game_state *g, pawn p, int direction)
-{
-    printf("This fxn will be replaced by move entry\n");
-}
-
 game_state play_simple_move(game_state *g, pawn p, int direction)
 {
     int aftermove_x, aftermove_y;
@@ -326,9 +320,19 @@ game_state play_simple_move(game_state *g, pawn p, int direction)
         return *g;
     }
 
+    //checking if it becomes king due to move
+    if (p.allegiance == WHITE && aftermove_y == sb - 1)
+    {
+        new.is_king = true;
+    }
+    if (p.allegiance == BLACK && aftermove_y == 0)
+    {
+        new.is_king = true;
+    }
+
     if (p.allegiance == WHITE)
     {
-        for (int i = 0; i < tp; i++)
+        for (int i = 0; i < 12; i++)
         {
             if (g->white[i].x == p.x && g->white[i].y == p.y)
             {
@@ -340,7 +344,7 @@ game_state play_simple_move(game_state *g, pawn p, int direction)
     }
     else
     {
-        for (int i = 0; i < tp; i++)
+        for (int i = 0; i < 12; i++)
         {
             if (g->black[i].x == p.x && g->black[i].y == p.y)
             {
@@ -351,7 +355,96 @@ game_state play_simple_move(game_state *g, pawn p, int direction)
         }
     }
 
-    g->cur_turn = colorFlip(g->cur_turn);
+    g->cur_turn = (g->cur_turn + 1) % 2;
+
+    return *g;
+}
+
+game_state play_capture_move(game_state *g, pawn p, int direction)
+{
+    int aftermove_x, aftermove_y;
+    if (direction == topLeft)
+    {
+        aftermove_x = p.x - 2;
+        aftermove_y = p.y + 2;
+    }
+    else if (direction == topRight)
+    {
+        aftermove_x = p.x + 2;
+        aftermove_y = p.x + 2;
+    }
+    else if (direction == bottomLeft)
+    {
+        aftermove_x = p.x - 2;
+        aftermove_y = p.y - 2;
+    }
+    else
+    {
+        aftermove_x = p.x + 2;
+        aftermove_y = p.y - 2;
+    }
+
+    pawn new;
+    new.x = aftermove_x;
+    new.y = aftermove_y;
+    new.allegiance = p.allegiance;
+    new.is_king = p.is_king;
+
+    if (!isLegal(p, new, g))
+    {
+        printf("Invalid move!\n");
+        return *g;
+    }
+
+    if (isOccupied(g, aftermove_x, aftermove_y))
+    {
+        printf("Position is already occupied!\n");
+        return *g;
+    }
+
+    if (!is_present(g, p))
+    {
+        printf("Piece is Not present\n");
+        return *g;
+    }
+
+    //checking if it becomes king due to move
+    if (p.allegiance == WHITE && aftermove_y == sb - 1)
+    {
+        new.is_king = true;
+    }
+    if (p.allegiance == BLACK && aftermove_y == 0)
+    {
+        new.is_king = true;
+    }
+
+    if (p.allegiance == WHITE)
+    {
+        for (int i = 0; i < 12; i++)
+        {
+            if (g->white[i].x == p.x && g->white[i].y == p.y)
+            {
+                g->white[i].x = aftermove_x;
+                g->black[i].y = aftermove_y;
+                break;
+            }
+        }
+    }
+    else
+    {
+        for (int i = 0; i < 12; i++)
+        {
+            if (g->black[i].x == p.x && g->black[i].y == p.y)
+            {
+                g->black[i].x = aftermove_x;
+                g->black[i].y = aftermove_y;
+                break;
+            }
+        }
+    }
+
+    g->cur_turn = (g->cur_turn + 1) % 2;
+
     return *g;
 }
 
