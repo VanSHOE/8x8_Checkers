@@ -9,6 +9,56 @@
 #include <stdbool.h>
 #include <assert.h>
 int lim = 4;
+typedef struct he
+{
+    int index;
+    ll d;
+} he;
+
+he heap[10000007];
+ll size = 0;
+
+void siftup(int index)
+{
+    if (index == 0)
+        return;
+    if (heap[(index - 1) / 2].d < heap[index].d)
+    {
+        he temp = heap[index];
+        heap[index] = heap[(index - 1) / 2];
+        heap[(index - 1) / 2] = temp;
+        siftup((index - 1) / 2);
+    }
+}
+void DownHeap(int index)
+{
+    int w1 = 2 * index + 1;
+    if (w1 >= size)
+        return;
+
+    if (w1 + 1 < size)
+        if (heap[w1].d < heap[w1 + 1].d)
+            w1++;
+
+    if (heap[index].d >= heap[w1].d)
+        return;
+    he temp = heap[w1];
+    heap[w1] = heap[index];
+    heap[index] = temp;
+    DownHeap(w1);
+}
+void insert(he elem)
+{
+    heap[size++] = elem;
+    siftup(size - 1);
+}
+he Extract_min()
+{
+    he ans = heap[0];
+    heap[0] = heap[--size];
+    DownHeap(0);
+    return ans;
+}
 
 long double bot_helperb(game_state g_o, int lim)
 {
@@ -205,71 +255,147 @@ void botb()
         }
     }
     int mi = 0;
-    for (int i = 1; i < 4 * tp; i++)
-    {
-        if (scores[mi] < scores[i])
-        {
-            mi = i;
-        }
-    }
 
-    printf("Moving %d", mi);
-    int flag = 0;
-    while (!flag)
+    for (int i = 0; i < 4 * tp; i++)
     {
-        int pc_i = mi / 4;
-        switch (mi % 4)
+        he q;
+        int pc_i = i / 4;
+        q.index = i;
+        q.d = scores[i];
+        pawn n;
+        int flag = 0;
+        switch (i % 4)
         {
         case 0:
-            if (!move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x + 1, c_state.black[pc_i].y + 1))
+            n.x = c_state.black[pc_i].x + 1;
+            n.y = c_state.black[pc_i].y + 1;
+            if (!isLegal(c_state.black[pc_i], n, &c_state))
             {
-                if (move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x + 2, c_state.black[pc_i].y + 2))
+                n.x = c_state.black[pc_i].x + 2;
+                n.y = c_state.black[pc_i].y + 2;
+                if (isLegal(c_state.black[pc_i], n, &c_state))
                     flag = 1;
             }
             else
                 flag = 1;
             break;
         case 1:
-            if (!move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x + 1, c_state.black[pc_i].y - 1))
+            n.x = c_state.black[pc_i].x + 1;
+            n.y = c_state.black[pc_i].y - 1;
+            if (!isLegal(c_state.black[pc_i], n, &c_state))
             {
-                if (move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x + 2, c_state.black[pc_i].y - 2))
+                n.x = c_state.black[pc_i].x + 2;
+                n.y = c_state.black[pc_i].y - 2;
+                if (isLegal(c_state.black[pc_i], n, &c_state))
                     flag = 1;
             }
             else
                 flag = 1;
             break;
         case 2:
-            if (!move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x - 1, c_state.black[pc_i].y - 1))
+            n.x = c_state.black[pc_i].x - 1;
+            n.y = c_state.black[pc_i].y - 1;
+            if (!isLegal(c_state.black[pc_i], n, &c_state))
             {
-                if (move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x - 2, c_state.black[pc_i].y - 2))
+                n.x = c_state.black[pc_i].x - 2;
+                n.y = c_state.black[pc_i].y - 2;
+                if (isLegal(c_state.black[pc_i], n, &c_state))
                     flag = 1;
             }
             else
                 flag = 1;
             break;
         case 3:
-            if (!move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x - 1, c_state.black[pc_i].y + 1))
+            n.x = c_state.black[pc_i].x - 1;
+            n.y = c_state.black[pc_i].y + 1;
+            if (!isLegal(c_state.black[pc_i], n, &c_state))
             {
-                if (move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x - 2, c_state.black[pc_i].y + 2))
+                n.x = c_state.black[pc_i].x - 2;
+                n.y = c_state.black[pc_i].y + 2;
+                if (isLegal(c_state.black[pc_i], n, &c_state))
                     flag = 1;
             }
             else
                 flag = 1;
             break;
         }
-        if (flag == 0)
-        {
-            scores[mi] = -9999999999999;
-        }
-        mi = 0;
-        for (int i = 1; i < 48; i++)
-        {
-            if (scores[mi] < scores[i])
-            {
-                mi = i;
-            }
-        }
+        if (flag)
+            insert(q);
     }
+
+    int prob = rand()%100 + 1;
+    int k;
+    if(difficulty == 0)
+    {
+        if(prob<=80)
+        {
+            k = 0;
+        }
+        else k = 1;
+    }
+    else if (difficulty == 1)
+    {
+        if(prob<=60)
+        {
+            k = 0;
+        }
+        else if(prob<=85)
+        {
+            k = 1;
+        }
+        else k = 2;
+    }
+    else
+    {
+        if(prob<=50)
+        {
+            k = 0;
+        }
+        else if(prob<=85)
+        {
+            k = 1;
+        }
+        else k = 2;
+    }
+    if (k >= size)
+    {
+        k = size - 1;
+    }
+    while (k--)
+        Extract_min();
+    mi = heap[0].index;
+    int pc_i = mi / 4;
+    printf("Moving %d", mi);
+
+    switch (mi % 4)
+    {
+    case 0:
+        if (!move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x + 1, c_state.black[pc_i].y + 1))
+        {
+            move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x + 2, c_state.black[pc_i].y + 2);
+        }
+        break;
+    case 1:
+        if (!move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x + 1, c_state.black[pc_i].y - 1))
+        {
+            move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x + 2, c_state.black[pc_i].y - 2);
+        };
+        break;
+    case 2:
+        if (!move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x - 1, c_state.black[pc_i].y - 1))
+        {
+            move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x - 2, c_state.black[pc_i].y - 2);
+        }
+
+        break;
+    case 3:
+        if (!move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x - 1, c_state.black[pc_i].y + 1))
+        {
+            move_entries(&c_state, c_state.black[pc_i], c_state.black[pc_i].x - 2, c_state.black[pc_i].y + 2);
+        }
+        break;
+    }
+    size = 0;
     free(scores);
 }
 long double bot_helperw(game_state g_o, int lim)
@@ -467,72 +593,147 @@ void botw()
         }
     }
     int mi = 0;
-    for (int i = 1; i < 4 * tp; i++)
-    {
-        if (scores[mi] < scores[i])
-        {
-            mi = i;
-        }
-    }
 
-    printf("Moving %d", mi);
-    int flag = 0;
-    while (!flag)
+    for (int i = 0; i < 4 * tp; i++)
     {
-        int pc_i = mi / 4;
-        switch (mi % 4)
+        he q;
+        int pc_i = i / 4;
+        q.index = i;
+        q.d = scores[i];
+        pawn n;
+        int flag = 0;
+        switch (i % 4)
         {
         case 0:
-            if (!move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x + 1, c_state.white[pc_i].y + 1))
+            n.x = c_state.white[pc_i].x + 1;
+            n.y = c_state.white[pc_i].y + 1;
+            if (!isLegal(c_state.white[pc_i], n, &c_state))
             {
-                if (move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x + 2, c_state.white[pc_i].y + 2))
+                n.x = c_state.white[pc_i].x + 2;
+                n.y = c_state.white[pc_i].y + 2;
+                if (isLegal(c_state.white[pc_i], n, &c_state))
                     flag = 1;
             }
             else
                 flag = 1;
             break;
         case 1:
-            if (!move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x + 1, c_state.white[pc_i].y - 1))
+            n.x = c_state.white[pc_i].x + 1;
+            n.y = c_state.white[pc_i].y - 1;
+            if (!isLegal(c_state.white[pc_i], n, &c_state))
             {
-                if (move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x + 2, c_state.white[pc_i].y - 2))
+                n.x = c_state.white[pc_i].x + 2;
+                n.y = c_state.white[pc_i].y - 2;
+                if (isLegal(c_state.white[pc_i], n, &c_state))
                     flag = 1;
             }
             else
                 flag = 1;
             break;
         case 2:
-            if (!move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x - 1, c_state.white[pc_i].y - 1))
+            n.x = c_state.white[pc_i].x - 1;
+            n.y = c_state.white[pc_i].y - 1;
+            if (!isLegal(c_state.white[pc_i], n, &c_state))
             {
-                if (move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x - 2, c_state.white[pc_i].y - 2))
+                n.x = c_state.white[pc_i].x - 2;
+                n.y = c_state.white[pc_i].y - 2;
+                if (isLegal(c_state.white[pc_i], n, &c_state))
                     flag = 1;
             }
             else
                 flag = 1;
             break;
         case 3:
-            if (!move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x - 1, c_state.white[pc_i].y + 1))
+            n.x = c_state.white[pc_i].x - 1;
+            n.y = c_state.white[pc_i].y + 1;
+            if (!isLegal(c_state.white[pc_i], n, &c_state))
             {
-                if (move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x - 2, c_state.white[pc_i].y + 2))
+                n.x = c_state.white[pc_i].x - 2;
+                n.y = c_state.white[pc_i].y + 2;
+                if (isLegal(c_state.white[pc_i], n, &c_state))
                     flag = 1;
             }
             else
                 flag = 1;
             break;
         }
-        if (flag == 0)
-        {
-            scores[mi] = -9999999999999;
-        }
-        mi = 0;
-        for (int i = 1; i < 48; i++)
-        {
-            if (scores[mi] < scores[i])
-            {
-                mi = i;
-            }
-        }
+        if (flag)
+            insert(q);
     }
+    int k;
+    int prob = rand()%100 + 1;
+    if(difficulty == 0)
+    {
+        if(prob<=80)
+        {
+            k = 0;
+        }
+        else k = 1;
+    }
+    else if (difficulty == 1)
+    {
+        if(prob<=60)
+        {
+            k = 0;
+        }
+        else if(prob<=85)
+        {
+            k = 1;
+        }
+        else k = 2;
+    }
+    else
+    {
+        if(prob<=50)
+        {
+            k = 0;
+        }
+        else if(prob<=85)
+        {
+            k = 1;
+        }
+        else k = 2;
+    }
+    if (k >= size)
+    {
+        k = size - 1;
+    }
+    while (k--)
+        Extract_min();
+    mi = heap[0].index;
+    printf("Moving %d", mi);
+    int pc_i = mi / 4;
+    switch (mi % 4)
+    {
+    case 0:
+        if (!move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x + 1, c_state.white[pc_i].y + 1))
+        {
+            move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x + 2, c_state.white[pc_i].y + 2);
+        }
+        break;
+    case 1:
+        if (!move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x + 1, c_state.white[pc_i].y - 1))
+        {
+            move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x + 2, c_state.white[pc_i].y - 2);
+        };
+        break;
+    case 2:
+        if (!move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x - 1, c_state.white[pc_i].y - 1))
+        {
+            move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x - 2, c_state.white[pc_i].y - 2);
+        }
+
+        break;
+    case 3:
+        if (!move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x - 1, c_state.white[pc_i].y + 1))
+        {
+            move_entries(&c_state, c_state.white[pc_i], c_state.white[pc_i].x - 2, c_state.white[pc_i].y + 2);
+        }
+        break;
+    }
+
     free(scores);
+    size = 0;
 }
 game_state play_capture_move(game_state g, pawn p, int direction)
 {
@@ -1180,114 +1381,6 @@ void filling_node(node *current, game_state p, int k) // takes a node , find whi
     }
 }
 
-void multi_Capture_BLACK(game_state *g)
-{
-    int cnt = 0;
-    pawn P;
-    P.allegiance = BLACK;
-    coords new;
-    for (int i = 0; i < tp; ++i)
-    {
-        if (g->black[i].x != -1)
-        {
-            if (capturePossible(g, g->black[i], bottomRight))
-            {
-                P = g->black[i];
-                new.x = g->black[i].x + 1;
-                new.y = g->black[i].y - 1;
-                cnt++;
-            }
-            if (capturePossible(g, g->black[i], bottomLeft))
-            {
-                P = g->black[i];
-                new.x = g->black[i].x - 1;
-                new.y = g->black[i].y - 1;
-                cnt++;
-            }
-            if (g->black[i].is_king)
-            {
-                if (capturePossible(g, g->black[i], topRight))
-                {
-                    P = g->black[i];
-                    new.x = g->black[i].x + 1;
-                    new.y = g->black[i].y + 1;
-                    cnt++;
-                }
-                if (capturePossible(g, g->black[i], topLeft))
-                {
-                    P = g->black[i];
-                    new.x = g->black[i].x - 1;
-                    new.y = g->black[i].y + 1;
-                    cnt++;
-                }
-            }
-            if (cnt > 1)
-                break;
-        }
-    }
-    if (cnt > 1 || cnt == 0)
-        return;
-    else
-    {
-        if (!move_entries(g, P, new.x, new.y))
-            return;
-    }
-}
-
-void multi_Capture_WHITE(game_state *g)
-{
-    int cnt = 0;
-    pawn P;
-    P.allegiance = WHITE;
-    coords new;
-    for (int i = 0; i < tp; ++i)
-    {
-        if (g->white[i].x != -1)
-        {
-            if (capturePossible(g, g->white[i], topRight))
-            {
-                P = g->white[i];
-                new.x = g->white[i].x + 1;
-                new.y = g->white[i].y + 1;
-                cnt++;
-            }
-            if (capturePossible(g, g->white[i], topLeft))
-            {
-                P = g->white[i];
-                new.x = g->white[i].x - 1;
-                new.y = g->white[i].y + 1;
-                cnt++;
-            }
-            if (g->white[i].is_king)
-            {
-                if (capturePossible(g, g->white[i], bottomRight))
-                {
-                    P = g->white[i];
-                    new.x = g->white[i].x + 1;
-                    new.y = g->white[i].y - 1;
-                    cnt++;
-                }
-                if (capturePossible(g, g->white[i], bottomLeft))
-                {
-                    P = g->white[i];
-                    new.x = g->white[i].x - 1;
-                    new.y = g->white[i].y - 1;
-                    cnt++;
-                }
-            }
-            if (cnt > 1)
-                break;
-        }
-    }
-    if (cnt > 1 || cnt == 0)
-        return;
-    else
-    {
-        if (!move_entries(g, P, new.x, new.y))
-            return;
-    }
-}
-
 bool move_entries(game_state *g, pawn P, int horizontal, int vertical)
 {
     if (!is_present(g, P))
@@ -1384,9 +1477,9 @@ void menu(log *head)
         else
             printf("  Play Multiplayer\n");
         if (option == 2)
-            printf("> Options\n");
+            printf("> Difficulty: %d\n",difficulty);
         else
-            printf("  Options\n");
+            printf("  Difficulty: %d\n",difficulty);
         if (option == 3)
             printf("> Quit\n");
         else
@@ -1421,13 +1514,26 @@ void menu(log *head)
                 bot_mode = -1;
                 start(head);
             }
-            else if (option == 2)
-            {
-            }
             else if (option == 3)
             {
                 cls();
                 exit(0);
+            }
+        }
+        else if ((key == 'd' || key == 'a') && option == 2)
+        {
+            if(key == 'a')
+            {
+                difficulty--;
+                if(difficulty<0) difficulty = 0;
+            }
+            else 
+            {
+                difficulty++;
+                if(difficulty>2)
+                {
+                    difficulty = 2;
+                }
             }
         }
     }
@@ -1629,16 +1735,6 @@ bool simple_Move_Possible(game_state *g, pawn P, int direction)
 
 bool capturePossible(game_state *g, pawn P, int direction)
 {
-    if (P.allegiance == BLACK && P.is_king == false)
-    {
-        if (direction == topRight || direction == topLeft)
-            return false;
-    }
-    else if (P.allegiance == WHITE && P.is_king == false)
-    {
-        if (direction == bottomRight || direction == bottomLeft)
-            return false;
-    }
     pawn Enemy;
     int AfterCapture_X, AfterCapture_Y;
     switch (direction)

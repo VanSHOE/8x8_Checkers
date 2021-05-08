@@ -13,9 +13,9 @@ typedef struct node node;
 #define bottomRight 2
 #define topLeft 3
 #define bottomLeft 4 
-//const int WHITE = 15, BLACK = 0;
+// WHITE = 15, BLACK = 0;
 //At start of game white occupies row 0,1,2 and black occupies row 5,6,7.
-
+int difficulty = 0; // 0 - hardest, 1 - medium , 2 - easy 
 #define sb 8                           //size of board
 const int tp = (sb / 2) * ((sb - 2) / 2); // total pieces
 #define colorFlip(i) (i ^ (1 << 0) ^ (1 << 1) ^ (1 << 2) ^ (1 << 3))
@@ -98,8 +98,6 @@ in this function i am writing here but after .c is made paste it there,
 we have to update board which involves lots of subfunctions like checking if move is legal or not
 also we have to update the position. and additional features if one can add (using \b) sounds to show moves
 */
-void multi_Capture_BLACK(game_state *g);
-void multi_Capture_WHITE(game_state *g);
 
 bool isOccupied(game_state *g, int x, int y); // checks if coordinates (x ,y) are occupied on board
 bool is_present(game_state *g, pawn P);       // returns true if P is present on board
