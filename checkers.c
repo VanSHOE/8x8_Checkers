@@ -59,6 +59,46 @@ he Extract_min()
     DownHeap(0);
     return ans;
 }
+bool is_multi_capture_possible(game_state g)
+{
+    if (g.cur_turn == BLACK)
+    {
+        for (int i = 0; i < tp; i++)
+        {
+            if (capturePossible(&g, g.black[i], bottomLeft) || capturePossible(&g, g.black[i], bottomRight))
+            {
+                return true;
+            }
+            else if (g.black[i].is_king == 1)
+            {
+                if (capturePossible(&g, g.black[i], topLeft) || capturePossible(&g, g.black[i], topRight))
+                {
+                    return true;
+                }
+            }
+        }
+    }
+
+    else
+    {
+        for (int i = 0; i < tp; i++)
+        {
+            if (capturePossible(&g, g.white[i], topLeft) || capturePossible(&g, g.white[i], topRight))
+            {
+                return true;
+            }
+            else if (g.white[i].is_king == 1)
+            {
+                if (capturePossible(&g, g.white[i], bottomLeft) || capturePossible(&g, g.white[i], bottomRight))
+                {
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
+}
 
 long double bot_helperb(game_state g_o, int lim)
 {
@@ -83,6 +123,9 @@ long double bot_helperb(game_state g_o, int lim)
 
             else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 2, g.black[pc_i].y + 2))
             {
+                if(is_multi_capture_possible(g))
+                g.cur_turn = colorFlip(g.cur_turn);
+
                 scores[4 * i] = 10;
                 scores[4 * i] += 0.9 * bot_helperb(g, lim - 1);
                 g = g_o;
@@ -95,6 +138,9 @@ long double bot_helperb(game_state g_o, int lim)
             }
             else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 2, g.black[pc_i].y - 2))
             {
+                if(is_multi_capture_possible(g))
+                g.cur_turn = colorFlip(g.cur_turn);
+
                 scores[4 * i + 1] = 10;
                 scores[4 * i + 1] += 0.9 * bot_helperb(g, lim - 1);
                 g = g_o;
@@ -107,6 +153,9 @@ long double bot_helperb(game_state g_o, int lim)
             }
             else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x - 2, g.black[pc_i].y - 2))
             {
+                if(is_multi_capture_possible(g))
+                g.cur_turn = colorFlip(g.cur_turn);
+                
                 scores[4 * i + 2] = 10;
                 scores[4 * i + 2] += 0.9 * bot_helperb(g, lim - 1);
                 g = g_o;
@@ -119,6 +168,9 @@ long double bot_helperb(game_state g_o, int lim)
             }
             else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x - 2, g.black[pc_i].y + 2))
             {
+                if(is_multi_capture_possible(g))
+                g.cur_turn = colorFlip(g.cur_turn);
+                
                 scores[4 * i + 3] = 10;
                 scores[4 * i + 3] += 0.9 * bot_helperb(g, lim - 1);
                 g = g_o;
@@ -140,6 +192,9 @@ long double bot_helperb(game_state g_o, int lim)
 
             else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x + 2, g.white[pc_i].y + 2))
             {
+                if(is_multi_capture_possible(g))
+                g.cur_turn = colorFlip(g.cur_turn);
+                
                 scores[4 * i] = 10;
                 scores[4 * i] += 0.9 * bot_helperb(g, lim - 1);
                 g = g_o;
@@ -152,6 +207,9 @@ long double bot_helperb(game_state g_o, int lim)
             }
             else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x + 2, g.white[pc_i].y - 2))
             {
+                if(is_multi_capture_possible(g))
+                g.cur_turn = colorFlip(g.cur_turn);
+                
                 scores[4 * i + 1] = 10;
                 scores[4 * i + 1] += 0.9 * bot_helperb(g, lim - 1);
                 g = g_o;
@@ -164,6 +222,9 @@ long double bot_helperb(game_state g_o, int lim)
             }
             else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x - 2, g.white[pc_i].y - 2))
             {
+                if(is_multi_capture_possible(g))
+                g.cur_turn = colorFlip(g.cur_turn);
+                
                 scores[4 * i + 2] = 10;
                 scores[4 * i + 2] += 0.9 * bot_helperb(g, lim - 1);
                 g = g_o;
@@ -176,6 +237,9 @@ long double bot_helperb(game_state g_o, int lim)
             }
             else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x - 2, g.white[pc_i].y + 2))
             {
+                if(is_multi_capture_possible(g))
+                g.cur_turn = colorFlip(g.cur_turn);
+                
                 scores[4 * i + 3] = 10;
                 scores[4 * i + 3] += 0.9 * bot_helperb(g, lim - 1);
                 g = g_o;
@@ -213,6 +277,9 @@ void botb()
 
         else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 2, g.black[pc_i].y + 2))
         {
+            if(is_multi_capture_possible(g))
+                g.cur_turn = colorFlip(g.cur_turn);
+                
             scores[4 * i] = 10;
             scores[4 * i] += 0.9 * bot_helperb(g, lim - 1);
             g = c_state;
@@ -225,6 +292,9 @@ void botb()
         }
         else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 2, g.black[pc_i].y - 2))
         {
+            if(is_multi_capture_possible(g))
+                g.cur_turn = colorFlip(g.cur_turn);
+                
             scores[4 * i + 1] = 10;
             scores[4 * i + 1] += 0.9 * bot_helperb(g, lim - 1);
             g = c_state;
@@ -237,6 +307,9 @@ void botb()
         }
         else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x - 2, g.black[pc_i].y - 2))
         {
+            if(is_multi_capture_possible(g))
+                g.cur_turn = colorFlip(g.cur_turn);
+                
             scores[4 * i + 2] = 10;
             scores[4 * i + 2] += 0.9 * bot_helperb(g, lim - 1);
             g = c_state;
@@ -249,6 +322,9 @@ void botb()
         }
         else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x - 2, g.black[pc_i].y + 2))
         {
+            if(is_multi_capture_possible(g))
+                g.cur_turn = colorFlip(g.cur_turn);
+                
             scores[4 * i + 3] = 10;
             scores[4 * i + 3] += 0.9 * bot_helperb(g, lim - 1);
             g = c_state;
@@ -323,39 +399,42 @@ void botb()
             insert(q);
     }
 
-    int prob = rand()%100 + 1;
+    int prob = rand() % 100 + 1;
     int k;
-    if(difficulty == 0)
+    if (difficulty == 0)
     {
-        if(prob<=80)
+        if (prob <= 80)
         {
             k = 0;
         }
-        else k = 1;
+        else
+            k = 1;
     }
     else if (difficulty == 1)
     {
-        if(prob<=60)
+        if (prob <= 60)
         {
             k = 0;
         }
-        else if(prob<=85)
+        else if (prob <= 85)
         {
             k = 1;
         }
-        else k = 2;
+        else
+            k = 2;
     }
     else
     {
-        if(prob<=50)
+        if (prob <= 50)
         {
             k = 0;
         }
-        else if(prob<=85)
+        else if (prob <= 85)
         {
             k = 1;
         }
-        else k = 2;
+        else
+            k = 2;
     }
     if (k >= size)
     {
@@ -421,6 +500,9 @@ long double bot_helperw(game_state g_o, int lim)
 
             else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 2, g.black[pc_i].y + 2))
             {
+                if(is_multi_capture_possible(g))
+                g.cur_turn = colorFlip(g.cur_turn);
+                
                 scores[4 * i] = 10;
                 scores[4 * i] += 0.9 * bot_helperw(g, lim - 1);
                 g = g_o;
@@ -433,6 +515,9 @@ long double bot_helperw(game_state g_o, int lim)
             }
             else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 2, g.black[pc_i].y - 2))
             {
+                if(is_multi_capture_possible(g))
+                g.cur_turn = colorFlip(g.cur_turn);
+                
                 scores[4 * i + 1] = 10;
                 scores[4 * i + 1] += 0.9 * bot_helperw(g, lim - 1);
                 g = g_o;
@@ -445,6 +530,9 @@ long double bot_helperw(game_state g_o, int lim)
             }
             else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x - 2, g.black[pc_i].y - 2))
             {
+                if(is_multi_capture_possible(g))
+                g.cur_turn = colorFlip(g.cur_turn);
+                
                 scores[4 * i + 2] = 10;
                 scores[4 * i + 2] += 0.9 * bot_helperw(g, lim - 1);
                 g = g_o;
@@ -457,6 +545,9 @@ long double bot_helperw(game_state g_o, int lim)
             }
             else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x - 2, g.black[pc_i].y + 2))
             {
+                if(is_multi_capture_possible(g))
+                g.cur_turn = colorFlip(g.cur_turn);
+                
                 scores[4 * i + 3] = 10;
                 scores[4 * i + 3] += 0.9 * bot_helperw(g, lim - 1);
                 g = g_o;
@@ -482,6 +573,9 @@ long double bot_helperw(game_state g_o, int lim)
 
             else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x + 2, g.white[pc_i].y + 2))
             {
+                if(is_multi_capture_possible(g))
+                g.cur_turn = colorFlip(g.cur_turn);
+                
                 scores[4 * i] = 10;
                 scores[4 * i] += 0.9 * bot_helperw(g, lim - 1);
                 g = g_o;
@@ -494,6 +588,9 @@ long double bot_helperw(game_state g_o, int lim)
             }
             else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x + 2, g.white[pc_i].y - 2))
             {
+                if(is_multi_capture_possible(g))
+                g.cur_turn = colorFlip(g.cur_turn);
+                
                 scores[4 * i + 1] = 10;
                 scores[4 * i + 1] += 0.9 * bot_helperw(g, lim - 1);
                 g = g_o;
@@ -506,6 +603,9 @@ long double bot_helperw(game_state g_o, int lim)
             }
             else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x - 2, g.white[pc_i].y - 2))
             {
+                if(is_multi_capture_possible(g))
+                g.cur_turn = colorFlip(g.cur_turn);
+                
                 scores[4 * i + 2] = 10;
                 scores[4 * i + 2] += 0.9 * bot_helperw(g, lim - 1);
                 g = g_o;
@@ -518,6 +618,9 @@ long double bot_helperw(game_state g_o, int lim)
             }
             else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x - 2, g.white[pc_i].y + 2))
             {
+                if(is_multi_capture_possible(g))
+                g.cur_turn = colorFlip(g.cur_turn);
+                
                 scores[4 * i + 3] = 10;
                 scores[4 * i + 3] += 0.9 * bot_helperw(g, lim - 1);
                 g = g_o;
@@ -551,6 +654,9 @@ void botw()
 
         else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x + 2, g.white[pc_i].y + 2))
         {
+            if(is_multi_capture_possible(g))
+                g.cur_turn = colorFlip(g.cur_turn);
+                
             scores[4 * i] = 10;
             scores[4 * i] += 0.9 * bot_helperw(g, lim - 1);
             g = c_state;
@@ -563,6 +669,9 @@ void botw()
         }
         else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x + 2, g.white[pc_i].y - 2))
         {
+            if(is_multi_capture_possible(g))
+                g.cur_turn = colorFlip(g.cur_turn);
+                
             scores[4 * i + 1] = 10;
             scores[4 * i + 1] += 0.9 * bot_helperw(g, lim - 1);
             g = c_state;
@@ -575,6 +684,9 @@ void botw()
         }
         else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x - 2, g.white[pc_i].y - 2))
         {
+            if(is_multi_capture_possible(g))
+                g.cur_turn = colorFlip(g.cur_turn);
+                
             scores[4 * i + 2] = 10;
             scores[4 * i + 2] += 0.9 * bot_helperw(g, lim - 1);
             g = c_state;
@@ -587,6 +699,9 @@ void botw()
         }
         else if (move_entries(&g, g.white[pc_i], g.white[pc_i].x - 2, g.white[pc_i].y + 2))
         {
+            if(is_multi_capture_possible(g))
+                g.cur_turn = colorFlip(g.cur_turn);
+                 
             scores[4 * i + 3] = 10;
             scores[4 * i + 3] += 0.9 * bot_helperw(g, lim - 1);
             g = c_state;
@@ -661,38 +776,41 @@ void botw()
             insert(q);
     }
     int k;
-    int prob = rand()%100 + 1;
-    if(difficulty == 0)
+    int prob = rand() % 100 + 1;
+    if (difficulty == 0)
     {
-        if(prob<=80)
+        if (prob <= 80)
         {
             k = 0;
         }
-        else k = 1;
+        else
+            k = 1;
     }
     else if (difficulty == 1)
     {
-        if(prob<=60)
+        if (prob <= 60)
         {
             k = 0;
         }
-        else if(prob<=85)
+        else if (prob <= 85)
         {
             k = 1;
         }
-        else k = 2;
+        else
+            k = 2;
     }
     else
     {
-        if(prob<=50)
+        if (prob <= 50)
         {
             k = 0;
         }
-        else if(prob<=85)
+        else if (prob <= 85)
         {
             k = 1;
         }
-        else k = 2;
+        else
+            k = 2;
     }
     if (k >= size)
     {
@@ -735,162 +853,7 @@ void botw()
     free(scores);
     size = 0;
 }
-game_state play_capture_move(game_state g, pawn p, int direction)
-{
-    int aftermove_x, aftermove_y;
-    if (direction == topLeft)
-    {
-        aftermove_x = p.x - 2;
-        aftermove_y = p.y + 2;
-    }
-    else if (direction == topRight)
-    {
-        aftermove_x = p.x + 2;
-        aftermove_y = p.x + 2;
-    }
-    else if (direction == bottomLeft)
-    {
-        aftermove_x = p.x - 2;
-        aftermove_y = p.y - 2;
-    }
-    else
-    {
-        aftermove_x = p.x + 2;
-        aftermove_y = p.y - 2;
-    }
 
-    pawn new;
-    new.x = aftermove_x;
-    new.y = aftermove_y;
-    new.allegiance = p.allegiance;
-    new.is_king = p.is_king;
-
-    // if (!isLegal(p, new, &g))
-    // {
-    //     printf("Invalid move!\n");
-    //     return g;
-    // }
-
-    // if (isOccupied(&g, aftermove_x, aftermove_y))
-    // {
-    //     printf("Position is already occupied!\n");
-    //     return g;
-    // }
-
-    // if (!is_present(&g, p))
-    // {
-    //     printf("Piece is Not present\n");
-    //     return g;
-    // }
-
-    //checking if it becomes king due to move
-    if (p.allegiance == WHITE && aftermove_y == sb - 1)
-    {
-        new.is_king = true;
-    }
-    if (p.allegiance == BLACK && aftermove_y == 0)
-    {
-        new.is_king = true;
-    }
-
-    if (p.allegiance == WHITE)
-    {
-        for (int i = 0; i < tp; i++)
-        {
-            if (g.white[i].x == p.x && g.white[i].y == p.y)
-            {
-                g.white[i].x = aftermove_x;
-                g.black[i].y = aftermove_y;
-                break;
-            }
-        }
-    }
-    else
-    {
-        for (int i = 0; i < tp; i++)
-        {
-            if (g.black[i].x == p.x && g.black[i].y == p.y)
-            {
-                g.black[i].x = aftermove_x;
-                g.black[i].y = aftermove_y;
-                break;
-            }
-        }
-    }
-
-    g.cur_turn = colorFlip(g.cur_turn);
-
-    return g;
-}
-game_state play_simple_move(game_state g, pawn p, int direction)
-{
-    int aftermove_x, aftermove_y;
-    if (direction == topLeft)
-    {
-        aftermove_x = p.x - 1;
-        aftermove_y = p.y + 1;
-    }
-    else if (direction == topRight)
-    {
-        aftermove_x = p.x + 1;
-        aftermove_y = p.x + 1;
-    }
-    else if (direction == bottomLeft)
-    {
-        aftermove_x = p.x - 1;
-        aftermove_y = p.y - 1;
-    }
-    else
-    {
-        aftermove_x = p.x + 1;
-        aftermove_y = p.y - 1;
-    }
-
-    pawn new;
-    new.x = aftermove_x;
-    new.y = aftermove_y;
-    new.allegiance = p.allegiance;
-    new.is_king = p.is_king;
-
-    //checking if it becomes king due to move
-    if (p.allegiance == WHITE && aftermove_y == sb - 1)
-    {
-        new.is_king = true;
-    }
-    if (p.allegiance == BLACK && aftermove_y == 0)
-    {
-        new.is_king = true;
-    }
-
-    if (p.allegiance == WHITE)
-    {
-        for (int i = 0; i < tp; i++)
-        {
-            if (g.white[i].x == p.x && g.white[i].y == p.y)
-            {
-                g.white[i].x = aftermove_x;
-                g.black[i].y = aftermove_y;
-                break;
-            }
-        }
-    }
-    else
-    {
-        for (int i = 0; i < tp; i++)
-        {
-            if (g.black[i].x == p.x && g.black[i].y == p.y)
-            {
-                g.black[i].x = aftermove_x;
-                g.black[i].y = aftermove_y;
-                break;
-            }
-        }
-    }
-
-    g.cur_turn = colorFlip(g.cur_turn);
-
-    return g;
-}
 
 void print_all_possible_next_move(node *current) // given a game state , what all possible can be achieved in next move
 {
@@ -960,18 +923,6 @@ void print_k_state(game_state p, int k)
     point_to_null(root);
 
     filling_node(root, p, k - 1);
-
-    // for (int i = 0; i < tp; i++)
-    // {
-    //     for (int j = 0; j < 4; j++)
-    //     {
-    //         if (root->array[i][j] != NULL) //  not equal to null means that a move is possible in this dirn
-    //         {
-    //             printf("%d %d %d\n" , i , j , k-1);
-    //             print_k_state(root->array[i][j]->board, k - 1);
-    //         }
-    //     }
-    // }
 }
 // #define topRight 1
 // #define bottomRight 2
@@ -1363,21 +1314,8 @@ void filling_node(node *current, game_state p, int k) // takes a node , find whi
 
                 if (current->array[i][j] != NULL)
                     print_k_state(current->array[i][j]->board, k);
-
-                //printf("%d %d HI\n", i, j);
             }
         }
-
-        // printf("press 'e' to Resume\n");
-        // while (1)
-        // {
-        //     char ch = getkey();
-        //     if (ch == 'e')
-        //     {
-        //         cls();
-        //         return;
-        //     }
-        // }
     }
 }
 
@@ -1477,9 +1415,9 @@ void menu(log *head)
         else
             printf("  Play Multiplayer\n");
         if (option == 2)
-            printf("> Difficulty: %d\n",difficulty);
+            printf("> Difficulty: %d\n", difficulty);
         else
-            printf("  Difficulty: %d\n",difficulty);
+            printf("  Difficulty: %d\n", difficulty);
         if (option == 3)
             printf("> Quit\n");
         else
@@ -1522,15 +1460,16 @@ void menu(log *head)
         }
         else if ((key == 'd' || key == 'a') && option == 2)
         {
-            if(key == 'a')
+            if (key == 'a')
             {
                 difficulty--;
-                if(difficulty<0) difficulty = 0;
+                if (difficulty < 0)
+                    difficulty = 0;
             }
-            else 
+            else
             {
                 difficulty++;
-                if(difficulty>2)
+                if (difficulty > 2)
                 {
                     difficulty = 2;
                 }
@@ -2108,6 +2047,7 @@ void Quit(log *head)
                 if (key == 'y')
                 {
                     review(head);
+                    return;
                 }
                 else if (key == 'n')
                 {
@@ -2276,6 +2216,7 @@ void controller(log *head)
                                 if (key == 'y' || key == 'Y')
                                 {
                                     review(head);
+                                    break;
                                 }
                                 else if (key == 'n' || key == 'N')
                                 {
@@ -2327,7 +2268,11 @@ void controller(log *head)
                         c_state = undo(head);
                         if (bot_mode != -1)
                         while(c_state.cur_turn == bot_mode)
-                            c_state = undo(head);
+                            {
+                                if(head->next->next == NULL)
+                                break;
+                                c_state = undo(head);
+                            }
                         break;
                     }
                     else if (ch == 'N')
@@ -2609,7 +2554,11 @@ void controller(log *head)
                         c_state = undo(head);
                         if (bot_mode != -1)
                         while(c_state.cur_turn == bot_mode)
-                            c_state = undo(head);
+                            {
+                                if(head->next->next == NULL)
+                                break;
+                                c_state = undo(head);
+                            }
                         break;
                     }
                     else if (ch == 'N')
@@ -2734,6 +2683,7 @@ void controller(log *head)
         result(&c_state, head);
     }
 }
+
 
 void instruction()
 {

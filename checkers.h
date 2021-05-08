@@ -23,8 +23,7 @@ const int tp = (sb / 2) * ((sb - 2) / 2); // total pieces
 
 int bot_mode = WHITE; // -1: 2 player mode ; 0: Black is bot ; 15: White is bot
 
-game_state play_simple_move(game_state g, pawn p, int direction); // have to be completed // dont forget to change the cur_turn
-game_state play_capture_move(game_state g, pawn p, int direction);
+
 
 typedef struct
 {
@@ -82,6 +81,7 @@ game_state c_state;
 void init_game_2players(void); //starts the game with 2 players mode
 void init_game_bot(void);      //starts the game with bot
 
+bool is_multi_capture_possible(game_state g); // to check if multi capture possible while calculating score by bot
 void start(log *head);
 void restart(log *head);
 void Quit(log *head);
