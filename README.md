@@ -7,35 +7,19 @@ External Libraries used
 rlutil: https://github.com/tapio/rlutil
 
 
-#ANALYSIS and EXPLANATATION---------
+The game can be compiled simply by cloning the git repo and running gcc checkers.c with additional parameters if desired
+The controls are mentioned in the instructions.txt which can also be accessed in-game by pressing H
 
-1. first of all we have to use some std data types to store position....to do we have made 5 structs as follows - 
-a.pawn it stores - x co-ordinate, y co-ordinate, is it White/Black, is_king
-b.coords - stores x co-ordinate, y co-ordinate. (though it isn't neccesary, but we found it to be rather useful)
-c.game_state - our main course, it store the current state of board. it cantains an array of pawn structs for white and black, it contains turn specifier, (and a 4th if you see....that was majboori for colour..). above pawn struct was thus came naturally from here
-d.move - it cantains name(info. regarding it..) of the pawn, its new x and y co-ordinates. it isn't obvious why we made it, but think like this we have a function that tells the best move....we naturally made a struct specially for it, its outputs a move struct......we are thinking of making a bot (whom i am telling too though, we all know ????)
-e.undostack - this is obvious, an stack using double linked list to store entire game log (....we typedef it to log), it cantains the current gamestate, next and prev ptr to prev and fwd gamestates(..you get what i want to say, not exactly gamestate, but to undostack)
+To control the cursor in the menu, use 'w' and 's'
+and to change the difficulty in the menu hover over difficulty and use 'a' and 'd' , not this only affects the singleplayer mode
 
-2.now are basic data types are out in wild, we are left to the task of giving life to the functions. we have many function in place but most of them are just formed out of making a clean big imp function...(like move_enter req check func which further req. draw,win/lost,legal, also move_enter req. to update undo stack.. and lots more). So i will mention in the clean way-
+Now the user may select multiplayer or singleplayer as desired and the game will be initalised
+The game can further be controlled using WASD to control the red square and space for selection/deselection
+Once a successful selection is made, selecting another square will move the desired piece if the move is illegal, else no move will happen
 
-//starting game
-we have 2 function playing with 'bot' and with 'friend', also in it function 'start' is used(of O(1)) and a function 'toss' is used.
-#########################################################################its analysis
+The multijump rule in our game dictates that once a player makes a capture, if any other piece of that player can make a capture, the player is granted another turn
 
-// within game we might need to resign, or offer a draw or results need to be published
-we have resign, askdraw.
-#########################################################################its analysis
+At any point in time, the user can see the instructions to use several of the available features such as review, undo and so on
 
-//updating the board
-A.in this we have first the 'move_enteries' function, the imp of all. what it does is 
-first it checks if that (it takes game state, pawn, hori, vert as input where hori is new x and similarly vert is new y), pawn really do exist using fuction called is_present(g,P) (in O(1)), then it checks if that move is legal or not(we will talk about it separately as its very big), then after validation we just 'update'(updating the turn and promoting the pawn to king is done in controller function) the game state simplily using for loops (O(1)).
-now as said lets talk about is_legal(P,new pawn,gamestate), it checks if the movement of pawn P to its new position given in new pawn valid. it checks in 4 steps-
-a. if the new pawn position going outside the board. (O(1))
-b. we all know a white pawn allways inc its y-coordinate and black dec (bottom left is 0,0), so we checks this (that new pawn.y > P.y in case of white and similarly for black in O(1)). aslo now user might even makes absurd hori and ver like pawn moving 3 times up and 2 times right..such acts are wrong. and we correct that in O(1), (the diff. is 1/2 and angle or diff in x and y is equal)
-c. now we check whether that new pawn position is occupied or not in O(1)
-d. now we check whether it follows capture rules or not. in O(1) using capture function..though it looks very big, its very intutive and easy to follow. just read the code and see..explaining every word/action in words is very tidious.....
-(in this function movee_entries we have used many functions- ispresent, islegal, isoccupied, capturepossible) 
-
-B.simple move check, checks whether the position to which move is being moved empty or not. its as says simple and O(1)
-
-C.
+Note- The undo function while reverses a single move in 2 player mode, it will go back to the last player-made move when it comes to singleplayer 
+That is it on how to run and play this game, have fun :)
