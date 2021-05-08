@@ -23,8 +23,8 @@ const int tp = (sb / 2) * ((sb - 2) / 2); // total pieces
 
 int bot_mode = WHITE; // -1: 2 player mode ; 0: Black is bot ; 15: White is bot
 
-game_state play_simple_move(game_state *g, pawn p, int direction); // have to be completed // dont forget to change the cur_turn
-game_state play_capture_move(game_state *g, pawn p, int direction);
+game_state play_simple_move(game_state g, pawn p, int direction); // have to be completed // dont forget to change the cur_turn
+game_state play_capture_move(game_state g, pawn p, int direction);
 
 typedef struct
 {
