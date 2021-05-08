@@ -323,7 +323,40 @@ void botb()
             insert(q);
     }
 
-    int k = difficulty;
+    int prob = rand()%100 + 1;
+    int k;
+    if(difficulty == 0)
+    {
+        if(prob<=80)
+        {
+            k = 0;
+        }
+        else k = 1;
+    }
+    else if (difficulty == 1)
+    {
+        if(prob<=60)
+        {
+            k = 0;
+        }
+        else if(prob<=85)
+        {
+            k = 1;
+        }
+        else k = 2;
+    }
+    else
+    {
+        if(prob<=50)
+        {
+            k = 0;
+        }
+        else if(prob<=85)
+        {
+            k = 1;
+        }
+        else k = 2;
+    }
     if (k >= size)
     {
         k = size - 1;
@@ -627,8 +660,40 @@ void botw()
         if (flag)
             insert(q);
     }
-
-    int k = difficulty;
+    int k;
+    int prob = rand()%100 + 1;
+    if(difficulty == 0)
+    {
+        if(prob<=80)
+        {
+            k = 0;
+        }
+        else k = 1;
+    }
+    else if (difficulty == 1)
+    {
+        if(prob<=60)
+        {
+            k = 0;
+        }
+        else if(prob<=85)
+        {
+            k = 1;
+        }
+        else k = 2;
+    }
+    else
+    {
+        if(prob<=50)
+        {
+            k = 0;
+        }
+        else if(prob<=85)
+        {
+            k = 1;
+        }
+        else k = 2;
+    }
     if (k >= size)
     {
         k = size - 1;
@@ -1444,9 +1509,9 @@ void menu(log *head)
             else 
             {
                 difficulty++;
-                if(difficulty>5)
+                if(difficulty>2)
                 {
-                    difficulty = 5;
+                    difficulty = 2;
                 }
             }
         }
