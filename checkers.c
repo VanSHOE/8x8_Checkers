@@ -114,46 +114,60 @@ long double bot_helperb(game_state g_o, int lim)
     if (!lim)
         return 0;
 
-    long double *scores = (long double *)calloc(tp * 4, sizeof(long double));
-    g_o.cur_turn = colorFlip(g_o.cur_turn);
+    long double *scores = (long double *)calloc(tp * 4, sizeof(long double)); // This array is tasked with storing the scores of all possible moves in the current state
+    g_o.cur_turn = colorFlip(g_o.cur_turn); // Flip the turn from the last turn to calculate scores of the correct side, WHITE or BLACK
     game_state g = g_o;
-    if (g.cur_turn == BLACK)
+    /*
+        The 8 if statements in each of the main if blocks are simply calling move entries with all possible moves on all the pieces of the current player on the current game state g which modifies
+        which again recursively calls this function for a total of lim times
+
+        For a non king piece, moving towards the enemy's side grants the bot 2 points, while moving backwards grant only a single point
+        Capturing grants 10 points
+
+        Now, when the bot is thinking, the bot also calculates the moves of the opponent and calculates its points in the exact same way, the only difference being, it subtracts its scores from its own scores
+        As an example, let's say you move a piece, which allowed opponent to capture some piece, then that move will get a -10 penalty on its score
+        the 0.9 in second line of each if block simply ensures that priority of the current scores are more than priority of the scores further down the line
+    */
+    if (g.cur_turn == BLACK) 
     {
         for (int i = 0; i < tp; i++)
         {
             int pc_i = i;
-
+            // Top-Right
             if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 1, g.black[pc_i].y + 1))
             {
                 scores[4 * i] = 1;
-                scores[4 * i] += 0.9 * bot_helperb(g, lim - 1);
+                scores[4 * i] += 0.9 * bot_helperb(g, lim - 1); 
                 g = g_o;
             }
 
             else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 2, g.black[pc_i].y + 2))
             {
-                if (is_multi_capture_possible(g))
-                    g.cur_turn = colorFlip(g.cur_turn);
+                // Now here and in statements below, a capture happened, according to our rules, if any of our piece can make a capture again, another turn is granted, so we check if there is any other capture available
+                if (is_multi_capture_possible(g))    
+                    g.cur_turn = colorFlip(g.cur_turn);  // If yes the line nullifies the turn flip by flipping the turn beforehand
 
                 scores[4 * i] = 10;
                 scores[4 * i] += 0.9 * bot_helperb(g, lim - 1);
                 g = g_o;
             }
+            // Bottom-Right
             if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 1, g.black[pc_i].y - 1))
             {
-                scores[4 * i + 1] = (g.black[pc_i].is_king) ? 1 : 2;
+                scores[4 * i + 1] = (g.black[pc_i].is_king) ? 1 : 2; // Now if a piece IS a king, moving in any directions grants the same score
                 scores[4 * i + 1] += 0.9 * bot_helperb(g, lim - 1);
                 g = g_o;
             }
             else if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 2, g.black[pc_i].y - 2))
             {
-                if (is_multi_capture_possible(g))
+                if (is_multi_capture_possible(g))  
                     g.cur_turn = colorFlip(g.cur_turn);
 
                 scores[4 * i + 1] = 10;
                 scores[4 * i + 1] += 0.9 * bot_helperb(g, lim - 1);
                 g = g_o;
             }
+            // Bottom-Left
             if (move_entries(&g, g.black[pc_i], g.black[pc_i].x - 1, g.black[pc_i].y - 1))
             {
                 scores[4 * i + 2] = (g.black[pc_i].is_king) ? 1 : 2;
@@ -169,6 +183,7 @@ long double bot_helperb(game_state g_o, int lim)
                 scores[4 * i + 2] += 0.9 * bot_helperb(g, lim - 1);
                 g = g_o;
             }
+            //Top-Left
             if (move_entries(&g, g.black[pc_i], g.black[pc_i].x - 1, g.black[pc_i].y + 1))
             {
                 scores[4 * i + 3] = 1;
@@ -253,6 +268,7 @@ long double bot_helperb(game_state g_o, int lim)
                 scores[4 * i + 3] += 0.9 * bot_helperb(g, lim - 1);
                 g = g_o;
             }
+            // This is where the inversion happens, we are in black bot function, so for that bot, scores of white must be inverted
             scores[4 * i] = -scores[4 * i];
             scores[4 * i + 1] = -scores[4 * i + 1];
             scores[4 * i + 2] = -scores[4 * i + 2];
@@ -260,6 +276,7 @@ long double bot_helperb(game_state g_o, int lim)
         }
     }
     long double sum = 0;
+    // Add up scores all of the moves that happened due to this move to this move's score
     for (int i = 0; i < 4 * tp; i++)
     {
         sum += scores[i];
@@ -273,6 +290,19 @@ void botb()
 
     long double *scores = (long double *)calloc(tp * 4, sizeof(long double));
     game_state g = c_state;
+     /*
+        The 8 if statements in each of the main if blocks are simply calling move entries with all possible moves on all the pieces of the current player on the current game state g which modifies
+        which again recursively calls this function for a total of lim times
+
+        For a non king piece, moving towards the enemy's side grants the bot 2 points, while moving backwards grant only a single point
+        Capturing grants 10 points
+
+        Now, when the bot is thinking, the bot also calculates the moves of the opponent and calculates its points in the exact same way, the only difference being, it subtracts its scores from its own scores
+        As an example, let's say you move a piece, which allowed opponent to capture some piece, then that move will get a -10 penalty on its score
+        the 0.9 in second line of each if block simply ensures that priority of the current scores are more than priority of the scores further down the line
+
+        And incase of a capture, we check whether another capture is possible, if another turn is granted and we flip the turn to nullify the flip that happens in the recursive call
+    */
     for (int i = 0; i < tp; i++)
     {
         int pc_i = i;
@@ -340,7 +370,7 @@ void botb()
         }
     }
     int mi = 0;
-
+    // Once the scores are calculated, we go through all moves and insert the valid ones into the heap
     for (int i = 0; i < 4 * tp; i++)
     {
         he q;
@@ -348,7 +378,7 @@ void botb()
         q.index = i;
         q.d = scores[i];
         pawn n;
-        int flag = 0;
+        int flag = 0; // flag is set to 1 as soon as any valid move is detected
         switch (i % 4)
         {
         case 0:
@@ -407,12 +437,15 @@ void botb()
         if (flag)
             insert(q);
     }
+    
 
+    // Added to ensure some sort of randomness to the bot, the bot doesn't always pick the move it thinks is best but rather based on the difficulty
+    // Has a probability distribution using which it will either pick the first best move, second best move or the third best move
     int prob = rand() % 100 + 1;
     int k;
     if (difficulty == 0)
     {
-        if (prob <= 80)
+        if (prob <= 95)
         {
             k = 0;
         }
@@ -421,11 +454,11 @@ void botb()
     }
     else if (difficulty == 1)
     {
-        if (prob <= 60)
+        if (prob <= 80)
         {
             k = 0;
         }
-        else if (prob <= 85)
+        else if (prob <= 98)
         {
             k = 1;
         }
@@ -434,11 +467,11 @@ void botb()
     }
     else
     {
-        if (prob <= 50)
+        if (prob <= 70)
         {
             k = 0;
         }
-        else if (prob <= 85)
+        else if (prob <= 95)
         {
             k = 1;
         }
@@ -449,6 +482,7 @@ void botb()
     {
         k = size - 1;
     }
+    // remove the k best moves
     while (k--)
         Extract_min();
 
@@ -461,8 +495,8 @@ void botb()
     }
     mi = temp.index;
     int pc_i = mi / 4;
-    printf("Moving %d", mi);
-
+ //   printf("Moving %d", mi);
+    // Simply attempt that move, the way we store our moves, mi / 4 stores index of the piece and mi % 4 gives information about what move to play
     switch (mi % 4)
     {
     case 0:
@@ -491,6 +525,7 @@ void botb()
         }
         break;
     }
+    // reset the heap for next use
     size = 0;
     free(scores);
 }
@@ -502,16 +537,26 @@ long double bot_helperw(game_state g_o, int lim)
     long double *scores = (long double *)calloc(tp * 4, sizeof(long double));
     g_o.cur_turn = colorFlip(g_o.cur_turn);
     game_state g = g_o;
+      /*
+        The 8 if statements in each of the main if blocks are simply calling move entries with all possible moves on all the pieces of the current player on the current game state g which modifies
+        which again recursively calls this function for a total of lim times
+
+        For a non king piece, moving towards the enemy's side grants the bot 2 points, while moving backwards grant only a single point
+        Capturing grants 10 points
+
+        Now, when the bot is thinking, the bot also calculates the moves of the opponent and calculates its points in the exact same way, the only difference being, it subtracts its scores from its own scores
+        As an example, let's say you move a piece, which allowed opponent to capture some piece, then that move will get a -10 penalty on its score
+        the 0.9 in second line of each if block simply ensures that priority of the current scores are more than priority of the scores further down the line
+    */
     if (g.cur_turn == BLACK)
     {
         for (int i = 0; i < tp; i++)
         {
             int pc_i = i;
-
             if (move_entries(&g, g.black[pc_i], g.black[pc_i].x + 1, g.black[pc_i].y + 1))
             {
                 scores[4 * i] = 1;
-                scores[4 * i] += 0.9 * bot_helperw(g, lim - 1);
+                scores[4 * i] += 0.9 * bot_helperw(g, lim - 1); 
                 g = g_o;
             }
 
@@ -569,6 +614,7 @@ long double bot_helperw(game_state g_o, int lim)
                 scores[4 * i + 3] += 0.9 * bot_helperw(g, lim - 1);
                 g = g_o;
             }
+            // This is where the inversion happens, we are in white bot function, so for that bot, scores of White must be inverted
             scores[4 * i] = -scores[4 * i];
             scores[4 * i + 1] = -scores[4 * i + 1];
             scores[4 * i + 2] = -scores[4 * i + 2];
@@ -645,6 +691,7 @@ long double bot_helperw(game_state g_o, int lim)
         }
     }
     long double sum = 0;
+    // Add up scores all of the moves that happened due to this move to this move's score
     for (int i = 0; i < 4 * tp; i++)
     {
         sum += scores[i];
@@ -658,6 +705,19 @@ void botw()
 
     long double *scores = (long double *)calloc(tp * 4, sizeof(long double));
     game_state g = c_state;
+	 /*
+        The 8 if statements in each of the main if blocks are simply calling move entries with all possible moves on all the pieces of the current player on the current game state g which modifies
+        which again recursively calls this function for a total of lim times
+
+        For a non king piece, moving towards the enemy's side grants the bot 2 points, while moving backwards grant only a single point
+        Capturing grants 10 points
+
+        Now, when the bot is thinking, the bot also calculates the moves of the opponent and calculates its points in the exact same way, the only difference being, it subtracts its scores from its own scores
+        As an example, let's say you move a piece, which allowed opponent to capture some piece, then that move will get a -10 penalty on its score
+        the 0.9 in second line of each if block simply ensures that priority of the current scores are more than priority of the scores further down the line
+
+        And incase of a capture, we check whether another capture is possible, if another turn is granted and we flip the turn to nullify the flip that happens in the recursive call
+    */
     for (int i = 0; i < tp; i++)
     {
         int pc_i = i;
@@ -725,7 +785,7 @@ void botw()
         }
     }
     int mi = 0;
-
+	 // Once the scores are calculated, we go through all moves and insert the valid ones into the heap
     for (int i = 0; i < 4 * tp; i++)
     {
         he q;
@@ -733,7 +793,7 @@ void botw()
         q.index = i;
         q.d = scores[i];
         pawn n;
-        int flag = 0;
+        int flag = 0; // flag is set to 1 as soon as any valid move is detected
         switch (i % 4)
         {
         case 0:
@@ -793,6 +853,8 @@ void botw()
             insert(q);
     }
     int k;
+	// Added to ensure some sort of randomness to the bot, the bot doesn't always pick the move it thinks is best but rather based on the difficulty
+    // Has a probability distribution using which it will either pick the first best move, second best move or the third best move
     int prob = rand() % 100 + 1;
     if (difficulty == 0)
     {
@@ -833,6 +895,7 @@ void botw()
     {
         k = size - 1;
     }
+	// remove the k best moves
     while (k--)
         Extract_min();
     he temp = Extract_min();
@@ -843,8 +906,9 @@ void botw()
         return;
     }
     mi = temp.index;
-    printf("Moving %d", mi);
+ //   printf("Moving %d", mi);
     int pc_i = mi / 4;
+	// Simply attempt that move, the way we store our moves, mi / 4 stores index of the piece and mi % 4 gives information about what move to play
     switch (mi % 4)
     {
     case 0:
@@ -873,7 +937,7 @@ void botw()
         }
         break;
     }
-
+	// reset the heap for next use
     free(scores);
     size = 0;
 }
@@ -1344,27 +1408,25 @@ void filling_node(node *current, game_state p, int k) // takes a node , find whi
 
 bool move_entries(game_state *g, pawn P, int horizontal, int vertical)
 {
-    if (!is_present(g, P))
+    if (!is_present(g, P)) // First check if the current player even has a piece from where they wish to move it
     {
-        //    printf("NOT PRESENT\n");
         return false;
     }
     pawn n;
     n.x = horizontal;
     n.y = vertical;
-    if (!isLegal(P, n, g))
+    if (!isLegal(P, n, g)) // If the piece is present, we check whether the move they made abides by the rules of checkers and we delegate that work to the isLegal function
     {
-        //   printf("NOT LEGAL\n");
         return false;
     }
-    // printf("WORKING\n");
+    // Green light has been given and now move_entries performs its task
     if (P.allegiance == BLACK)
-    { //printf("WORKINGb\n");
+    { 
         for (int i = 0; i < tp; ++i)
         {
             if (P.x == g->black[i].x && P.y == g->black[i].y)
             {
-                if (abs(P.x - horizontal) == 2 && abs(P.y - vertical) == 2)
+                if (abs(P.x - horizontal) == 2 && abs(P.y - vertical) == 2) // Is this a capture move? if yes, we are also tasked with eliminating the capture piece be setting its coords to -1,-1
                 {
                     coords captured_piece = {0, 0};
                     captured_piece.x = (P.x < horizontal) ? (P.x + 1) : (P.x - 1);
@@ -1381,9 +1443,8 @@ bool move_entries(game_state *g, pawn P, int horizontal, int vertical)
                 g->black[i].x = horizontal;
                 g->black[i].y = vertical;
 
-                if (g->black[i].y == 0) // black piece reached to row 0
+                if (g->black[i].y == 0) // Black piece reached to row 0 and hence now will be coronated to a king
                     g->black[i].is_king = true;
-                // multi_Capture_BLACK(g);
                 break;
             }
         }
@@ -1394,8 +1455,8 @@ bool move_entries(game_state *g, pawn P, int horizontal, int vertical)
         for (int i = 0; i < tp; ++i)
         {
             if (P.x == g->white[i].x && P.y == g->white[i].y)
-            { //   printf("OLD:%d, %d ; New: %d , %d\n",g->white[i].x, g->white[i].y,horizontal,vertical);
-                if (abs(P.x - horizontal) == 2 && abs(P.y - vertical) == 2)
+            { 
+                if (abs(P.x - horizontal) == 2 && abs(P.y - vertical) == 2) // Is this a capture move? if yes, we are also tasked with eliminating the capture piece be setting its coords to -1,-1
                 {
                     coords captured_piece = {0, 0};
                     captured_piece.x = (P.x < horizontal) ? (P.x + 1) : (P.x - 1);
@@ -1412,16 +1473,16 @@ bool move_entries(game_state *g, pawn P, int horizontal, int vertical)
                 g->white[i].x = horizontal;
                 g->white[i].y = vertical;
 
-                if (g->white[i].y == sb - 1) // white piece reached to row 7
+                if (g->white[i].y == sb - 1)  // White piece reached the end, and hence will now be coronated to a king
                     g->white[i].is_king = true;
-                // multi_Capture_WHITE(g);
+
                 break;
             }
         }
     }
     return true;
 }
-
+// A simple menu function which displays the initial menu screen
 void menu(log *head)
 {
     int option = 0;
@@ -1430,6 +1491,7 @@ void menu(log *head)
     {
         locate(1, 1);
         hidecursor();
+        // These 4 if statements check options to display which option is selected
         if (option == 0)
             printf("> Play Singleplayer\n");
         else
@@ -1448,6 +1510,7 @@ void menu(log *head)
             printf("  Quit\n");
 
         char key = getkey();
+        // we further check for keys such as w and s to navigate between options
         if (key == 'w')
         {
             option = (option - 1) % 4;
@@ -1458,7 +1521,7 @@ void menu(log *head)
         {
             option = (option + 1) % 4;
         }
-        else if (key == KEY_SPACE)
+        else if (key == KEY_SPACE) // For selection based options such as Play Singleplay, Play multiplayer and Quit
         {
             if (option == 0)
             {
@@ -1482,7 +1545,7 @@ void menu(log *head)
                 exit(0);
             }
         }
-        else if ((key == 'd' || key == 'a') && option == 2)
+        else if ((key == 'd' || key == 'a') && option == 2) // Used for changing difficulty of the bot using a and d
         {
             if (key == 'a')
             {
@@ -1501,10 +1564,10 @@ void menu(log *head)
         }
     }
 }
-
+// The function that is called to print the board and any additional information required
 void print_board(game_state *P)
 {
-    int c_s = 4, r_s = 8;
+    int c_s = 4, r_s = 8; // spacing of the squares, the reason r_s is higher because 1 character space in a row is not equal to the length between each line
     int b[sb][sb];
     for (int i = 0; i < sb; i++)
     {
@@ -1514,11 +1577,13 @@ void print_board(game_state *P)
         }
     }
     resetColor();
+
+    // These store the coordinates of the red square boxes used to select the pieces we want to move
     int yc1 = sb - 1 - P->hover[0].y;
     int xc1 = P->hover[0].x;
     int yc2 = sb - 1 - P->hover[1].y;
     int xc2 = P->hover[1].x;
-
+    // Making a temporary 2d grid for easier printing, Black Non king - 1, Black king - 3, White Non king - 2, White king - 4, rest all 0
     for (int i = 0; i < tp; i++)
     {
         if (P->black[i].y != -1)
@@ -1557,42 +1622,42 @@ void print_board(game_state *P)
     }
     printf("\n");
 
-
+   // This is the main for loop dedicated to printing the board, simply using some modular formulas to print the correct symbols
     for (int i = 0; i <= (sb)*c_s; i++)
     {
         for (int j = 0; j <= (sb)*r_s; j++)
         {
             setBackgroundColor(BLACK);
-            if (i % (c_s) == 0 && j % (r_s) == 0)
+            if (i % (c_s) == 0 && j % (r_s) == 0) // Junction of rows and columns
             {
                 printf("+");
             }
-            else if (i % (c_s) == 0)
+            else if (i % (c_s) == 0) // Printing the horizontal separators
                 printf("-");
-            else if (j % (r_s) == 0)
+            else if (j % (r_s) == 0) // Printing vertical separators
             {
                 printf("|");
             }
             else
             {
-                if ((i / c_s) == yc1 && j / r_s == xc1)
+                if ((i / c_s) == yc1 && j / r_s == xc1) // We are in the square which is highlighted
                 {
                     setBackgroundColor(RED);
                 }
-                else if ((i / c_s) == yc2 && j / r_s == xc2)
+                else if ((i / c_s) == yc2 && j / r_s == xc2) // Another highlighted square (if only one of them is highlighted, then both of squares in this function store the same coordinate)
                 {
                     setBackgroundColor(RED);
                 }
 
-                else if (((i / c_s) + (j / r_s)) % 2 == 0)
+                else if (((i / c_s) + (j / r_s)) % 2 == 0) // Switching between white and green board squares
                 {
                     setBackgroundColor(7);
                 }
                 else
                     setBackgroundColor(2);
-                if ((i % c_s == c_s / 2) && (j % r_s == r_s / 2))
+                if ((i % c_s == c_s / 2) && (j % r_s == r_s / 2)) // At a center of the board cell
                 {
-
+                    // Now this is where our 2d grid helps us, we simply check what piece belongs here by comparing with the grid
                     if (b[i / c_s][j / r_s] == 1)
                     {
                         setColor(BLACK);
@@ -1628,6 +1693,7 @@ void print_board(game_state *P)
 
     printf("\nPress 'H' to see instructions, 'Q' to Quit game and 'N' to restart game\n");
 }
+
 
 bool isOccupied(game_state *g, int x, int y)
 {
@@ -2117,7 +2183,7 @@ void add_board(game_state p, log *head) // after every move , add game state to 
     if (temp->next == NULL)
         head->prev = temp;
 }
-
+// The controller function, tasked with running the entire game by reading input, and calling functions as required
 void controller(log *head)
 {
     push(head, &c_state);
@@ -2125,7 +2191,7 @@ void controller(log *head)
     {
         pawn p;
         int c;
-        if (c_state.cur_turn == BLACK)
+        if (c_state.cur_turn == BLACK) // First checks whose turn it is 
         {
             //  char c = getkey();
             /*   if(c == 'u') 
@@ -2134,7 +2200,7 @@ void controller(log *head)
                 print_board(&c_state);
                 continue;
             }*/
-            if (bot_mode == BLACK)
+            if (bot_mode == BLACK) // If bot's allegiance is BLACK, then the control is given to the bot not the player
             {
                 //---------------------------------------------------------------BOT-Playing----------------------------------------------------------------
                 int count_w = 0;
@@ -2154,7 +2220,7 @@ void controller(log *head)
                         }
                     }
                 }
-                printf("Bot");
+           //     printf("Bot");
                 botb();
                 //    print_board(&c_state);
                 int flag1 = 0;
@@ -2189,9 +2255,9 @@ void controller(log *head)
                 push(head, &c_state);
                 //-----------------------------------------------------------------------------------------------------------------------------------------------
             }
-            else
+            else // It is the player's turn
             {
-
+                // Choose some valid piece on which to start the first red square on
                 for (int i = tp - 1; i >= 0; --i)
                 {
                     if (c_state.black[i].x != -1 && c_state.black[i].y != -1)
@@ -2201,14 +2267,15 @@ void controller(log *head)
                     }
                 }
                 int x[2];
-                int y[2];
+                int y[2]; // These both store x and y coords of the 2 squares
                 x[0] = c_state.black[c].x;
                 y[0] = c_state.black[c].y;
-                x[1] = y[1] = -1;
+                x[1] = y[1] = -1; // Second square doesnt exist yet
                 int cur = 0;
 
                 while (1)
                 {
+                    // Sets the hover values as required by the print_board
                     c_state.hover[0].x = x[0];
                     c_state.hover[0].y = y[0];
                     c_state.hover[1].x = x[1];
@@ -2219,6 +2286,7 @@ void controller(log *head)
                     hidecursor();
                     print_board(&c_state);
                     char ch = getkey();
+                    // cur is initially 0 , that means we are controlling the first square with wasd, the rest of these keys are documented in our instructions
                     if (ch == 'd')
                     {
                         x[cur] = (x[cur] + 1) % sb;
@@ -2339,11 +2407,12 @@ void controller(log *head)
                     {
                         review(head);
                     }
-                    else if (ch == KEY_SPACE)
+                    else if (ch == KEY_SPACE) // A selection is being made
                     {
-                        if (cur == 0)
+                        if (cur == 0) // It was the first square, that means we are just trying to select a piece to move it
                         {
                             int flag = -1;
+                            // Confirm that piece exists, if yes we increment cur to now control the second square which will be used to select where to move
                             for (int i = 0; i < tp; ++i)
                             {
                                 if (x[0] == c_state.black[i].x && y[0] == c_state.black[i].y)
@@ -2356,12 +2425,12 @@ void controller(log *head)
                                 }
                             }
                             if (flag == -1)
-                                continue;
+                                continue; // if the piece doesnt exist, just reset back to taking input again
                             cur++;
                         }
-                        else
+                        else // If cur is 1
                         {
-                            if (x[1] == x[0] && y[0] == y[1])
+                            if (x[1] == x[0] && y[0] == y[1]) // We wish to de select our previous selection
                             {
                                 cur--;
                                 x[1] = -1;
@@ -2383,11 +2452,11 @@ void controller(log *head)
                                     count_w = 1;
                             }
 
-                            if (!move_entries(&c_state, p, x[1], y[1]))
+                            if (!move_entries(&c_state, p, x[1], y[1])) // If move did not succeed, simply reset
                             {
                                 continue;
                             }
-                            else
+                            else // otherwise reset all the red squares, and push the current state to the stack
                             {
                                 cur--;
                                 x[0] = x[1];
@@ -2434,9 +2503,9 @@ void controller(log *head)
             }
         }
 
-        else
+        else // White's Turn
         {
-            if (bot_mode == WHITE)
+            if (bot_mode == WHITE) // If bot's allegiance is WHITE, then the control is given to the bot not the player
             {
                 int count_w = 0;
                 for (int i = 0; i < tp; i++)
@@ -2455,7 +2524,7 @@ void controller(log *head)
                         }
                     }
                 }
-                printf("Bot");
+              //  printf("Bot");
                 botw();
                 //    print_board(&c_state);
                 int flag1 = 0;
@@ -2489,8 +2558,9 @@ void controller(log *head)
                 c_state.cur_turn = colorFlip(c_state.cur_turn);
                 push(head, &c_state);
             }
-            else
+            else // It is the player's turn
             {
+                 // Choose some valid piece on which to start the first red square on
                 for (int i = tp - 1; i >= 0; --i)
                 {
                     if (c_state.white[i].x != -1 && c_state.white[i].y != -1)
@@ -2500,13 +2570,14 @@ void controller(log *head)
                     }
                 }
                 int x[2];
-                int y[2];
+                int y[2]; // These both store x and y coords of the 2 squares
                 x[0] = c_state.white[c].x;
                 y[0] = c_state.white[c].y;
-                x[1] = y[1] = -1;
+                x[1] = y[1] = -1;  // Second square doesnt exist yet
                 int cur = 0;
                 while (1)
                 {
+                    // Sets the hover values as required by the print_board
                     c_state.hover[0].x = x[0];
                     c_state.hover[0].y = y[0];
                     c_state.hover[1].x = x[1];
@@ -2517,6 +2588,7 @@ void controller(log *head)
                     hidecursor();
                     print_board(&c_state);
                     char ch = getkey();
+                    // cur is initially 0 , that means we are controlling the first square with wasd, the rest of these keys are documented in our instructions
                     if (ch == 'd')
                     {
                         x[cur] = (x[cur] + 1) % sb;
@@ -2636,11 +2708,12 @@ void controller(log *head)
                     {
                         review(head);
                     }
-                    else if (ch == KEY_SPACE)
+                    else if (ch == KEY_SPACE) // A selection is being made
                     {
-                        if (cur == 0)
+                        if (cur == 0) // It was the first square, that means we are just trying to select a piece to move it
                         {
                             int flag = -1;
+                            // Confirm that piece exists, if yes we increment cur to now control the second square which will be used to select where to move
                             for (int i = 0; i < tp; ++i)
                             {
                                 if (x[0] == c_state.white[i].x && y[0] == c_state.white[i].y)
@@ -2653,12 +2726,12 @@ void controller(log *head)
                                 }
                             }
                             if (flag == -1)
-                                continue;
+                                continue; // if the piece doesnt exist, just reset back to taking input again
                             cur++;
                         }
-                        else
+                        else // If cur is 1
                         {
-                            if (x[1] == x[0] && y[0] == y[1])
+                            if (x[1] == x[0] && y[0] == y[1]) // We wish to de select our previous selection
                             {
                                 cur--;
                                 x[1] = -1;
@@ -2680,11 +2753,11 @@ void controller(log *head)
                                     count_b = 1;
                             }
 
-                            if (!move_entries(&c_state, p, x[1], y[1]))
+                            if (!move_entries(&c_state, p, x[1], y[1])) // If move did not succeed, simply reset
                             {
                                 continue;
                             }
-                            else
+                            else // otherwise reset all the red squares, and push the current state to the stack
                             {
                                 cur--;
                                 x[0] = x[1];
@@ -2753,7 +2826,7 @@ void instruction()
 
 int toss(void)
 {
-
+    cls();
     int Toss;
     int arr[50];
     Toss = rand() % 2;
@@ -2765,19 +2838,21 @@ int toss(void)
     for (int i = 0; i < 50; i++)
     {
         if (arr[i] == 1)
-            printf("WHITE\n");
+            printf("Your Allegiance: WHITE\n");
         else
-            printf("BLACK\n");
+            printf("Your Allegiance: BLACK\n");
 
-        msleep(i);
-        cls();
+        msleep(3*i);
+        locate(1,1);
+        hidecursor();
     }
     if (arr[49] == 1)
-        printf("WHITE\n");
+        printf("Your Allegiance: WHITE\n");
     else
-        printf("BLACK\n");
+        printf("Your Allegiance: BLACK\n");
 
     msleep(2000);
+    cls();
     return arr[49];
 }
 
@@ -2878,47 +2953,6 @@ void review(log *head)
     }
 }
 
-void max_heapify(nodeb array[], int N, int i) //N is size of array, and afer i it follows max-heap property
-{
-    //sorted according to score.
-    int left_child = 2 * i;
-    int right_child = 2 * i + 1;
-    int max = i;
-    if (left_child < N && array[i].score < array[left_child].score)
-        max = left_child;
-    if (right_child < N && array[max].score < array[right_child].score)
-        max = right_child;
-    if (max != i)
-    {
-        nodeb temp = array[i]; //swaping nodes
-        array[i] = array[max];
-        array[max] = temp;
-        max_heapify(array, N, max); //if swap than only calling the function, just saving iretration.
-    }
-}
-
-void build_max_heap(nodeb array[], int N) //for bot
-{
-    for (int i = N / 2 - 1; i >= 0; --i)
-        max_heapify(array, N, i);
-}
-void insert_element(nodeb array[], int *ptr_size, nodeb element)
-{
-    //insert element at correct place in max_heap, i.e assuming array is max_heap
-    //also i assume array was init by malloc
-    *ptr_size = *ptr_size + 1;
-    array = (nodeb *)realloc(array, *ptr_size);
-    assert(array != NULL);
-    max_heapify(array, *ptr_size, *ptr_size - 1);
-}
-
-void delete_element(nodeb array[], int *ptr_size)
-{
-    //delete the max element in the heap
-    array[0] = array[*ptr_size - 1];
-    *ptr_size = *ptr_size - 1; //i.e size of array is now on
-    max_heapify(array, *ptr_size, 0);
-}
 int main()
 {
     cls();
