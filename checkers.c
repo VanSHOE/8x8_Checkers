@@ -1539,12 +1539,25 @@ void print_board(game_state *P)
 
     for (int i = 0; i < sb; i++)
     {
-        for (int j = 0; j < sb; j++)
-        {
-            printf("%d ", b[i][j]);
-        }
+        // for (int j = 0; j < sb; j++)
+        // {
+        //     printf("%d ", b[i][j]);
+        // }
         printf("\n");
     }
+
+    printf("Turn: ");
+    if (c_state.cur_turn == BLACK)
+    {
+        printf("BLACK\n");
+    }
+    else
+    {
+        printf("WHITE\n");
+    }
+    printf("\n");
+
+
     for (int i = 0; i <= (sb)*c_s; i++)
     {
         for (int j = 0; j <= (sb)*r_s; j++)
@@ -1612,14 +1625,8 @@ void print_board(game_state *P)
         resetColor();
         printf("\n");
     }
-    if (c_state.cur_turn == BLACK)
-    {
-        printf("BLACK\n");
-    }
-    else
-        printf("WHITE\n");
 
-    printf("Press 'H' to see instructions , 'Q' to Quit game and 'N' to restart game\n");
+    printf("\nPress 'H' to see instructions, 'Q' to Quit game and 'N' to restart game\n");
 }
 
 bool isOccupied(game_state *g, int x, int y)
