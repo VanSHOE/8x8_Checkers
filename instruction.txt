@@ -17,6 +17,7 @@ Q        -> to Quit the game
 N        -> to restart
 H        -> To see these INSTRUCTIONs
 m        -> draw 
+k        -> to print next k states
 
 How to play:
 

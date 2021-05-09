@@ -108,7 +108,6 @@ bool is_multi_capture_possible(game_state g)
     return false;
 }
 
-
 long double bot_helperb(game_state g_o, int lim)
 {
     if (!lim)
@@ -533,7 +532,6 @@ void botb()
     size = 0;
     free(scores);
 }
-
 
 long double bot_helperw(game_state g_o, int lim)
 {
@@ -2018,7 +2016,6 @@ bool isLegal(pawn p, pawn new_pos, game_state *g)
     return false;
 }
 
-
 void start(log *head)
 {
     int cur_pc = 0;
@@ -2055,13 +2052,11 @@ void start(log *head)
     // print_board(&c_state);
 }
 
-
 void restart(log *head)
 {
     clear_stack(head);
     start(head);
 }
-
 
 void clear_stack(log *head)
 {
@@ -3006,9 +3001,23 @@ void review(log *head)
     {
         if (c > 10)
         {
-            printf("Press any key to print next 10 boards \n");
-            char c = getkey();
-            c = 0;
+            printf("Press 'spacebar' to print next 10 boards and 'e' to resume game \n");
+            while (1)
+            {
+                char ch = getkey();
+                if(ch == KEY_SPACE)
+                {
+                    msleep(500);
+                    c = 0;
+                    break;
+                }
+                if(ch == 'e')
+                {
+                    cls();
+                    return;
+                }
+                
+            }
         }
         temp = head->next;
         game_state s = temp->g;
