@@ -14,7 +14,7 @@ and to change the difficulty in the menu, hover over difficulty and use 'a' and 
 
 Now the user may select multiplayer or single-player as desired, and the game will be initialised. 
 The game can be controlled using WASD to control the red square and space for selection/deselection.
-Once a successful selection is made, selecting another square will move the desired piece if the move is illegal; else, no move will happen.
+Once a successful selection is made, selecting another square will move the desired piece if the move is legal; else, no move will happen.
 
 The multi jump rule in our game dictates that once a player makes a capture, if any other piece of that player can make a capture, the player is granted another turn.
 
