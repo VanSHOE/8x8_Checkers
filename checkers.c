@@ -2888,7 +2888,7 @@ void instruction()
     FILE *fp;
 
     fp = fopen("instruction.txt", "r");
-    while (feof(fp) != 1)
+    while (!feof(fp) && !ferror(fp))
     {
         fscanf(fp, "%c", &A);
         printf("%c", A);

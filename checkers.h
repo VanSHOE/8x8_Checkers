@@ -6,7 +6,6 @@
 
 typedef struct board game_state; //game state
 typedef struct pieces pawn;
-typedef struct move move;
 typedef struct undo_stack log;
 typedef struct node node;
 #define topRight 1
@@ -49,13 +48,6 @@ struct board
     pawn black[(sb / 2) * ((sb - 2) / 2)]; // stores info about 12 black elements
     coords hover[2];
     int cur_turn; // Whose turn is it at this particular state // 0 is for black , 15 is for white
-};
-
-struct move // move will store new position of piece after a move is made
-{
-    pawn piece;
-    int x_new;
-    int y_new;
 };
 
 struct node
@@ -128,9 +120,9 @@ void insert(he elem);
 he Extract_max();
 
 long double bot_helperb(game_state g_o, int lim);
-void botb()
-long double bot_helperw(game_state g_o, int lim)
-void botw()
+void botb();
+long double bot_helperw(game_state g_o, int lim);
+void botw();
 
 
 
