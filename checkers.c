@@ -68,13 +68,13 @@ he Extract_min()
     DownHeap(0);
     return ans;
 }
-bool is_multi_capture_possible(game_state g)
+bool is_multi_capture_possible(game_state g) // this function run when one piece is captured and to find any other capture is possible in same turn
 {
     if (g.cur_turn == BLACK)
     {
         for (int i = 0; i < tp; i++)
         {
-            if (capturePossible(&g, g.black[i], bottomLeft) || capturePossible(&g, g.black[i], bottomRight))
+            if (capturePossible(&g, g.black[i], bottomLeft) || capturePossible(&g, g.black[i], bottomRight))  // to check whether capture possible
             {
                 return true;
             }
@@ -1986,13 +1986,13 @@ void start(log *head)
     // print_board(&c_state);
 }
 
-void restart(log *head)
+void restart(log *head) // To start new game press 'N' while playing game 
 {
     clear_stack(head);
     start(head);
 }
 
-void clear_stack(log *head)
+void clear_stack(log *head) // This clears the stack 
 {
     log *temp;
     while (head->next != NULL)
@@ -2135,7 +2135,7 @@ void draw(game_state *P, log *head) // just call this fxn and it will print who 
     print_board(P);
 }
 
-void Quit(log *head)
+void Quit(log *head) // To quit the game
 {
 
     printf("Do you want to quit the game? [y/n]\n");
@@ -2155,7 +2155,7 @@ void Quit(log *head)
                 }
                 else if (key == 'n')
                 {
-                    clear_stack(head);
+                    clear_stack(head);  // clear stack before quitting
                     cls();
                     exit(0);
                 }
@@ -2203,7 +2203,7 @@ void controller(log *head)
             if (bot_mode == BLACK) // If bot's allegiance is BLACK, then the control is given to the bot not the player
             {
                 //---------------------------------------------------------------BOT-Playing----------------------------------------------------------------
-                int count_w = 0;
+                int count_w = 0;   // flag to  check whether capture is possible in current move, if possible then count_w = 1.  
                 for (int i = 0; i < tp; i++)
                 {
                     if (capturePossible(&c_state, c_state.black[i], bottomLeft) || capturePossible(&c_state, c_state.black[i], bottomRight))
@@ -2221,16 +2221,16 @@ void controller(log *head)
                     }
                 }
            //     printf("Bot");
-                botb();
+                botb();   // bot will play now.
                 //    print_board(&c_state);
                 int flag1 = 0;
-                if (count_w == 1)
+                if (count_w == 1)  // bot captured a piece 
                 {
-                    for (int i = 0; i < tp; i++)
+                    for (int i = 0; i < tp; i++)  // since bot captured a piece, now check whether more capture is possible in same turn
                     {
                         if (capturePossible(&c_state, c_state.black[i], bottomLeft) || capturePossible(&c_state, c_state.black[i], bottomRight))
                         {
-                            flag1 = 1;
+                            flag1 = 1;  // if multi capture is possible.
                             break;
                         }
                         else if (c_state.black[i].is_king == 1)
@@ -2244,14 +2244,14 @@ void controller(log *head)
                     }
                     count_w = 0;
                 }
-                if (flag1 == 1)
+                if (flag1 == 1)  // if flag1  == 1 => multicapture is possible.
                 {
                     flag1 = 0;
-                    push(head, &c_state);
-                    continue;
+                    push(head, &c_state);  // push current state in stack.
+                    continue;  // repeat same above procedure in same turn since multi capture is possible
                 }
 
-                c_state.cur_turn = colorFlip(c_state.cur_turn);
+                c_state.cur_turn = colorFlip(c_state.cur_turn); 
                 push(head, &c_state);
                 //-----------------------------------------------------------------------------------------------------------------------------------------------
             }
@@ -2441,10 +2441,10 @@ void controller(log *head)
                             pawn n;
                             n.x = x[1];
                             n.y = y[1];
-                            int count_w = 0;
+                            int count_w = 0; // Flag to check whether capture is possible in current turn.
                             if (capturePossible(&c_state, p, bottomLeft) || capturePossible(&c_state, p, bottomRight))
                             {
-                                count_w = 1;
+                                count_w = 1; // capture is possible.
                             }
                             else if (p.is_king == 1)
                             {
@@ -2464,15 +2464,15 @@ void controller(log *head)
                                 x[1] = -1;
                                 y[1] = -1;
 
-                                int flag1 = 0;
-                                if (count_w == 1)
+                                int flag1 = 0; // flag to check whether multi capture is possible
+                                if (count_w == 1) // piece is captured in current turn.
                                 {
-                                    for (int i = 0; i < tp; i++)
+                                    for (int i = 0; i < tp; i++)  // To check if multi capture is possible in same turn by any black piece.
                                     {
                                         if (capturePossible(&c_state, c_state.black[i], bottomLeft) || capturePossible(&c_state, c_state.black[i], bottomRight))
                                         {
-                                            push(head, &c_state);
-                                            flag1 = 1;
+                                            push(head, &c_state); // push current game state in stack.
+                                            flag1 = 1; // multi capture is possible.
                                             break;
                                         }
                                         else if (c_state.black[i].is_king == 1)
@@ -2487,10 +2487,10 @@ void controller(log *head)
                                     }
                                     count_w = 0;
                                 }
-                                if (flag1 == 1)
+                                if (flag1 == 1) //multi capture is possible when flag1 = 1 
                                 {
                                     flag1 = 0;
-                                    continue;
+                                    continue; // continue playing because multicapture is possible 
                                 }
 
                                 c_state.cur_turn = colorFlip(c_state.cur_turn);
@@ -2507,12 +2507,12 @@ void controller(log *head)
         {
             if (bot_mode == WHITE) // If bot's allegiance is WHITE, then the control is given to the bot not the player
             {
-                int count_w = 0;
-                for (int i = 0; i < tp; i++)
+                int count_w = 0;  // flag to  check whether capture is possible in current move, if possible then count_w = 1.
+                for (int i = 0; i < tp; i++)  // since bot captured a piece, now check whether more capture is possible in same turn
                 {
                     if (capturePossible(&c_state, c_state.white[i], topLeft) || capturePossible(&c_state, c_state.white[i], topRight))
                     {
-                        count_w = 1;
+                        count_w = 1;// if multi capture is possible.
                         break;
                     }
                     else if (c_state.white[i].is_king == 1)
@@ -2527,14 +2527,14 @@ void controller(log *head)
               //  printf("Bot");
                 botw();
                 //    print_board(&c_state);
-                int flag1 = 0;
-                if (count_w == 1)
+                int flag1 = 0; 
+                if (count_w == 1)// bot captured a piece 
                 {
-                    for (int i = 0; i < tp; i++)
+                    for (int i = 0; i < tp; i++) // since bot captured a piece, now check whether more capture is possible in same turn
                     {
                         if (capturePossible(&c_state, c_state.white[i], topLeft) || capturePossible(&c_state, c_state.white[i], topRight))
                         {
-                            flag1 = 1;
+                            flag1 = 1; // if multi capture is possible.
                             break;
                         }
                         else if (c_state.white[i].is_king == 1)
@@ -2548,11 +2548,11 @@ void controller(log *head)
                     }
                     count_w = 0;
                 }
-                if (flag1 == 1)
+                if (flag1 == 1) // if flag1  == 1 => multicapture is possible.
                 {
                     flag1 = 0;
-                    push(head, &c_state);
-                    continue;
+                    push(head, &c_state); // push current state in stack.
+                    continue;  // repeat same above procedure in same turn since multi capture is possible
                 }
 
                 c_state.cur_turn = colorFlip(c_state.cur_turn);
@@ -2742,10 +2742,10 @@ void controller(log *head)
                             pawn n;
                             n.x = x[1];
                             n.y = y[1];
-                            int count_b = 0;
+                            int count_b = 0; // Flag to check if  capture is possible in current move.
                             if (capturePossible(&c_state, p, topLeft) || capturePossible(&c_state, p, topRight))
                             {
-                                count_b = 1;
+                                count_b = 1; // capture is possible.
                             }
                             else if (p.is_king == 1)
                             {
@@ -2764,14 +2764,14 @@ void controller(log *head)
                                 y[0] = y[1];
                                 x[1] = -1;
                                 y[1] = -1;
-                                int flag2 = 0;
-                                if (count_b == 1)
-                                {
-                                    for (int i = 0; i < tp; i++)
+                                int flag2 = 0; // flag to check multicapture is possible
+                                if (count_b == 1)  // if count_b == 1, piece is captured in this turn.
+                                { 
+                                    for (int i = 0; i < tp; i++) // to check multi capture is possible by any white piece in same turn
                                     {
                                         if (capturePossible(&c_state, c_state.white[i], topLeft) || capturePossible(&c_state, c_state.white[i], topRight))
                                         {
-                                            flag2 = 1;
+                                            flag2 = 1; // multi capture is possible.
                                             push(head, &c_state);
                                             break;
                                         }
@@ -2787,10 +2787,10 @@ void controller(log *head)
                                     }
                                     count_b = 0;
                                 }
-                                if (flag2 == 1)
+                                if (flag2 == 1) // if flab2 == 1 => multi capture is possible.
                                 {
-                                    flag2 = 0;
-                                    continue;
+                                    flag2 = 0; 
+                                    continue; // play and do multi capture in same turn.
                                 }
 
                                 c_state.cur_turn = colorFlip(c_state.cur_turn);
@@ -2806,7 +2806,7 @@ void controller(log *head)
     }
 }
 
-void instruction()
+void instruction() // Instruction to play the game. press 'H' to see instruction list while playing game.
 {
     cls();
     char A;
@@ -2824,12 +2824,12 @@ void instruction()
     fclose(fp);
 }
 
-int toss(void)
+int toss(void) // To toss for single player game,, whatever will be toss result that colored piece will be alloted to player
 {
     cls();
     int Toss;
     int arr[50];
-    Toss = rand() % 2;
+    Toss = rand() % 2; // To generate any random number.
     for (int i = 49; i >= 0; i--)
     {
         arr[i] = Toss;
@@ -2842,7 +2842,7 @@ int toss(void)
         else
             printf("Your Allegiance: BLACK\n");
 
-        msleep(3*i);
+        msleep(3*i); // to delay  flickering BLACK/WHITE
         locate(1,1);
         hidecursor();
     }
@@ -2851,12 +2851,12 @@ int toss(void)
     else
         printf("Your Allegiance: BLACK\n");
 
-    msleep(2000);
+    msleep(2000); // wait for 2s to start the game.
     cls();
     return arr[49];
 }
 
-void rule(void)
+void rule(void) // To see rules of checkers game. Press 'b' to see rule book in middle of game.
 {
     cls();
     char A;
@@ -2874,7 +2874,7 @@ void rule(void)
     fclose(fp);
 }
 
-log *CreateEmptyStackNode()
+log *CreateEmptyStackNode() // node to store game state in stack.
 {
     log *S = (log *)malloc(sizeof(log));
 
@@ -2884,7 +2884,7 @@ log *CreateEmptyStackNode()
     return S;
 }
 
-void push(log *head, game_state *preState)
+void push(log *head, game_state *preState) // push the current game state in stack.
 {
     log *S = CreateEmptyStackNode();
     S->g = *preState;
@@ -2897,7 +2897,6 @@ void push(log *head, game_state *preState)
     }
     else
     {
-        //      assert(0); // should never happen now
         S->next = head->next;
         head->next = S;
         S->prev = head;
@@ -2960,25 +2959,17 @@ int main()
     if (sb % 2 != 0)
         exit(1);
     resetColor();
+
     log *head = CreateEmptyStackNode(); // start of linked list which is going to store table after every move
+    
     int i = rand() % 50;
-    ;
+    
     while (i--)
     {
         rand();
     }
-    //  char key;
-    //   printf("Press 'e' to start and 't' to toss\n");
+    
     menu(head);
 
-    while (1)
-    {
-        char key = getkey();
-        if (key == 't')
-            toss();
-
-        else if (key == 'e')
-            start(head);
-    }
     return 0;
 }
