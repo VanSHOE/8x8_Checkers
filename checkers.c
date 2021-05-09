@@ -1636,20 +1636,23 @@ bool isOccupied(game_state *g, int x, int y)
 
 bool is_present(game_state *g, pawn P)
 {
-    if (P.allegiance == BLACK)
+    if (P.x != -1 && P.y != -1)
     {
-        for (int i = 0; i < tp; ++i)
+        if (P.allegiance == BLACK)
         {
-            if (P.x == g->black[i].x && P.y == g->black[i].y)
-                return true;
+            for (int i = 0; i < tp; ++i)
+            {
+                if (P.x == g->black[i].x && P.y == g->black[i].y)
+                    return true;
+            }
         }
-    }
-    else if (P.allegiance == WHITE)
-    {
-        for (int i = 0; i < tp; ++i)
+        else if (P.allegiance == WHITE)
         {
-            if (P.x == g->white[i].x && P.y == g->white[i].y)
-                return true;
+            for (int i = 0; i < tp; ++i)
+            {
+                if (P.x == g->white[i].x && P.y == g->white[i].y)
+                    return true;
+            }
         }
     }
     return false;
