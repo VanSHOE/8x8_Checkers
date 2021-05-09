@@ -1039,6 +1039,10 @@ void filling_node(node *current, game_state p, int k) // takes a node , find whi
                             // finding the board after the move is made
                             game_state board_next = p;
                             bool tmp = move_entries(&board_next, p.black[i], p.black[i].x - 1, p.black[i].y + 1);
+
+                            if(tmp == false)
+                            continue;
+
                             board_next.cur_turn = colorFlip(board_next.cur_turn);
 
                             //allocating memory
@@ -1053,6 +1057,8 @@ void filling_node(node *current, game_state p, int k) // takes a node , find whi
                         {
                             game_state board_next = p;
                             bool tmp = move_entries(&board_next, p.black[i], p.black[i].x - 2, p.black[i].y + 2);
+                            if(tmp == false)
+                            continue;
                             board_next.cur_turn = colorFlip(board_next.cur_turn);
                             current->array[i][j] = (node *)malloc(sizeof(node));
                             current->array[i][j]->next_board = NULL;
@@ -1069,6 +1075,8 @@ void filling_node(node *current, game_state p, int k) // takes a node , find whi
                             // finding the board after the move is made
                             game_state board_next = p;
                             bool tmp = move_entries(&board_next, p.black[i], p.black[i].x + 1, p.black[i].y + 1);
+                            if(tmp == false)
+                            continue;
                             board_next.cur_turn = colorFlip(board_next.cur_turn);
                             //allocating memory
                             current->array[i][j] = (node *)malloc(sizeof(node));
@@ -1082,6 +1090,8 @@ void filling_node(node *current, game_state p, int k) // takes a node , find whi
                         {
                             game_state board_next = p;
                             bool tmp = move_entries(&board_next, p.black[i], p.black[i].x + 2, p.black[i].y + 2);
+                            if(tmp == false)
+                            continue;
                             board_next.cur_turn = colorFlip(board_next.cur_turn);
                             current->array[i][j] = (node *)malloc(sizeof(node));
                             current->array[i][j]->next_board = NULL;
@@ -1098,6 +1108,8 @@ void filling_node(node *current, game_state p, int k) // takes a node , find whi
                             // finding the board after the move is made
                             game_state board_next = p;
                             bool tmp = move_entries(&board_next, p.black[i], p.black[i].x - 1, p.black[i].y - 1);
+                            if(tmp == false)
+                            continue;
                             board_next.cur_turn = colorFlip(board_next.cur_turn);
                             //allocating memory
                             current->array[i][j] = (node *)malloc(sizeof(node));
@@ -1111,6 +1123,8 @@ void filling_node(node *current, game_state p, int k) // takes a node , find whi
                         {
                             game_state board_next = p;
                             bool tmp = move_entries(&board_next, p.black[i], p.black[i].x - 2, p.black[i].y - 2);
+                            if(tmp == false)
+                            continue;
                             board_next.cur_turn = colorFlip(board_next.cur_turn);
                             current->array[i][j] = (node *)malloc(sizeof(node));
                             current->array[i][j]->next_board = NULL;
@@ -1127,6 +1141,8 @@ void filling_node(node *current, game_state p, int k) // takes a node , find whi
                             // finding the board after the move is made
                             game_state board_next = p;
                             bool tmp = move_entries(&board_next, p.black[i], p.black[i].x + 1, p.black[i].y - 1);
+                            if(tmp == false)
+                            continue;
                             board_next.cur_turn = colorFlip(board_next.cur_turn);
                             //allocating memory
                             current->array[i][j] = (node *)malloc(sizeof(node));
@@ -1140,6 +1156,8 @@ void filling_node(node *current, game_state p, int k) // takes a node , find whi
                         {
                             game_state board_next = p;
                             bool tmp = move_entries(&board_next, p.black[i], p.black[i].x + 2, p.black[i].y - 2);
+                            if(tmp == false)
+                            continue;
                             board_next.cur_turn = colorFlip(board_next.cur_turn);
                             current->array[i][j] = (node *)malloc(sizeof(node));
                             current->array[i][j]->next_board = NULL;
@@ -1159,6 +1177,8 @@ void filling_node(node *current, game_state p, int k) // takes a node , find whi
                             // finding the board after the move is made
                             game_state board_next = p;
                             bool tmp = move_entries(&board_next, p.black[i], p.black[i].x - 1, p.black[i].y - 1);
+                            if(tmp == false)
+                            continue;
                             board_next.cur_turn = colorFlip(board_next.cur_turn);
                             //allocating memory
                             current->array[i][j] = (node *)malloc(sizeof(node));
@@ -1172,6 +1192,8 @@ void filling_node(node *current, game_state p, int k) // takes a node , find whi
                         {
                             game_state board_next = p;
                             bool tmp = move_entries(&board_next, p.black[i], p.black[i].x - 2, p.black[i].y - 2);
+                            if(tmp == false)
+                            continue;
                             board_next.cur_turn = colorFlip(board_next.cur_turn);
                             current->array[i][j] = (node *)malloc(sizeof(node));
                             current->array[i][j]->next_board = NULL;
@@ -1188,6 +1210,8 @@ void filling_node(node *current, game_state p, int k) // takes a node , find whi
                             // finding the board after the move is made
                             game_state board_next = p;
                             bool tmp = move_entries(&board_next, p.black[i], p.black[i].x + 1, p.black[i].y - 1);
+                            if(tmp == false)
+                            continue;
                             board_next.cur_turn = colorFlip(board_next.cur_turn);
                             //allocating memory
                             current->array[i][j] = (node *)malloc(sizeof(node));
@@ -1201,6 +1225,8 @@ void filling_node(node *current, game_state p, int k) // takes a node , find whi
                         {
                             game_state board_next = p;
                             bool tmp = move_entries(&board_next, p.black[i], p.black[i].x + 2, p.black[i].y - 2);
+                            if(tmp == false)
+                            continue;
                             board_next.cur_turn = colorFlip(board_next.cur_turn);
                             current->array[i][j] = (node *)malloc(sizeof(node));
                             current->array[i][j]->next_board = NULL;
